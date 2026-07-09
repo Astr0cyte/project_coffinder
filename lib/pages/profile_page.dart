@@ -6,6 +6,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFFAF9F4),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -17,11 +18,16 @@ class ProfilePage extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        OutlinedButton(
-                          onPressed: () {
-                           // Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
-                          },
-                          child: Icon(Icons.arrow_back, color: Color(0xFF3E2A20)),
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
+                            onPressed: () {
+                            // Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
+                            },
                         ),
                         Spacer(),
                       ],
