@@ -92,12 +92,17 @@ class LoginPage extends StatelessWidget {
 
               // "Continue as guest" button
               Align(
-                alignment: Alignment(0, 0.6),
+                alignment: Alignment(0, 0.57),
                 child: FilledButton(
                   style: FilledButton.styleFrom(
-                    fixedSize: const Size(270, 54),
+                    side: const BorderSide(
+                      color: Color.fromRGBO(133, 115, 98, 1.0),
+                    ),
+                    fixedSize: const Size(327, 48),
+                    elevation: 1.0,
+                    shadowColor: Colors.black,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(20),
+                      borderRadius: BorderRadiusGeometry.circular(10),
                     ),
                     backgroundColor: Color.fromRGBO(126, 101, 76, 1.0),
                     foregroundColor: Color.fromRGBO(223, 217, 185, 1.0),
@@ -115,22 +120,27 @@ class LoginPage extends StatelessWidget {
 
               // "Sign in or create account" button
               Align(
-                alignment: Alignment(0, 0.73),
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    fixedSize: const Size(224, 33),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(15),
+                alignment: Alignment(0, 0.70),
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    side: const BorderSide(
+                      color: Color.fromRGBO(230, 230, 230, 1),
                     ),
-                    backgroundColor: Color.fromRGBO(250, 249, 244, 0),
-                    foregroundColor: Color.fromRGBO(223, 217, 185, 1.0),
+                    fixedSize: const Size(327, 48),
+                    elevation: 1.0,
+                    shadowColor: const Color.fromARGB(255, 144, 144, 144),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadiusGeometry.circular(10),
+                    ),
+                    backgroundColor: Color.fromRGBO(255, 255, 255, 1),
+                    foregroundColor: Color.fromRGBO(184, 184, 184, 1),
                   ),
                   onPressed: () {},
                   child: Text(
                     "Sign in or create account",
                     style: GoogleFonts.questrial(
-                      fontSize: 14,
-                      color: Color.fromRGBO(126, 101, 76, 1.0),
+                      fontSize: 16,
+                      color: Color.fromRGBO(175, 175, 175, 1),
                     ),
                   ),
                 ),
