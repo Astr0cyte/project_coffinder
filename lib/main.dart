@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-import 'package:project_coffinder/auth/sign_in_page.dart';
-import 'package:project_coffinder/pages/login_page.dart';
-=======
+
+import 'package:project_coffinder/pages/sign_in_page.dart';
 import 'package:project_coffinder/pages/login_page.dart';
 
->>>>>>> a13990abaed731c5a9bd2dd8d7ff6c543bc1520d
+import 'package:project_coffinder/pages/login_page.dart';
+
+
 void main() {
   runApp(const MyApp());
 }
@@ -80,11 +80,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-<<<<<<< HEAD
-    return const SignInPage();
-    // return LoginPage();
-=======
+    // return const SignInPage();
+    // return const SignInPage();
     return LoginPage();
->>>>>>> a13990abaed731c5a9bd2dd8d7ff6c543bc1520d
+
   }
 }

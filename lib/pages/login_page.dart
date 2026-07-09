@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:project_coffinder/pages/sign_in_page.dart';
 
 class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
+
   @override
-  Widget build(context) {
+  Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         body: Container(
@@ -135,7 +138,14 @@ class LoginPage extends StatelessWidget {
                     backgroundColor: Color.fromRGBO(255, 255, 255, 1),
                     foregroundColor: Color.fromRGBO(184, 184, 184, 1),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    // Navigate to the sign-in screen.
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const SignInPage(),
+                      ),
+                    );
+                  },
                   child: Text(
                     "Sign in or create account",
                     style: GoogleFonts.questrial(
