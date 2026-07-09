@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:project_coffinder/auth/sign_in_page.dart';
 import 'package:project_coffinder/pages/login_page.dart';
+=======
+import 'package:project_coffinder/pages/login_page.dart';
+
+>>>>>>> a13990abaed731c5a9bd2dd8d7ff6c543bc1520d
 void main() {
   runApp(const MyApp());
 }
@@ -29,9 +34,8 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: LoginPage(),
     );
   }
 }
@@ -76,7 +80,11 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+<<<<<<< HEAD
     return const SignInPage();
     // return LoginPage();
+=======
+    return LoginPage();
+>>>>>>> a13990abaed731c5a9bd2dd8d7ff6c543bc1520d
   }
 }
