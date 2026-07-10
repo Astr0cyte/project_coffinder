@@ -7,6 +7,7 @@ import '../widgets/mascot_avatar.dart';
 import '../widgets/top_gradient_backdrop.dart';
 import '../pages/login_page.dart';
 import 'register_page.dart';
+import 'forgot_password_page.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({
@@ -206,7 +207,13 @@ class _SignInPageState extends State<SignInPage> {
                                     ],
                                   ),
                                   GestureDetector(
-                                    onTap: widget.onForgotPassword,
+                                    onTap: widget.onForgotPassword ??
+                                            () => Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                            const ForgotPasswordPage(),
+                                          ),
+                                        ),
                                     child: const Text(
                                       'Forgot Password ?',
                                       style: TextStyle(
