@@ -95,7 +95,7 @@ class SettingsPopup extends StatelessWidget {
                   ),
                   onTap: () {},
                 ),
-              ],
+               ],
             ),
 
             ListTile(
