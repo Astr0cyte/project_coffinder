@@ -1,37 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../states/sign_in_state.dart';
+import '../states/register_state.dart';
 import '../widgets/auth_text_field.dart';
-import '../widgets/social_login_button.dart';
 import '../widgets/mascot_avatar.dart';
 import '../widgets/top_gradient_backdrop.dart';
-import '../pages/login_page.dart';
-import 'register_page.dart';
 
-class SignInPage extends StatefulWidget {
-  const SignInPage({
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({
     super.key,
     this.onSubmit,
-    this.onForgotPassword,
-    this.onGoogleSignIn,
-    this.onFacebookSignIn,
-    this.onSignUp,
+    this.onLogIn,
   });
 
-  /// Called with email/password when the user taps "Log In".
-  final void Function(String email, String password)? onSubmit;
-  final VoidCallback? onForgotPassword;
-  final VoidCallback? onGoogleSignIn;
-  final VoidCallback? onFacebookSignIn;
-  final VoidCallback? onSignUp;
+  /// Called with the completed [RegisterState] when the user taps "Register".
+  final void Function(RegisterState state)? onSubmit;
+  final VoidCallback? onLogIn;
 
   @override
-  State<SignInPage> createState() => _SignInPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _SignInPageState extends State<SignInPage> {
-  late final SignInState _state;
+class _RegisterPageState extends State<RegisterPage> {
+  late final RegisterState _state;
+  late final TextEditingController _firstNameController;
+  late final TextEditingController _lastNameController;
   late final TextEditingController _emailController;
+  late final TextEditingController _dobController;
+  late final TextEditingController _phoneController;
   late final TextEditingController _passwordController;
 
   static const _textColor = Color(0xFF3E2A20);
@@ -42,9 +37,16 @@ class _SignInPageState extends State<SignInPage> {
   @override
   void initState() {
     super.initState();
-    _state = SignInState();
+    _state = RegisterState();
+    _firstNameController = TextEditingController()
+      ..addListener(() => _state.setFirstName(_firstNameController.text));
+    _lastNameController = TextEditingController()
+      ..addListener(() => _state.setLastName(_lastNameController.text));
     _emailController = TextEditingController()
       ..addListener(() => _state.setEmail(_emailController.text));
+    _dobController = TextEditingController();
+    _phoneController = TextEditingController()
+      ..addListener(() => _state.setPhone(_phoneController.text));
     _passwordController = TextEditingController()
       ..addListener(() => _state.setPassword(_passwordController.text));
     _state.addListener(_onStateChanged);
@@ -56,27 +58,38 @@ class _SignInPageState extends State<SignInPage> {
   void dispose() {
     _state.removeListener(_onStateChanged);
     _state.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
+    _dobController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
-  void _handleLogIn() {
-    widget.onSubmit?.call(_state.email, _state.password);
-  }
-
-  /// Goes back to LoginPage. If SignInPage was pushed on top of it (the
-  /// normal case), a simple pop returns there. If for some reason there's
-  /// nothing to pop to (e.g. SignInPage was opened as the first route),
-  /// falls back to pushing LoginPage explicitly.
   void _handleBack(BuildContext context) {
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
-    } else {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const LoginPage()),
-      );
     }
+  }
+
+  Future<void> _pickDateOfBirth() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(now.year - 18, now.month, now.day),
+      firstDate: DateTime(now.year - 100),
+      lastDate: now,
+    );
+    if (picked != null) {
+      _state.setDateOfBirth(picked);
+      _dobController.text =
+      '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
+    }
+  }
+
+  void _handleRegister() {
+    widget.onSubmit?.call(_state);
   }
 
   @override
@@ -93,7 +106,7 @@ class _SignInPageState extends State<SignInPage> {
               top: 0,
               left: 0,
               right: 0,
-              child: TopGradientBackdrop(height: 220),
+              child: TopGradientBackdrop(height: 160),
             ),
             SafeArea(
               child: Padding(
@@ -102,13 +115,14 @@ class _SignInPageState extends State<SignInPage> {
                   builder: (context, constraints) {
                     return SingleChildScrollView(
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                        constraints:
+                        BoxConstraints(minHeight: constraints.maxHeight),
                         child: IntrinsicHeight(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(height: _edgeSpacing + 44),
+                              const SizedBox(height: _edgeSpacing + 44),
                               Center(
                                 child: Container(
                                   width: 99,
@@ -127,40 +141,70 @@ class _SignInPageState extends State<SignInPage> {
                                       'assets/logo.png',
                                       fit: BoxFit.contain,
                                       errorBuilder: (context, error, stackTrace) {
-                                        // Falls back to the drawn mascot only if the
-                                        // asset fails to load.
+                                        // Falls back to the drawn mascot only if
+                                        // the asset fails to load.
                                         return const MascotAvatar(size: 72);
                                       },
                                     ),
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 24),
+                              const SizedBox(height: 20),
                               const Text(
-                                'Sign in to your\nAccount',
+                                'Register',
                                 style: TextStyle(
-                                  fontSize: 32,
+                                  fontSize: 30,
                                   fontWeight: FontWeight.bold,
                                   color: _textColor,
-                                  letterSpacing: 1,
-                                  height: 1.2,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 6),
                               Text(
-                                'Enter your email and password to log in',
+                                'Create an account to continue!',
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: _textColor.withOpacity(0.8),
+                                  color: _textColor.withOpacity(0.7),
                                 ),
                               ),
                               const SizedBox(height: 24),
+                              AuthTextField(
+                                controller: _firstNameController,
+                                hintText: 'First name',
+                              ),
+                              const SizedBox(height: 12),
+                              AuthTextField(
+                                controller: _lastNameController,
+                                hintText: 'Last name',
+                              ),
+                              const SizedBox(height: 12),
                               AuthTextField(
                                 controller: _emailController,
                                 hintText: 'youremail@gmail.com',
                                 keyboardType: TextInputType.emailAddress,
                               ),
-                              const SizedBox(height: 14),
+                              const SizedBox(height: 12),
+                              AuthTextField(
+                                controller: _dobController,
+                                hintText: 'DD/MM/YYYY',
+                                readOnly: true,
+                                onTap: _pickDateOfBirth,
+                                suffixIcon: Icon(
+                                  Icons.calendar_today_outlined,
+                                  size: 18,
+                                  color: _textColor.withOpacity(0.5),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              _PhoneField(
+                                controller: _phoneController,
+                                flagEmoji: _state.countryFlagEmoji,
+                                dialCode: _state.countryDialCode,
+                                onCountryTap: () {
+                                  // Hook up a real country picker here if needed;
+                                  // kept minimal since it's outside this form's scope.
+                                },
+                              ),
+                              const SizedBox(height: 12),
                               AuthTextField(
                                 controller: _passwordController,
                                 hintText: '••••••••',
@@ -175,118 +219,51 @@ class _SignInPageState extends State<SignInPage> {
                                   onPressed: _state.toggleObscurePassword,
                                 ),
                               ),
-                              const SizedBox(height: 14),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: Checkbox(
-                                          value: _state.rememberMe,
-                                          onChanged: (value) =>
-                                              _state.toggleRememberMe(value),
-                                          activeColor: _buttonColor,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(4),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        'Remember me',
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: _textColor.withOpacity(0.8),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  GestureDetector(
-                                    onTap: widget.onForgotPassword,
-                                    child: const Text(
-                                      'Forgot Password ?',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: Color(0xFF375DFB),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 24),
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
-                                  onPressed: _state.canSubmit ? _handleLogIn : null,
+                                  onPressed: _state.canSubmit ? _handleRegister : null,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: _buttonColor,
-                                    disabledBackgroundColor: _buttonColor.withOpacity(0.5),
+                                    disabledBackgroundColor:
+                                    _buttonColor.withOpacity(0.5),
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(vertical: 16),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(28),
+                                      borderRadius: BorderRadius.circular(14),
+                                      side: const BorderSide(
+                                        color: Color(0xFF7C6AE8),
+                                        width: 2,
+                                      ),
                                     ),
                                   ),
                                   child: const Text(
-                                    'Log In',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFFDFD9B9)),
+                                    'Register',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               ),
                               const SizedBox(height: 20),
-                              Row(
-                                children: [
-                                  Expanded(child: Divider(color: _textColor.withOpacity(0.15))),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                                    child: Text(
-                                      'Or',
-                                      style: TextStyle(color: _textColor.withOpacity(0.5)),
-                                    ),
-                                  ),
-                                  Expanded(child: Divider(color: _textColor.withOpacity(0.15))),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-                              SocialLoginButton(
-                                label: 'Continue with Google',
-                                icon: const GoogleLogoIcon(),
-                                onPressed: widget.onGoogleSignIn ?? () {},
-                              ),
-                              const SizedBox(height: 12),
-                              SocialLoginButton(
-                                label: 'Continue with Facebook',
-                                icon: const Icon(Icons.facebook, color: Color(0xFF1877F2), size: 22),
-                                onPressed: widget.onFacebookSignIn ?? () {},
-                              ),
-                              const SizedBox(height: 28),
                               Center(
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      "Don't have an account? ",
+                                      'Already have an account? ',
                                       style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
                                         color: _textColor.withOpacity(0.6),
                                       ),
                                     ),
                                     GestureDetector(
-                                      onTap: widget.onSignUp ??
-                                              () => Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (_) =>
-                                              const RegisterPage(),
-                                            ),
-                                          ),
+                                      onTap: widget.onLogIn ??
+                                              () => _handleBack(context),
                                       child: const Text(
-                                        'Sign Up',
+                                        'Log in',
                                         style: TextStyle(
                                           fontSize: 13,
                                           color: Color(0xFF375DFB),
@@ -297,7 +274,7 @@ class _SignInPageState extends State<SignInPage> {
                                   ],
                                 ),
                               ),
-                              SizedBox(height: _edgeSpacing),
+                              const SizedBox(height: _edgeSpacing),
                             ],
                           ),
                         ),
@@ -334,6 +311,62 @@ class _SignInPageState extends State<SignInPage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Country-code + phone number row: a small flag/dial-code pill on the
+/// left, and a regular phone number field on the right — matches the
+/// "🇺🇸 (454) 726-0592" row in the mockup.
+class _PhoneField extends StatelessWidget {
+  const _PhoneField({
+    required this.controller,
+    required this.flagEmoji,
+    required this.dialCode,
+    required this.onCountryTap,
+  });
+
+  final TextEditingController controller;
+  final String flagEmoji;
+  final String dialCode;
+  final VoidCallback onCountryTap;
+
+  static const _borderColor = Color(0xFFE3DACB);
+  static const _textColor = Color(0xFF3E2A20);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        InkWell(
+          onTap: onCountryTap,
+          borderRadius: BorderRadius.circular(14),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: _borderColor),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(flagEmoji, style: const TextStyle(fontSize: 16)),
+                const SizedBox(width: 4),
+                const Icon(Icons.expand_more, size: 16, color: _textColor),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: AuthTextField(
+            controller: controller,
+            hintText: '$dialCode phone number',
+            keyboardType: TextInputType.phone,
+          ),
+        ),
+      ],
     );
   }
 }

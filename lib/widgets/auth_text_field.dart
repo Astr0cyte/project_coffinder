@@ -9,6 +9,8 @@ class AuthTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType,
     this.suffixIcon,
+    this.readOnly = false,
+    this.onTap,
   });
 
   final TextEditingController controller;
@@ -16,6 +18,8 @@ class AuthTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final Widget? suffixIcon;
+  final bool readOnly;
+  final VoidCallback? onTap;
 
   static const _borderColor = Color(0xFFE3DACB);
   static const _textColor = Color(0xFF3E2A20);
@@ -26,6 +30,8 @@ class AuthTextField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
+      readOnly: readOnly,
+      onTap: onTap,
       style: const TextStyle(color: _textColor, fontSize: 14),
       decoration: InputDecoration(
         hintText: hintText,
@@ -34,7 +40,7 @@ class AuthTextField extends StatelessWidget {
         fillColor: Colors.white,
         suffixIcon: suffixIcon,
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: _borderColor),
