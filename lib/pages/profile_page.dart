@@ -26,7 +26,7 @@ class ProfilePage extends StatelessWidget {
                             highlightColor: Colors.transparent,
                             hoverColor: Colors.transparent,
                             onPressed: () {
-                            // Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
+                             // Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
                             },
                         ),
                         Spacer(),
@@ -314,7 +314,6 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 12),
                   
 
                   Container(
