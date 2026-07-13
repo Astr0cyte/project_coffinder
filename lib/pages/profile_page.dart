@@ -317,45 +317,45 @@ class ProfilePage extends StatelessWidget {
                   
 
                   Container(
-  padding: const EdgeInsets.all(12),
-  decoration: BoxDecoration(
-    color: const Color(0xFFDED4BA),
-    borderRadius: BorderRadius.circular(8),
-  ),
-  child: Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDED4BA),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
 
-      // Image placeholder
-      Container(
-        width: 64,
-        height: 64,
-        decoration: BoxDecoration(
-          color: const Color(0xFFE8DFC8),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: const Color(0xFFD6C7A8),
-          ),
-        ),
-        child: const Icon(
-          Icons.image_outlined,
-          color: Color(0xFF7E654C),
-        ),
-      ),
+                        // Image placeholder
+                        Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE8DFC8),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: const Color(0xFFD6C7A8),
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.image_outlined,
+                            color: Color(0xFF7E654C),
+                          ),
+                        ),
 
-      const SizedBox(width: 12),
+                        const SizedBox(width: 12),
 
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "L'Usine",
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF402F11),
-              ),
-            ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "L'Usine",
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF402F11),
+                                ),
+                              ),
 
             const SizedBox(height: 6),
 
