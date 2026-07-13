@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
-///this file is only a prototype for the purposes of functionality, while trung works on the final desgin of the page 
-
 class ReviewData {
   final String name;
   final String stars;
@@ -22,9 +20,14 @@ class CoffeeShopDetailScreen extends StatelessWidget {
 
   final String shopName;
 
+  // Figma frame was 402 x 874 (iPhone-sized). We scale every position
+  // proportionally to whatever the real device width is.
   static const double designWidth = 402;
   static const double designHeight = 874;
 
+  // The first review has real content from the Figma file ("Mike").
+  // The other two were still unresolved placeholders ("????") there —
+  // cleaned-up placeholder content below for those two, replace with real data.
   static const reviews = [
     ReviewData('Mike', '★★★★★',
         'Great atmosphere and the coffee is amazing. Perfect place to work or relax.'),
