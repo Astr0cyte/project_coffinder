@@ -639,8 +639,3 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
     );
   }
 
-}
-
-
-
-
