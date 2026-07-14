@@ -1,6 +1,6 @@
 # Project Coffinder, aka: BrewStreet!
 
-- A 4 week project developing a coffee recommendation app for Ho Chi Minh City. Collaboration between HCMUT and Macquarie University students.                           
+- A 4 week project developing a coffee recommendation app for Ho Chi Minh City. Collaboration between HCMUT and Macquarie University students.
 
 - Problem: How do you know which coffee shops are better than others? Google Reviews is an option, but we think we can improve the user experience.
     - What differentiates this app from Google Reviews?
