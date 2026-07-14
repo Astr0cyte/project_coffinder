@@ -1,0 +1,16 @@
+[
+  {
+    "englishName": "Traditional Vietnamese Coffee",
+    "vietName": "Ca Phe Sua Da",
+    "imagePath": "assets/coffee_images/traditional_iced_coffee.png",
+    "description": "The classic Vietnamese iced coffee...",
+    "pronunciation": ""
+  },
+  {
+    "englishName": "Egg Foam Coffee",
+    "vietName": "Ca Phe Trung",
+    "imagePath": "assets/coffee_images/egg_iced_coffee.png",
+    "description": "A rich, dessert-like coffee...",
+    "pronunciation": "cah feh troong"
+  }
+]

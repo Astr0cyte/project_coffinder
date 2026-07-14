@@ -1,19 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
+import 'package:project_coffinder/widgets/coffee_glossary_card.dart';
+import 'package:project_coffinder/models/coffee_glossary_item.dart';
 
-class DiaryGlossaryPage extends StatelessWidget {
+class DiaryGlossaryPage extends StatefulWidget {
   DiaryGlossaryPage({super.key});
 
-	double cardInterval = -0.35; // TODO: Create a simple algorithm for this variable.
+@override
+  State<DiaryGlossaryPage> createState() => _DiaryGlossaryPageState();
+}
+
+class _DiaryGlossaryPageState extends State<DiaryGlossaryPage> {
+
+  Future<List<CoffeeGlossaryItem>> loadCoffeeData() async {
+    // Read raw text from file
+    final String jsonString = await rootBundle.loadString('assets/data/coffees.json');
+    
+    // Text -> Dart List
+    final List<dynamic> jsonList = json.decode(jsonString);
+    
+    // Utilise factory within Data Model file
+    return jsonList.map((json) => CoffeeGlossaryItem.fromJson(json)).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return Scaffold(
         body: Container(
           decoration: const BoxDecoration(
             color: Color.fromRGBO(250, 249, 244, 1.0),
-          ),
+          ), 
 
           child: Stack(
 						children: [
@@ -44,114 +62,39 @@ class DiaryGlossaryPage extends StatelessWidget {
 
 							// 4 - Coffee definition card instance
 							Align(
-								alignment: Alignment(0, cardInterval), // TODO: Create a simple algorithm for this variable.
-								child: Container(
-									width: 348,
-									height: 96,
-									decoration: BoxDecoration(
-										color: Color.fromRGBO(250, 249, 239, 1.0),
-										borderRadius: BorderRadius.circular(16),
-										border: Border.all(
-											color: Color.fromRGBO(222, 212, 186, 1.0), 
-											width: 1
-										),
-									boxShadow: [
-										BoxShadow(
-											offset: Offset(0, 2),
-											color: Color.fromRGBO(204, 203, 199, 1.0),
-											blurRadius: 1.0,
-										),
-									],
-									),
-								),
-							),
+                alignment: Alignment.bottomCenter,
+                child: FractionallySizedBox(
+                  heightFactor: 0.7,
+                  child: FutureBuilder<List<CoffeeGlossaryItem>>(
+                    future: loadCoffeeData(),
+                    builder: (context, snapshot) {
+                      if(snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
 
-							Align(
-								alignment: Alignment(0, cardInterval + 0.26), // TODO: Create a simple algorithm for this variable.
-								child: Container(
-									width: 348,
-									height: 96,
-									decoration: BoxDecoration(
-										color: Color.fromRGBO(250, 249, 239, 1.0),
-										borderRadius: BorderRadius.circular(16),
-										border: Border.all(
-											color: Color.fromRGBO(222, 212, 186, 1.0), 
-											width: 1
-										),
-									boxShadow: [
-										BoxShadow(
-											offset: Offset(0, 2),
-											color: Color.fromRGBO(204, 203, 199, 1.0),
-											blurRadius: 1.0,
-										),
-									],
-									),
-								),
-							),
+                      final coffeeGlossaryList = snapshot.data!;
 
-							Align(
-								alignment: Alignment(0, cardInterval + 0.52), // TODO: Create a simple algorithm for this variable.
-								child: Container(
-									width: 348,
-									height: 96,
-									decoration: BoxDecoration(
-										color: Color.fromRGBO(250, 249, 239, 1.0),
-										borderRadius: BorderRadius.circular(16),
-										border: Border.all(
-											color: Color.fromRGBO(222, 212, 186, 1.0), 
-											width: 1
-										),
-									boxShadow: [
-										BoxShadow(
-											offset: Offset(0, 2),
-											color: Color.fromRGBO(204, 203, 199, 1.0),
-											blurRadius: 1.0,
-										),
-									],
-									),
-								),
-							),
-
-							Align(
-								alignment: Alignment(0, cardInterval + 0.78), // TODO: Create a simple algorithm for this variable.
-								child: Container(
-									width: 348,
-									height: 96,
-									decoration: BoxDecoration(
-										color: Color.fromRGBO(250, 249, 239, 1.0),
-										borderRadius: BorderRadius.circular(16),
-										border: Border.all(
-											color: Color.fromRGBO(222, 212, 186, 1.0), 
-											width: 1
-										),
-									boxShadow: [
-										BoxShadow(
-											offset: Offset(0, 2),
-											color: Color.fromRGBO(204, 203, 199, 1.0),
-											blurRadius: 1.0,
-										),
-									],
-									),
-								),
-							),
-
-
-						/*
-						Container(
-							width: 200,
-							height: 100,
-							decoration: BoxDecoration(
-								color: Colors.blue,
-								borderRadius: BorderRadius.circular(12), // Rounds the corners
-								border: Border.all(color: Colors.black, width: 2), // Optional border
-							),
-						)
-						*/
-
+                      return ListView.builder(
+                        padding: const EdgeInsets.only(top: 16),
+                        itemCount: coffeeGlossaryList.length,
+                        itemBuilder: (context, idx) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: CoffeeGlossaryCard(coffee: coffeeGlossaryList[idx]),
+                          );
+                        }
+                      );
+                    }
+                  )
+                ),
+              ),
         		],
           ),
         ),
-      ),
-    );
+      );
   }
 }
+
+
+
+  

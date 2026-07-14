@@ -62,6 +62,12 @@ flutter:
   assets:
     - assets/logo.png
     - assets/google.png
+    - assets/arrow_up.png
+    - assets/arrow_down.png
+    - assets/coffee_images/egg_iced_coffee.png
+    - assets/coffee_images/salted_iced_coffee.png
+    - assets/coffee_images/traditional_iced_coffee.png
+    - assets/data/coffees.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
