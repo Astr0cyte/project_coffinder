@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:project_coffinder/pages/sign_in_page.dart';
+import 'sign_in_page.dart';
+import '../home_screen.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return Scaffold(
         body: Container(
           decoration: const BoxDecoration(
             color: Color.fromRGBO(250, 249, 244, 1.0),
@@ -110,7 +110,11 @@ class LoginPage extends StatelessWidget {
                     backgroundColor: Color.fromRGBO(126, 101, 76, 1.0),
                     foregroundColor: Color.fromRGBO(223, 217, 185, 1.0),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (_) => const HomeScreen()),
+                    );
+                  },
                   child: Text(
                     "Continue as guest",
                     style: GoogleFonts.questrial(
@@ -158,7 +162,6 @@ class LoginPage extends StatelessWidget {
             ],
           ),
         ),
-      ),
     );
   }
 }

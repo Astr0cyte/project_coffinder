@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 import 'coffee_shop_detail_screen.dart';
+import 'pages/profile_page.dart';
 
 class ShopListItem {
   final String name;
@@ -55,11 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return false;
   }
 
-  // The Figma list cards only carried placeholder background photos — no
-  // shop name text nodes came through in the export. "Phuc Long" is the
-  // real shop from the detail page; the rest are placeholder names, swap
-  // in your real data. `distance` is a static placeholder string — wire up
-  // real geolocation later if you want live distances.
+
   static const shops = [
     ShopListItem('Phuc Long', AppColors.brownMid, false, '350 m away', ['A/C', 'Wi-Fi', 'Quiet']),
     ShopListItem('Lotus Leaf Cafe', AppColors.cardBg, false, '0.8 km away', ['Pets', 'Friendly']),
@@ -134,10 +131,6 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Row(
             children: [
-              // Stand-in for the illustrated coffee-cup mascot in the design —
-              // that's custom artwork I can't reproduce here. Drop the real
-              // asset into assets/images/ and swap this for
-              // Image.asset('assets/images/mascot.png') when you have it.
               Container(
                 width: 44 * s,
                 height: 44 * s,
@@ -198,7 +191,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // --- "5 Coffee shops nearby" ------------------------------------------------
   
   
 
@@ -448,7 +440,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       _navIcon(Icons.bookmark_border),
                       _navIcon(Icons.history),
                       _navIcon(Icons.notifications_none),
-                      _navIcon(Icons.person_outline),
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => ProfilePage()),
+                        ),
+                        child: _navIcon(Icons.person_outline),
+                      ),
                     ],
                   ),
                 ),
