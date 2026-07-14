@@ -26,8 +26,11 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
   static const _maxStoryLength = 400;
   late final TextEditingController _storyController;
 
-  static const _textColor = Color(0xFF3E2A20);
-  static const _backgroundColor = Color(0xFFFAF6EE);
+  // Khai báo ScrollController cho TỔNG THỂ toàn bộ trang
+  final ScrollController _scrollController = ScrollController();
+
+  static const _textColor = Color(0xFF7E654C);
+  static const _backgroundColor = Color(0xFFFAF9F4);
   static const _cardColor = Color(0xFF8A6A50);
 
   @override
@@ -44,6 +47,7 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
   void dispose() {
     widget.state.removeListener(_onStateChanged);
     _storyController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -52,8 +56,6 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
   }
 
   void _handleSkip() {
-    // Last step — "Skip" exits the whole flow back to where it started.
-    // Customize this (e.g. navigate to a specific home route) as needed.
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
@@ -67,202 +69,244 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
 
     return Theme(
       data: Theme.of(context).copyWith(
-        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+        textTheme: GoogleFonts.playfairTextTheme(Theme.of(context).textTheme),
       ),
       child: Scaffold(
         backgroundColor: _backgroundColor,
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 8),
-                StepFlowHeader(
-                  currentStep: 4,
-                  totalSteps: 4,
-                  onSkip: _handleSkip,
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'Step 4',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: _textColor.withOpacity(0.6),
-                  ),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 8),
-                        Text(
-                          'Story',
-                          style: GoogleFonts.playfairDisplay(
-                            textStyle: const TextStyle(
-                              fontSize: 26,
-                              fontWeight: FontWeight.w600,
-                              color: _textColor,
-                            ),
-                          ),
+          child: RawScrollbar(
+            controller: _scrollController,
+            thumbVisibility: true,
+            thumbColor: _textColor.withOpacity(0.5),
+            radius: const Radius.circular(8),
+            thickness: 5,
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 35),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 26),
+                      StepFlowHeader(
+                        currentStep: 4,
+                        totalSteps: 4,
+                        onSkip: _handleSkip,
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'Step 4',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: _textColor,
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'What makes your coffee shop special ?',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: _textColor.withOpacity(0.6),
-                          ),
+                      ),
+                      const SizedBox(height: 5),
+                      const Text(
+                        'Story',
+                        style: TextStyle(
+                          fontSize: 45,
+                          fontWeight: FontWeight.w500,
+                          color: _textColor,
                         ),
-                        const SizedBox(height: 14),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF3ECE1),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          padding: const EdgeInsets.all(14),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              TextField(
-                                controller: _storyController,
-                                maxLines: 5,
-                                maxLength: _maxStoryLength,
-                                buildCounter: (context,
-                                    {required currentLength,
-                                      required isFocused,
-                                      maxLength}) =>
-                                null,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: _textColor,
-                                ),
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: 'Write your ideas here ...',
-                                  hintStyle: TextStyle(
-                                    color: _textColor.withOpacity(0.4),
-                                  ),
-                                ),
+                      ),
+                      Text(
+                        'What makes your coffee shop special?',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: _textColor.withOpacity(0.8),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Khung nhập text (Story)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF2EFDE),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: const EdgeInsets.all(14),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            TextField(
+                              controller: _storyController,
+                              maxLines: 5,
+                              maxLength: _maxStoryLength,
+                              buildCounter: (context,
+                                  {required currentLength,
+                                    required isFocused,
+                                    maxLength}) =>
+                              null,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                color: _textColor,
                               ),
-                              Text(
-                                '${_storyController.text.length}/$_maxStoryLength',
-                                style: TextStyle(
-                                  fontSize: 11,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Write your ideas here ...',
+                                hintStyle: TextStyle(
                                   color: _textColor.withOpacity(0.4),
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 28),
-                        Text(
-                          'Preview',
-                          style: GoogleFonts.playfairDisplay(
-                            textStyle: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                              color: _textColor,
                             ),
+                            Text(
+                              '${_storyController.text.length}/$_maxStoryLength',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: _textColor.withOpacity(0.5),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 28),
+
+                      const Text(
+                        'Preview',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          color: _textColor,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Khung Preview Ảnh
+                      Container(
+                        width: double.infinity,
+                        height: 450,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF2EFDE),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: const Color(0xFFC9B892),
+                            width: 1.5,
+                            style: BorderStyle.solid,
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        Container(
-                          width: double.infinity,
-                          height: 220,
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: _cardColor,
-                            borderRadius: BorderRadius.circular(20),
-                            image: state.imagePath != null
-                                ? DecorationImage(
-                              image: FileImage(File(state.imagePath!)),
-                              fit: BoxFit.cover,
-                              colorFilter: ColorFilter.mode(
-                                Colors.black.withOpacity(0.25),
-                                BlendMode.darken,
-                              ),
-                            )
-                                : null,
-                          ),
-                          child: Stack(
-                            children: [
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 5,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: const Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(Icons.star,
-                                          size: 14, color: Color(0xFFF5B301)),
-                                      SizedBox(width: 4),
-                                      Text(
-                                        '4.8',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          color: _textColor,
+                        child: Stack(
+                          children: [
+                            if (state.imagePath != null)
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(14),
+                                child: Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    Image.file(
+                                      File(state.imagePath!),
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, __, ___) => Center(
+                                        child: Icon(
+                                          Icons.image,
+                                          size: 40,
+                                          color: _textColor.withOpacity(0.3),
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                    Container(
+                                      color: Colors.black.withOpacity(0.25),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            else
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: _cardColor,
+                                  borderRadius: BorderRadius.circular(14),
                                 ),
                               ),
-                              Align(
-                                alignment: Alignment.bottomLeft,
-                                child: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
+
+                            // Nút 4.8 Sao
+                            Positioned(
+                              top: 12,
+                              right: 12,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
+                                    Icon(Icons.star,
+                                        size: 14, color: Color(0xFFF5B301)),
+                                    SizedBox(width: 4),
                                     Text(
-                                      displayName.isEmpty
-                                          ? 'Your cafe name'
-                                          : displayName,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      tagsLabel.isEmpty
-                                          ? (state.area.isEmpty
-                                          ? 'Area · Features'
-                                          : state.area)
-                                          : '350 m away · $tagsLabel',
+                                      '4.8',
                                       style: TextStyle(
                                         fontSize: 12,
-                                        color: Colors.white.withOpacity(0.85),
+                                        fontWeight: FontWeight.w600,
+                                        color: _textColor,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+
+                            // Chữ Tên quán & Tính năng
+                            Positioned(
+                              bottom: 16,
+                              left: 16,
+                              right: 16,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    displayName.isEmpty
+                                        ? 'Your cafe name'
+                                        : displayName,
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    tagsLabel.isEmpty
+                                        ? (state.area.isEmpty
+                                        ? 'Area · Features'
+                                        : state.area)
+                                        : '350 m away · $tagsLabel',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.white.withOpacity(0.9),
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 24),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 36),
+
+                      // Nút Post giờ đây sẽ luôn hiện và có thể bấm được bất kể step4Valid
+                      FlowPrimaryButton(
+                        label: 'Post',
+                        onPressed: _handlePost,
+                      ),
+                      const SizedBox(height: 20),
+                    ],
                   ),
                 ),
-                FlowPrimaryButton(
-                  label: 'Post',
-                  onPressed: state.step4Valid ? _handlePost : null,
-                ),
-                const SizedBox(height: 12),
-              ],
+              ),
             ),
           ),
         ),

@@ -21,6 +21,10 @@ class SelectableChipGroup extends StatelessWidget {
   /// [options] and doesn't participate in selection state.
   final Widget? trailing;
 
+  // Khai báo các màu đồng bộ với format cũ
+  static const _textColor = Color(0xFF7E654C);
+  static const _unselectedBgColor = Color(0xFFF2EFDE);
+
   @override
   Widget build(BuildContext context) {
     return Wrap(
@@ -37,14 +41,14 @@ class SelectableChipGroup extends StatelessWidget {
               const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? const Color(0xFF3E2A20)
-                    : const Color(0xFFF3ECE1),
+                    ? _textColor
+                    : _unselectedBgColor,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 option,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : const Color(0xFF3E2A20),
+                  color: isSelected ? Colors.white : _textColor,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),

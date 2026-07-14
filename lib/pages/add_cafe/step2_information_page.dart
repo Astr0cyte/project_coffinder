@@ -22,8 +22,8 @@ class _Step2InformationPageState extends State<Step2InformationPage> {
   late final TextEditingController _addressController;
   late final TextEditingController _openTimeController;
 
-  static const _textColor = Color(0xFF3E2A20);
-  static const _backgroundColor = Color(0xFFFAF6EE);
+  static const _textColor = Color(0xFF7E654C);
+  static const _backgroundColor = Color(0xFFFAF9F4);
 
   @override
   void initState() {
@@ -73,17 +73,17 @@ class _Step2InformationPageState extends State<Step2InformationPage> {
     final state = widget.state;
     return Theme(
       data: Theme.of(context).copyWith(
-        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+        textTheme: GoogleFonts.playfairTextTheme(Theme.of(context).textTheme),
       ),
       child: Scaffold(
         backgroundColor: _backgroundColor,
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 35),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 8),
+                const SizedBox(height: 26),
                 StepFlowHeader(
                   currentStep: 2,
                   totalSteps: 4,
@@ -93,25 +93,25 @@ class _Step2InformationPageState extends State<Step2InformationPage> {
                 Text(
                   'Step 2',
                   style: TextStyle(
-                    fontSize: 13,
-                    color: _textColor.withOpacity(0.6),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Information of café',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
                     color: _textColor,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 5),
+                const Text(
+                  'Information of café',
+                  style: TextStyle(
+                    fontSize: 45,
+                    fontWeight: FontWeight.w500,
+                    color: _textColor,
+                  ),
+                ),
                 Text(
                   'Address, Time, status',
                   style: TextStyle(
-                    fontSize: 13,
-                    color: _textColor.withOpacity(0.6),
+                    fontSize: 18,
+                    color: _textColor.withOpacity(0.8),
                   ),
                 ),
                 Expanded(
