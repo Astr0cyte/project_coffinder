@@ -1,3 +1,5 @@
+import 'package:brewstreet_app/home_screen.dart';
+
 import '../model/diary_note.dart';
 import 'package:brewstreet_app/widgets/add_note_dialog.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +8,7 @@ import '../widgets/diary_note_card.dart';
 import '../widgets/diary_top_row.dart';
 
 class DiaryPage extends StatefulWidget {
-  const DiaryPage({super.key});
+  DiaryPage({super.key});
 
   @override
   State<DiaryPage> createState() => _DiaryPageState();
@@ -53,7 +55,9 @@ final List<DiaryNote> notes = [
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+          },
         ),
       ),
       body: SingleChildScrollView(

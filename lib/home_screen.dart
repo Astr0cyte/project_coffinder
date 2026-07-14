@@ -1,7 +1,9 @@
+import 'package:brewstreet_app/pages/diary_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 import 'coffee_shop_detail_screen.dart';
+import 'pages/profile_page.dart';
 
 class ShopListItem {
   final String name;
@@ -55,11 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return false;
   }
 
-  // The Figma list cards only carried placeholder background photos — no
-  // shop name text nodes came through in the export. "Phuc Long" is the
-  // real shop from the detail page; the rest are placeholder names, swap
-  // in your real data. `distance` is a static placeholder string — wire up
-  // real geolocation later if you want live distances.
+
   static const shops = [
     ShopListItem('Phuc Long', AppColors.brownMid, false, '350 m away', ['A/C', 'Wi-Fi', 'Quiet']),
     ShopListItem('Lotus Leaf Cafe', AppColors.cardBg, false, '0.8 km away', ['Pets', 'Friendly']),
@@ -134,10 +132,6 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Row(
             children: [
-              // Stand-in for the illustrated coffee-cup mascot in the design —
-              // that's custom artwork I can't reproduce here. Drop the real
-              // asset into assets/images/ and swap this for
-              // Image.asset('assets/images/mascot.png') when you have it.
               Container(
                 width: 44 * s,
                 height: 44 * s,
@@ -198,7 +192,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // --- "5 Coffee shops nearby" ------------------------------------------------
   
   
 
@@ -443,12 +436,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _navIcon(Icons.home, active: true),
-                      _navIcon(Icons.bookmark_border),
-                      _navIcon(Icons.history),
-                      _navIcon(Icons.notifications_none),
-                      _navIcon(Icons.person_outline),
+                    children:[
+                      _navIcon(Icons.home, active: true, onTap: () {}),
+                      _navIcon(Icons.bookmark_border, onTap: () {Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => DiaryPage()),
+                        );
+                      }),
+                      _navIcon(Icons.history, onTap: () {}),
+                      _navIcon(Icons.notifications_none, onTap: () {}),
+                      _navIcon(Icons.person_outline, onTap: () {Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => ProfilePage()),
+                        );
+                      }),
                     ],
                   ),
                 ),
@@ -460,12 +459,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _navIcon(IconData icon, {bool active = false}) {
-    return Container(
-      width: 42,
-      height: 42,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
+  Widget _navIcon(IconData icon, {bool active = false, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 42,
+        height: 42,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: active ? AppColors.tan : Colors.transparent,
       ),
@@ -473,6 +474,7 @@ class _HomeScreenState extends State<HomeScreen> {
         icon,
         size: 20,
         color: active ? AppColors.brownDark : AppColors.tan.withOpacity(0.6),
+      ),
       ),
     );
   }

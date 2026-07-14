@@ -26,7 +26,7 @@ class ProfilePage extends StatelessWidget {
                             highlightColor: Colors.transparent,
                             hoverColor: Colors.transparent,
                             onPressed: () {
-                             // Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
+                             Navigator.pop(context);
                             },
                         ),
                         Spacer(),
