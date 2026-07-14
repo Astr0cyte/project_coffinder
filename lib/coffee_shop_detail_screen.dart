@@ -31,9 +31,9 @@ class CoffeeShopDetailScreen extends StatelessWidget {
   static const reviews = [
     ReviewData('Mike', '★★★★★',
         'Great atmosphere and the coffee is amazing. Perfect place to work or relax.'),
-    ReviewData('Thu Ha', '★★★★☆',
+    ReviewData('Anh Doh', '★★★★☆',
         'Great wifi and quiet enough to work from. Will come back.'),
-    ReviewData('Duc Anh', '★★★★★',
+    ReviewData('4Q', '★★★★★',
         'Friendly staff and a beautiful space. Loved the ambience.'),
   ];
 

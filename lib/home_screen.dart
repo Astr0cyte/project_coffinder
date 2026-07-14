@@ -18,12 +18,6 @@ class ShopListItem {
   }
 }
 
-class FilterChipData {
-  final String label;
-  final bool active;
-  const FilterChipData(this.label, this.active);
-}
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -36,6 +30,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool _navVisible = true;
   double _lastOffset = 0;
+  String _activeFilter = 'All';
+  bool _searchOpen = false;
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   bool _handleScroll(ScrollNotification notification) {
     final offset = notification.metrics.pixels;
@@ -58,23 +61,20 @@ class _HomeScreenState extends State<HomeScreen> {
   // in your real data. `distance` is a static placeholder string — wire up
   // real geolocation later if you want live distances.
   static const shops = [
-    ShopListItem('Phuc Long', AppColors.brownMid, false, '350 m away', ['Air conditioned', 'Wi-Fi', 'Quiet']),
-    ShopListItem('Lotus Leaf Cafe', AppColors.cardBg, false, '0.8 km away', ['Pets', 'Friendly staff']),
+    ShopListItem('Phuc Long', AppColors.brownMid, false, '350 m away', ['A/C', 'Wi-Fi', 'Quiet']),
+    ShopListItem('Lotus Leaf Cafe', AppColors.cardBg, false, '0.8 km away', ['Pets', 'Friendly']),
     ShopListItem('Sunset Terrace Coffee', AppColors.brownDark, true, '1.2 km away', ['Quiet', 'Wi-Fi']),
-    ShopListItem('Ban Mai Coffee House', AppColors.tan, true, '1.5 km away', ['Air conditioned', 'Friendly staff']),
+    ShopListItem('Ban Mai Coffee House', AppColors.tan, true, '1.5 km away', ['A/C', 'Friendly']),
     ShopListItem('Old Quarter Coffee', AppColors.chipLight, false, '2.0 km away', ['Pets', 'Wi-Fi', 'Quiet']),
+    
   ];
 
-  // "Quiet" was the one filter chip with the active/selected (dark) style
-  // in the source file; the rest were unselected.
-  static const filters = [
-    FilterChipData('All', true),
-    FilterChipData('Quiet', false),
-    FilterChipData('Wi-Fi', false),
-    FilterChipData('A/C', false),
-    FilterChipData('Pets', false),
-    FilterChipData('Friendly', false),
-  ];
+  static const filterLabels = ['All', 'Quiet', 'Wi-Fi', 'A/C', 'Pets', 'Friendly'];
+
+  List<ShopListItem> get _visibleShops {
+    if (_activeFilter == 'All') return shops;
+    return shops.where((s) => s.amenities.contains(_activeFilter)).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,16 +97,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 SliverPadding(
                   padding: EdgeInsets.fromLTRB(20 * scale, 12 * scale, 20 * scale, 0),
                   sliver: SliverList.separated(
-                    itemCount: shops.length,
+                    itemCount: _visibleShops.length,
                     separatorBuilder: (_, __) => SizedBox(height: 14 * scale),
-                    itemBuilder: (context, i) => _shopCard(context, scale, shops[i]),
+                    itemBuilder: (context, i) => _shopCard(context, scale, _visibleShops[i]),
                   ),
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(20 * scale, 16 * scale, 20 * scale, 110 * scale),
                     child: Text(
-                      '${shops.length} Coffeeshops Found',
+                      '${_visibleShops.length} Coffeeshops Found',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.inter(
                         fontSize: 13 * scale,
@@ -204,21 +204,74 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // --- Filter chips (search icon leads the row) -----------------------------
   Widget _filterChips(double s) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 220),
+      child: _searchOpen ? _searchBar(s) : _chipsRow(s),
+    );
+  }
+
+  Widget _searchBar(double s) {
+    return Padding(
+      key: const ValueKey('search'),
+      padding: EdgeInsets.symmetric(horizontal: 22 * s),
+      child: Container(
+        height: 40 * s,
+        decoration: BoxDecoration(
+          color: AppColors.chipLight,
+          borderRadius: BorderRadius.circular(20 * s),
+        ),
+        child: Row(
+          children: [
+            GestureDetector(
+              onTap: () => setState(() {
+                _searchOpen = false;
+                _searchController.clear();
+              }),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12 * s),
+                child: Icon(Icons.arrow_back, size: 18 * s, color: AppColors.brownDark),
+              ),
+            ),
+            Expanded(
+              child: TextField(
+                controller: _searchController,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: 'Search coffee shops...',
+                  hintStyle: GoogleFonts.inter(
+                    fontSize: 13 * s,
+                    color: AppColors.brownMid,
+                  ),
+                  border: InputBorder.none,
+                  isDense: true,
+                  contentPadding: EdgeInsets.zero,
+                ),
+                style: GoogleFonts.inter(
+                  fontSize: 13 * s,
+                  color: AppColors.brownDark,
+                ),
+              ),
+            ),
+            SizedBox(width: 12 * s),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _chipsRow(double s) {
     return SizedBox(
+      key: const ValueKey('chips'),
       height: 40 * s,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 22 * s),
-        itemCount: filters.length + 1,
+        itemCount: filterLabels.length + 1,
         separatorBuilder: (_, __) => SizedBox(width: 8 * s),
         itemBuilder: (context, i) {
           if (i == 0) {
             return GestureDetector(
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Search tapped')),
-                );
-              },
+              onTap: () => setState(() => _searchOpen = true),
               child: Container(
                 width: 40 * s,
                 height: 40 * s,
@@ -231,19 +284,23 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           }
-          final f = filters[i - 1];
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: 16 * s, vertical: 8 * s),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: f.active ? AppColors.brownDark : AppColors.tan.withOpacity(0.57),
-              borderRadius: BorderRadius.circular(20 * s),
-            ),
-            child: Text(
-              f.label,
-              style: GoogleFonts.inter(
-                fontSize: 13 * s,
-                color: f.active ? AppColors.cream : AppColors.brownDark,
+          final label = filterLabels[i - 1];
+          final active = label == _activeFilter;
+          return GestureDetector(
+            onTap: () => setState(() => _activeFilter = label),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16 * s, vertical: 8 * s),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: active ? AppColors.brownDark : AppColors.tan.withOpacity(0.57),
+                borderRadius: BorderRadius.circular(20 * s),
+              ),
+              child: Text(
+                label,
+                style: GoogleFonts.inter(
+                  fontSize: 13 * s,
+                  color: active ? AppColors.cream : AppColors.brownDark,
+                ),
               ),
             ),
           );
