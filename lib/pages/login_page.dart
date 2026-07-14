@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:project_coffinder/pages/home_screen.dart';
 import 'package:project_coffinder/pages/sign_in_page.dart';
 
 class LoginPage extends StatelessWidget {
@@ -110,13 +111,30 @@ class LoginPage extends StatelessWidget {
                     backgroundColor: Color.fromRGBO(126, 101, 76, 1.0),
                     foregroundColor: Color.fromRGBO(223, 217, 185, 1.0),
                   ),
-                  onPressed: () {},
-                  child: Text(
-                    "Continue as guest",
-                    style: GoogleFonts.questrial(
-                      fontSize: 18,
-                      color: Color.fromRGBO(223, 217, 185, 1.0),
+                  onPressed: () {
+                    // Navigate to the home page.
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const HomeScreen(),
+                      ),
+                    );
+                  },
+                  child: IconButton(
+                    icon: Text(
+                      "Continue as guest",
+                      style: GoogleFonts.questrial(
+                        fontSize: 18,
+                        color: Color.fromRGBO(223, 217, 185, 1.0),
+                      ),
                     ),
+                    onPressed: () {
+                      // Navigate to the home page.
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const HomeScreen(),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
