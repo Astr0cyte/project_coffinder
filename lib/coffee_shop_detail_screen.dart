@@ -20,18 +20,14 @@ class CoffeeShopDetailScreen extends StatelessWidget {
 
   final String shopName;
 
-  // Figma frame was 402 x 874 (iPhone-sized). We scale every position
-  // proportionally to whatever the real device width is.
+
   static const double designWidth = 402;
   static const double designHeight = 874;
 
-  // The first review has real content from the Figma file ("Mike").
-  // The other two were still unresolved placeholders ("????") there —
-  // cleaned-up placeholder content below for those two, replace with real data.
   static const reviews = [
     ReviewData('Mike', '★★★★★',
         'Great atmosphere and the coffee is amazing. Perfect place to work or relax.'),
-    ReviewData('Anh Doh', '★★★★☆',
+    ReviewData('Anna', '★★★★☆',
         'Great wifi and quiet enough to work from. Will come back.'),
     ReviewData('4Q', '★★★★★',
         'Friendly staff and a beautiful space. Loved the ambience.'),
@@ -113,7 +109,7 @@ class CoffeeShopDetailScreen extends StatelessWidget {
   Widget _title(double s) {
     return Positioned(
       left: 15 * s,
-      top: 302 * s,
+      top: 260 * s,
       width: 250 * s,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 18 * s, vertical: 12 * s),
@@ -161,7 +157,7 @@ class CoffeeShopDetailScreen extends StatelessWidget {
   Widget _locationCard(double s) {
     return Positioned(
       left: 16 * s,
-      top: 342 * s,
+      top: 320 * s,
       width: 370 * s,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 18 * s, vertical: 12 * s),

@@ -1,5 +1,5 @@
 name: brewstreet_app
-description: "BrewStreet coffee shop app, generated from Figma design."
+description: "BrewStreet coffee shop app"
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -19,4 +19,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/logo.png
     - assets/images/
