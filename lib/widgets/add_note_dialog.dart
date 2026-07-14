@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
+import '../model/diary_note.dart';
 
-class AddNoteDialog extends StatelessWidget {
+class AddNoteDialog extends StatefulWidget {
   const AddNoteDialog({super.key});
+
+  @override
+  State<AddNoteDialog> createState() => _AddNoteDialogState();
+}
+
+class _AddNoteDialogState extends State<AddNoteDialog> {
+
+  final TextEditingController noteController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Add Note'),
-      content: const TextField(
-        decoration: InputDecoration(
+      content: TextField(
+      controller: noteController,
+        decoration: const InputDecoration(
           hintText: 'Write your note...',
         ),
         maxLines: 5,
@@ -20,8 +30,15 @@ class AddNoteDialog extends StatelessWidget {
         ),
         ElevatedButton(
           onPressed: () {
-            // notes shall be saved into firebase - to be done later
-            Navigator.pop(context);
+            if(noteController.text.trim().isEmpty) return;
+
+            Navigator.pop(
+              context,
+              DiaryNote(
+                title: "New Note",
+                body: "• ${noteController.text.trim()}",
+              ),
+            );
           },
           child: const Text('Save'),
         ),

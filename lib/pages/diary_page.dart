@@ -1,3 +1,4 @@
+import '../model/diary_note.dart';
 import 'package:brewstreet_app/widgets/add_note_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,6 +15,28 @@ class DiaryPage extends StatefulWidget {
 class _DiaryPageState extends State<DiaryPage> {
   int selectedTab = 3;
 
+final List<DiaryNote> notes = [
+  DiaryNote(
+    title: "Coffee tasting notes",
+    body:
+        "• Longer note has a drop down and ellipse\n"
+        "to demonstrate a note is longer than the\n"
+        "\"preview\" card.\n"
+        "• Arabica beans.\n"
+        "• Toffee praline flavours. Earthy richness.",
+    expanded: true,
+  ),
+  DiaryNote(
+    title: "Shorter note",
+    body: "• No drop-down required for short notes.",
+  ),
+  DiaryNote(
+    title: "Coffee tasting notes",
+    body:
+        "• Ability to attach notes to specific coffee\n"
+        "shop items within a specific coffee shop?",
+  ),
+];
   final tabs = const [
     "Glossary",
     "Saved Shops",
@@ -38,12 +61,13 @@ class _DiaryPageState extends State<DiaryPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               "Diary",
               style: TextStyle(
                 fontSize: 34,
-                fontWeight: FontWeight.w500,
-                fontFamily: "Serif",
+                fontFamily: GoogleFonts.playfairDisplay().fontFamily,
+                fontWeight: FontWeight.w600,
+                color: Color(0xff402f11),
               ),
             ),
 
@@ -71,47 +95,39 @@ class _DiaryPageState extends State<DiaryPage> {
 
             const SizedBox(height: 18),
 
-            DiaryNoteCard(
-              title: "Coffee tasting notes",
-              expanded: true,
-              body:
-                  "• Longer note has a drop down and ellipse\n"
-                  "to demonstrate a note is longer than the\n"
-                  "\"preview\" card.\n"
-                  "• Arabica beans.\n"
-                  "• Toffee praline flavours. Earthy richness.",
-              onToggle: () {},
-            ),
-
-            const SizedBox(height: 15),
-
-            DiaryNoteCard(
-              title: "Shorter note",
-              expanded: false,
-              body: "• No drop-down required for short notes.",
-              onToggle: () {},
-            ),
-
-            const SizedBox(height: 15),
-
-            DiaryNoteCard(
-              title: "Coffee tasting notes",
-              expanded: false,
-              body:
-                  "• Ability to attach notes to specific coffee\n"
-                  "shop items within a specific coffee shop?",
-              onToggle: () {},
-            ),
+           Column(
+            children: notes.map((note) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 15),
+                child: DiaryNoteCard(
+                  title: note.title,
+                  body: note.body,
+                  expanded: note.expanded,
+                  onToggle: () {
+                    setState(() {
+                      note.expanded = !note.expanded;
+                    });
+                  },
+                ),
+              );
+            }).toList(),
+          ),
 
             const SizedBox(height: 22),
 
             GestureDetector(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => const AddNoteDialog(),
-                );
-              },
+            onTap: () async {
+            final DiaryNote? newNote = await showDialog<DiaryNote>(
+              context: context,
+              builder: (context) => const AddNoteDialog(),
+            );
+
+            if (newNote != null) {
+              setState(() {
+                notes.add(newNote);
+              });
+            }
+          },
               child: Text(
                 "+ Add a note",
                 style: TextStyle(
