@@ -78,16 +78,6 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
 
     final GlobalKey<PopupMenuButtonState<String>> _popupKey = GlobalKey();final List<String> requiredLabels = ['Air conditioned', 'Pets', 'Quiet', 'Wi-Fi', 'Friendly'];
 
-
-    List<AmenityTag> displayAmenities = requiredLabels.map((label) {
-      // Tìm xem trong widget.amenities truyền vào có tag này không
-      final matchingTag = widget.amenities.firstWhere(
-            (element) => element.label.toLowerCase() == label.toLowerCase(),
-        orElse: () => AmenityTag(label: label, percentage: 0.0), // Nếu không truyền thì mặc định percentage = 0.0 (Tắt)
-      );
-      return matchingTag;
-    }).toList();
-
     return Scaffold(
       backgroundColor: const Color(0xFFFAF9F4),
       body: Stack(
@@ -131,7 +121,7 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
 
                       SizedBox(height: 0.0),
 
-                      // 2. TODO: Address + Phone --> Database
+                      // 2. Address + Phone --> Database
                       Container(
                         margin: const EdgeInsets.only(left: 10.0),
                         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 4.0),
@@ -151,7 +141,7 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
 
                       ),
 
-                      // 3. TODO: Description --> Database
+                      // 3. Description --> Database
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
                         child: FractionallySizedBox(
@@ -169,114 +159,34 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                         ),
                       ),
 
-                      // 4. TODO: Amenities / Tags Rating --> Database
+                      // 4. Amenities / Tags Rating --> Database
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                         child: Wrap(
                           spacing: 8.0,
                           runSpacing: 8.0,
-                          children: [
-                            Container(
+                          children: widget.amenities.map((tag) {
+                            return Container(
                               padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
                               decoration: BoxDecoration(
-                                color: Color(0xFF402F11),
+                                color: tag.isActive ? const Color(0xFF402F11) : const Color(0xFFEFECDC),
                                 borderRadius: BorderRadius.circular(999.0),
                                 border: Border.all(
-                                  color: Color(0xFF7E654C),
+                                  color: tag.isActive ? const Color(0xFF7E654C) : const Color(0xFFDED4BA),
                                   width: 1.0,
                                 ),
                               ),
                               child: Text(
-                                'Air conditioned',
+                                tag.label,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Color(0xFFDED4BA),
+                                  color: tag.isActive ? const Color(0xFFDED4BA) : const Color(0xFF7E654C),
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
-                              decoration: BoxDecoration(
-                                color: Color(0xFFEFECDC),
-                                borderRadius: BorderRadius.circular(999.0),
-                                border: Border.all(
-                                  color: Color(0xFFDED4BA),
-                                  width: 1.0,
-                                ),
-                              ),
-                              child: Text(
-                                'Pets',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFF7E654C),
-                                  fontFamily:  '',
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
-                              decoration: BoxDecoration(
-                                color: Color(0xFF402F11),
-                                borderRadius: BorderRadius.circular(999.0),
-                                border: Border.all(
-                                  color: Color(0xFF7E654C),
-                                  width: 1.0,
-                                ),
-                              ),
-                              child: Text(
-                                'Quiet',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFFDED4BA),
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
-                              decoration: BoxDecoration(
-                                color: Color(0xFFEFECDC),
-                                borderRadius: BorderRadius.circular(999.0),
-                                border: Border.all(
-                                  color: Color(0xFFDED4BA),
-                                  width: 1.0,
-                                ),
-                              ),
-                              child: Text(
-                                'Wi-Fi',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFF7E654C),
-                                  fontFamily:  'Inter',
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
-                              decoration: BoxDecoration(
-                                color: Color(0xFFEFECDC),
-                                borderRadius: BorderRadius.circular(999.0),
-                                border: Border.all(
-                                  color: Color(0xFFDED4BA),
-                                  width: 1.0,
-                                ),
-                              ),
-                              child: Text(
-                                'Friendly',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFF7E654C),
-                                  fontFamily:  'Inter',
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                          ],
+                            );
+                          }).toList(),
                         ),
                       ),
 
