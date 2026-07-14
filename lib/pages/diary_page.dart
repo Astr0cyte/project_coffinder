@@ -1,6 +1,6 @@
+import 'package:brewstreet_app/widgets/add_note_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:project_coffinder/widgets/add_note_dialog.dart';
 import '../widgets/diary_note_card.dart';
 import '../widgets/diary_top_row.dart';
 

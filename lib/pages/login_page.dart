@@ -1,7 +1,8 @@
+import 'package:brewstreet_app/home_screen.dart';
+import 'package:brewstreet_app/pages/sign_in_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:project_coffinder/pages/home_screen.dart';
-import 'package:project_coffinder/pages/sign_in_page.dart';
+
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
