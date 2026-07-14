@@ -260,7 +260,23 @@ class _HomeScreenState extends State<HomeScreen> {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => CoffeeShopDetailScreen(shopName: shop.name),
+            builder: (_) => CoffeeShopDetailScreen(
+              shopName: shop.name,
+              address: '123 Nguyen Hue Street, District 1, HCMC',
+              phone: '6868686',
+              imageUrl: 'assets/images/Phuc_Long.png',
+              description: '"Where every cup tells a story"',
+              amenities: [
+                AmenityTag(label: 'Air conditioned', percentage: 0.7),
+                AmenityTag(label: 'Wi-Fi', percentage: 0.6),
+                AmenityTag(label: 'Quiet', percentage: 0.8),
+                AmenityTag(label: 'Pets', percentage: 0.4),
+                AmenityTag(label: 'Friendly', percentage: 0.4)
+              ],
+              reviews: [],
+              rating: 4.8,
+              reviewCount: 130,
+            ),
           ),
         );
       },

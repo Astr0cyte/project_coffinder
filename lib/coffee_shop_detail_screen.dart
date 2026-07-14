@@ -70,13 +70,19 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
   }
 
   @override
-  Widget build(BuildContext context){
-
+  Widget build(BuildContext context) {
     // Fix --> screen ratio
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    final GlobalKey<PopupMenuButtonState<String>> _popupKey = GlobalKey();final List<String> requiredLabels = ['Air conditioned', 'Pets', 'Quiet', 'Wi-Fi', 'Friendly'];
+    final GlobalKey<PopupMenuButtonState<String>> _popupKey = GlobalKey();
+    final List<String> requiredLabels = [
+      'Air conditioned',
+      'Pets',
+      'Quiet',
+      'Wi-Fi',
+      'Friendly'
+    ];
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAF9F4),
@@ -88,8 +94,8 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
           DraggableScrollableSheet(
             initialChildSize: 0.6,
             minChildSize: 0.6,
-            maxChildSize: 0.6,
-            builder: (context, scrollController){
+            maxChildSize: 0.8,
+            builder: (context, scrollController) {
               return Container(
                 decoration: const BoxDecoration(
                     color: Color(0xFFFAF9F4),
@@ -105,40 +111,43 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
 
+                      const SizedBox(height: 20.0),
                       // 1. TODO: Coffee shop Name --> Database
                       Padding(
-                        padding: const EdgeInsets.only(left: 23.0),
+                        padding: const EdgeInsets.only(left: 16.5),
                         child: Text(
                           widget.shopName,
-                          style: const TextStyle(
-                            fontFamily: 'Playfair_Display',
+                          style: GoogleFonts.playfairDisplay(
                             fontSize: 32,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF402F11),
+                            color: const Color(0xFF402F11),
                           ),
                         ),
                       ),
 
-                      SizedBox(height: 0.0),
+                      const SizedBox(height: 6.0),
 
                       // 2. Address + Phone --> Database
                       Container(
-                        margin: const EdgeInsets.only(left: 10.0),
-                        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 4.0),
-                        decoration: BoxDecoration(
-                          color: Color(0xFF7E654C),
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: Text(
-                          '${widget.address}\nPhone number: ${widget.phone}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontFamily: 'Quick-sand',
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFFDED4BA),
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 4.0),
+                        child: Text.rich(
+                          TextSpan(
+                            style: GoogleFonts.quicksand(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w300,
+                              color: const Color(0xFF402F11),
+                            ),
+                            children: [
+                              TextSpan(text: '${widget.address}\n'),
+                              TextSpan(
+                                text: 'Phone number: ${widget.phone}',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-
                       ),
 
                       // 3. Description --> Database
@@ -149,11 +158,10 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                           widthFactor: 0.7, // 55% width
                           child: Text(
                             widget.description,
-                            style: const TextStyle(
-                              fontFamily: 'Rale-wayItalic',
+                            style: GoogleFonts.quicksand(
                               fontSize: 20,
-                              color: Color(0xFF402F11),
-                              fontWeight: FontWeight.w200,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF402F11),
                             ),
                           ),
                         ),
@@ -169,19 +177,24 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                             return Container(
                               padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
                               decoration: BoxDecoration(
-                                color: tag.isActive ? const Color(0xFF402F11) : const Color(0xFFEFECDC),
+                                color: tag.isActive
+                                    ? const Color(0xFF402F11)
+                                    : const Color(0xFFEFECDC),
                                 borderRadius: BorderRadius.circular(999.0),
                                 border: Border.all(
-                                  color: tag.isActive ? const Color(0xFF7E654C) : const Color(0xFFDED4BA),
+                                  color: tag.isActive
+                                      ? const Color(0xFF7E654C)
+                                      : const Color(0xFFDED4BA),
                                   width: 1.0,
                                 ),
                               ),
                               child: Text(
                                 tag.label,
-                                style: TextStyle(
+                                style: GoogleFonts.inter(
                                   fontSize: 12,
-                                  color: tag.isActive ? const Color(0xFFDED4BA) : const Color(0xFF7E654C),
-                                  fontFamily: 'Inter',
+                                  color: tag.isActive
+                                      ? const Color(0xFFDED4BA)
+                                      : const Color(0xFF7E654C),
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
@@ -203,26 +216,26 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                               children: [
                                 Text(
                                   'Reviews',
-                                  style: const TextStyle(
+                                  style: GoogleFonts.playfairDisplay(
                                     fontSize: 18,
-                                    fontFamily: 'Playfair_Display',
                                     fontWeight: FontWeight.w600,
-                                    color: Color(0xFF402F11),
+                                    color: const Color(0xFF402F11),
                                   ),
                                 ),
-                                SizedBox(height: 4.0),
+                                const SizedBox(height: 4.0),
                                 Text(
-                                  '${widget.rating} · ${widget.reviewCount} reviews',
-                                  style: TextStyle(
-                                    fontFamily: 'Inter' ,
+                                  '${widget.rating} · ${widget
+                                      .reviewCount} reviews',
+                                  style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w400,
                                     fontSize: 13,
-                                    color: Color(0xFF7E654C),
+                                    color: const Color(0xFF7E654C),
                                   ),
                                 ),
                               ],
                             ),
 
+                            //  Filter Button
                             Theme(
                               data: Theme.of(context).copyWith(
                                 splashFactory: NoSplash.splashFactory,
@@ -252,8 +265,10 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                                   color: Colors.transparent,
                                   child: InkWell(
                                     customBorder: const CircleBorder(),
-                                    splashColor: Colors.white.withValues(alpha: 0.3),
-                                    highlightColor: Colors.white.withValues(alpha: 0.2),
+                                    splashColor: Colors.white.withValues(
+                                        alpha: 0.3),
+                                    highlightColor: Colors.white.withValues(
+                                        alpha: 0.2),
 
                                     onTap: () {
                                       _popupKey.currentState?.showButtonMenu();
@@ -276,16 +291,21 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                                   ),
                                 ),
 
-                                itemBuilder: (BuildContext context) => [
-                                  const PopupMenuItem<String>(
+                                itemBuilder: (BuildContext context) =>
+                                [
+                                  PopupMenuItem<String>(
                                     value: 'high_to_low',
                                     child: Row(
                                       children: [
-                                        Icon(Icons.arrow_downward, size: 18, color: Color(0xFF402F11)),
-                                        SizedBox(width: 8),
+                                        const Icon(Icons.arrow_downward, size: 18,
+                                            color: Color(0xFF402F11)),
+                                        const SizedBox(width: 8),
                                         Text(
                                           'High to Low',
-                                          style: TextStyle(color: Color(0xFF402F11), fontWeight: FontWeight.w600, fontFamily: 'Quick-sand'),
+                                          style: GoogleFonts.quicksand(
+                                              color: const Color(0xFF402F11),
+                                              fontWeight: FontWeight.w600,
+                                          )
                                         ),
                                       ],
                                     ),
@@ -296,18 +316,22 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                                     padding: EdgeInsets.zero,
                                     child: Container(
                                       height: 1,
-                                      color: const Color(0xFF402F11).withValues(alpha: 0.2),
+                                      color: const Color(0xFF402F11).withValues(
+                                          alpha: 0.2),
                                     ),
                                   ),
-                                  const PopupMenuItem<String>(
+                                  PopupMenuItem<String>(
                                     value: 'low_to_high',
                                     child: Row(
                                       children: [
-                                        Icon(Icons.arrow_upward, size: 18, color: Color(0xFF402F11)),
-                                        SizedBox(width: 8),
+                                        const Icon(Icons.arrow_upward, size: 18,
+                                            color: Color(0xFF402F11)),
+                                        const SizedBox(width: 8),
                                         Text(
                                           'Low to High',
-                                          style: TextStyle(fontFamily: 'Quick-sand' ,color: Color(0xFF402F11), fontWeight: FontWeight.w600),
+                                          style: GoogleFonts.quicksand(
+                                              color: Color(0xFF402F11),
+                                              fontWeight: FontWeight.w600),
                                         ),
                                       ],
                                     ),
@@ -333,7 +357,7 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                               margin: const EdgeInsets.only(right: 12.0),
                               padding: const EdgeInsets.all(16.0),
                               decoration: BoxDecoration(
-                                color: Color(0xFFF5F1DC),
+                                color:  Color(0xFFF5F1DC),
                                 borderRadius: BorderRadius.circular(16.0),
                                 border: Border.all(
                                   color: Color(0xFFDED4BA),
@@ -353,13 +377,13 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                                       ),
                                       SizedBox(width: 8.0),
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children :[
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .start,
+                                        children: [
                                           Text(
                                             'Mike',
-                                            style: TextStyle(
+                                            style: GoogleFonts.inter(
                                               fontSize: 15,
-                                              fontFamily: 'Inter',
                                               fontWeight: FontWeight.w600,
                                               color: Color(0xFF402F11),
                                             ),
@@ -368,7 +392,9 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                                             // TODO: Stars Rating of a User --> Database
                                             children: List.generate(
                                               5,
-                                                  (index) => Icon(Icons.star, size: 14, color: Color(0xFF7E654C)),
+                                                  (index) =>
+                                                  Icon(Icons.star, size: 14,
+                                                      color: Color(0xFF7E654C)),
                                             ),
                                           ),
                                         ],
@@ -380,10 +406,9 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                                   SizedBox(height: 8.0),
                                   Text(
                                     'Great atmosphere and the coffee is amazing. Perfect place to work or relax.',
-                                    style: TextStyle(
+                                    style: GoogleFonts.inter(
                                       fontSize: 12,
                                       color: Color(0xFF7E654C),
-                                      fontFamily: 'Inter',
                                       fontWeight: FontWeight.w400,
                                     ),
                                     maxLines: 3,
@@ -419,13 +444,13 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                                       ),
                                       SizedBox(width: 8.0),
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children :[
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .start,
+                                        children: [
                                           Text(
                                             '????',
-                                            style: TextStyle(
+                                            style: GoogleFonts.inter(
                                               fontSize: 15,
-                                              fontFamily: 'Inter',
                                               fontWeight: FontWeight.w600,
                                               color: Color(0xFF402F11),
                                             ),
@@ -434,7 +459,9 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                                             // TODO: Stars Rating of a User --> Database
                                             children: List.generate(
                                               5,
-                                                  (index) => Icon(Icons.star, size: 14, color: Color(0xFF7E654C)),
+                                                  (index) =>
+                                                  Icon(Icons.star, size: 14,
+                                                      color: Color(0xFF7E654C)),
                                             ),
                                           ),
                                         ],
@@ -446,10 +473,9 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                                   SizedBox(height: 8.0),
                                   Text(
                                     'Great atmosphere and the coffee is amazing. Perfect place to work or relax.',
-                                    style: TextStyle(
+                                    style: GoogleFonts.inter(
                                       fontSize: 12,
                                       color: Color(0xFF7E654C),
-                                      fontFamily: 'Inter',
                                       fontWeight: FontWeight.w400,
                                     ),
                                     maxLines: 3,
@@ -485,13 +511,13 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                                       ),
                                       SizedBox(width: 8.0),
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children :[
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .start,
+                                        children: [
                                           Text(
-                                            '???_2',
-                                            style: TextStyle(
+                                            '????_2',
+                                            style: GoogleFonts.inter(
                                               fontSize: 15,
-                                              fontFamily: 'Inter',
                                               fontWeight: FontWeight.w600,
                                               color: Color(0xFF402F11),
                                             ),
@@ -500,7 +526,9 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                                             // TODO: Stars Rating of a User --> Database
                                             children: List.generate(
                                               5,
-                                                  (index) => Icon(Icons.star, size: 14, color: Color(0xFF7E654C)),
+                                                  (index) =>
+                                                  Icon(Icons.star, size: 14,
+                                                      color: Color(0xFF7E654C)),
                                             ),
                                           ),
                                         ],
@@ -512,10 +540,9 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                                   SizedBox(height: 8.0),
                                   Text(
                                     'Great atmosphere and the coffee is amazing. Perfect place to work or relax.',
-                                    style: TextStyle(
+                                    style: GoogleFonts.inter(
                                       fontSize: 12,
                                       color: Color(0xFF7E654C),
-                                      fontFamily: 'Inter',
                                       fontWeight: FontWeight.w400,
                                     ),
                                     maxLines: 3,
@@ -529,17 +556,21 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                         ),
                       ),
 
+                      const SizedBox(height: 11.0),
                       // 7. Post your vist
                       // TODO: Push --> Post Review page
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 16.0),
                         child: SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Color(0xFF7E654C),
-                              foregroundColor: Colors.white.withValues(alpha: 0.05),
-                              padding: const EdgeInsets.symmetric(vertical: 16.0),
+                              foregroundColor: Colors.white.withValues(
+                                  alpha: 0.05),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 16.0),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
@@ -556,9 +587,8 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                             },
                             child: Text(
                               'Post Your Visit',
-                              style: TextStyle(
+                              style: GoogleFonts.quicksand(
                                 fontSize: 16,
-                                fontFamily: 'Quick-sand',
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xFFDED4BA),
                               ),
@@ -579,9 +609,9 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
   }
 
   // -- Coffee Shop Image --> Database
-  Widget _shopImage(double height){
+  Widget _shopImage(double height) {
     return Image.asset(
-      widget.imageUrl,  // Image.network if imageUrl: link online
+      widget.imageUrl, // Image.network if imageUrl: link online
       width: double.infinity,
       height: height * 0.5,
       fit: BoxFit.cover,
@@ -590,7 +620,7 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
 
   // -- Return Home_Page Button
   // TODO: Return Home_Page
-  Widget _returnHomePage(){
+  Widget _returnHomePage() {
     return Positioned(
       top: 40,
       left: 16,
@@ -614,7 +644,7 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
   }
 
   // Add/Remove Favorite List --> Database in Future Development
-  Widget _heartButton(){
+  Widget _heartButton() {
     return Positioned(
       top: 40,
       right: 16,
@@ -638,4 +668,4 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
       ),
     );
   }
-
+}
