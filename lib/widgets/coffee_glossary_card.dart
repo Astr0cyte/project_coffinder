@@ -60,10 +60,13 @@ class _CoffeeGlossaryCardState extends State<CoffeeGlossaryCard> {
                 child: Container(
                   height: 96,
                   color: Colors.transparent,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: Row(
                     children: [
-                      Image.asset(widget.coffee.imagePath, width: 75, height: 75),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Image.asset(widget.coffee.imagePath, width: 75, height: 75),
+                      ),
                       const SizedBox(width:16), 
                       Expanded(
                         child: Text(widget.coffee.englishName,

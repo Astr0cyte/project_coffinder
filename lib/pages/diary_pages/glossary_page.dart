@@ -64,7 +64,7 @@ class _DiaryGlossaryPageState extends State<DiaryGlossaryPage> {
 							Align(
                 alignment: Alignment.bottomCenter,
                 child: FractionallySizedBox(
-                  heightFactor: 0.7,
+                  heightFactor: 0.73,
                   child: FutureBuilder<List<CoffeeGlossaryItem>>(
                     future: loadCoffeeData(),
                     builder: (context, snapshot) {
