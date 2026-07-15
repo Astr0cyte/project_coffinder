@@ -1,16 +1,23 @@
 [
   {
     "englishName": "Traditional \nVietnamese Coffee",
-    "vietName": "Ca Phe Sua Da",
+    "vietName": "Cà phê sữa",
     "imagePath": "assets/coffee_images/traditional_iced_coffee.png",
-    "description": "The classic Vietnamese iced coffee...",
-    "pronunciation": ""
+    "description": "Typically served iced, but can be hot upon request. \nCà phê sữa đá: Iced \nCà phê sữa nóng: Hot",
+    "pronunciation": "Pronunciation: Kah-Fey-Suh-Da / Kah-Fey-Suh-Nong"
   },
   {
     "englishName": "Egg Foam Coffee",
-    "vietName": "Ca Phe Trung",
+    "vietName": "Cà phê trứng",
     "imagePath": "assets/coffee_images/egg_iced_coffee.png",
-    "description": "A rich, dessert-like coffee...",
-    "pronunciation": "cah feh troong"
+    "description": "Typically served iced, but can be hot upon request. \nCà phê trứng đá: Iced \nCà phê trứng nóng: Hot",
+    "pronunciation": "Pronunciation: Kah-Fey-Troong"
+  },
+  {
+    "englishName": "Salted Coffee",
+    "vietName": "Cà Phê Muối",
+    "imagePath": "assets/coffee_images/salted_iced_coffee.png",
+    "description": "Almost exclusively served iced, especially in the South where it is hotter. On rare occasions, it may be served hot. \nCà phê muối đá: Iced \nCà phê muối nóng: Hot",
+    "pronunciation": "Pronunciation: Kah-Feh-Mwoy-ee"
   }
 ]
