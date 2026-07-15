@@ -123,7 +123,7 @@ class _CoffeeGlossaryCardState extends State<CoffeeGlossaryCard> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF7F5E8),
+                          color: const Color(0xFFF5F2E0),
                           borderRadius: BorderRadius.circular(
                             16,
                           ), // Adjust this number for more or less rounding
@@ -147,7 +147,7 @@ class _CoffeeGlossaryCardState extends State<CoffeeGlossaryCard> {
                               width: double.infinity,
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF4F2E1),
+                                color: const Color(0xFFF0EDDB),
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: Column(

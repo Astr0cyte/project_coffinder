@@ -39,11 +39,11 @@ class _DiaryGlossaryPageState extends State<DiaryGlossaryPage> {
 
 							// 2 - Descriptive phrase
 							Align(
-								alignment: Alignment(-0.40, -0.55),
+								alignment: Alignment(-0.18, -0.55),
 								child: Text(
 									"Vietnamese pronunciation of popular coffees",
 									style: GoogleFonts.quicksand(
-										fontSize: 14,
+										fontSize: 16,
 										color: Color.fromRGBO(126, 101, 76, 1.0),
 									),
 								),
