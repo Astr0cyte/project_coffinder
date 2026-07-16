@@ -1,5 +1,5 @@
 name: brewstreet_app
-description: "BrewStreet coffee shop app"
+description: "BrewStreet coffee shop app, generated from Figma design."
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   google_fonts: ^6.2.1
+  image_picker: ^1.2.3
 
 dev_dependencies:
   flutter_test:
