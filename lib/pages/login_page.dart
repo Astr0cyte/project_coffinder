@@ -2,15 +2,15 @@ import 'package:brewstreet_app/pages/home_screen.dart';
 import 'package:brewstreet_app/pages/sign_in_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'sign_in_page.dart';
-import '../home_screen.dart';
+
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MaterialApp(
+      home: Scaffold(
         body: Container(
           decoration: const BoxDecoration(
             color: Color.fromRGBO(250, 249, 244, 1.0),
@@ -113,15 +113,20 @@ class LoginPage extends StatelessWidget {
                     foregroundColor: Color.fromRGBO(223, 217, 185, 1.0),
                   ),
                   onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (_) => const HomeScreen()),
+                    // Navigate to the home page.
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const HomeScreen(),
+                      ),
                     );
                   },
-                  child: Text(
-                    "Continue as guest",
-                    style: GoogleFonts.questrial(
-                      fontSize: 18,
-                      color: Color.fromRGBO(223, 217, 185, 1.0),
+                  child: IconButton(
+                    icon: Text(
+                      "Continue as guest",
+                      style: GoogleFonts.questrial(
+                        fontSize: 18,
+                        color: Color.fromRGBO(223, 217, 185, 1.0),
+                      ),
                     ),
                     onPressed: () {
                       // Navigate to the home page.
@@ -172,6 +177,7 @@ class LoginPage extends StatelessWidget {
             ],
           ),
         ),
+      ),
     );
   }
 }
