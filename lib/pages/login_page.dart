@@ -1,5 +1,5 @@
-import 'package:brewstreet_app/pages/home_screen.dart';
-import 'package:brewstreet_app/pages/sign_in_page.dart';
+import 'home_screen.dart';
+import 'sign_in_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 

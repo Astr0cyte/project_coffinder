@@ -1,4 +1,6 @@
-import 'package:brewstreet_app/pages/diary_page.dart';
+import 'diary_page.dart';
+import 'add_cafe/step1_picture_page.dart';
+import '../states/add_cafe_state.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
@@ -352,7 +354,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       }),
                       _navIcon(Icons.history, onTap: () {}),
-                      _navIcon(Icons.notifications_none, onTap: () {}),
+                      _navIcon(Icons.add, onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => Step1PicturePage(state: AddCafeState())),
+                      )),
                       _navIcon(Icons.person_outline, onTap: () {Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => ProfilePage()),
                         );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'settings_popup.dart';
 
 
 class ProfilePage extends StatelessWidget {
@@ -30,6 +31,21 @@ class ProfilePage extends StatelessWidget {
                             },
                         ),
                         Spacer(),
+                        IconButton(
+                          icon: const Icon(Icons.settings_outlined),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          hoverColor: Colors.transparent,
+                          color: const Color(0xFF402F11),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) => const SettingsPopup(),
+                            );
+                          },
+                        ),
                       ],
                     ),
                     SizedBox(height: 20),

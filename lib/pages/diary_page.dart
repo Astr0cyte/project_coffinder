@@ -1,5 +1,5 @@
 import '../model/diary_note.dart';
-import 'package:brewstreet_app/widgets/add_note_dialog.dart';
+import '/widgets/add_note_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../widgets/diary_note_card.dart';

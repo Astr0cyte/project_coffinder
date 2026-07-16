@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
+import 'post_page.dart';
 
 class ReviewData {
   final String name;
@@ -386,8 +387,10 @@ class CoffeeShopDetailScreen extends StatelessWidget {
       height: 60 * s,
       child: GestureDetector(
         onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Post your visit tapped')),
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => PostPage(placeName: shopName, placeAddress: ''),
+            ),
           );
         },
         child: Container(
