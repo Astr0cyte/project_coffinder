@@ -1,17 +1,12 @@
-import 'package:brewstreet_app/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'pages/login_page.dart';
 
+void main() => runApp(const CafeApp());
 
-void main() {
-  runApp(const MyApp());
-}
+class CafeApp extends StatelessWidget {
+  const CafeApp({super.key});
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,8 +18,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
 
   void _incrementCounter() {
     setState(() {
