@@ -1,3 +1,4 @@
+import 'package:brewstreet_app/pages/diary_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
@@ -21,6 +22,16 @@ class ShopListItem {
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  static const shops = [
+    ShopListItem('Phuc Long', AppColors.brownMid, false, '350 m away', ['A/C', 'Wi-Fi', 'Quiet']),
+    ShopListItem('Lotus Leaf Cafe', AppColors.cardBg, false, '0.8 km away', ['Pets', 'Friendly']),
+    ShopListItem('Sunset Terrace Coffee', AppColors.brownDark, true, '1.2 km away', ['Quiet', 'Wi-Fi']),
+    ShopListItem('Ban Mai Coffee House', AppColors.tan, true, '1.5 km away', ['A/C', 'Friendly']),
+    ShopListItem('Old Quarter Coffee', AppColors.chipLight, false, '2.0 km away', ['Pets', 'Wi-Fi', 'Quiet']),
+  ];
+
+  static const filterLabels = ['All', 'Quiet', 'Wi-Fi', 'A/C', 'Pets', 'Friendly'];
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -69,8 +80,8 @@ class _HomeScreenState extends State<HomeScreen> {
   static const filterLabels = ['All', 'Quiet', 'Wi-Fi', 'A/C', 'Pets', 'Friendly'];
 
   List<ShopListItem> get _visibleShops {
-    if (_activeFilter == 'All') return shops;
-    return shops.where((s) => s.amenities.contains(_activeFilter)).toList();
+    if (_activeFilter == 'All') return HomeScreen.shops;
+    return HomeScreen.shops.where((s) => s.amenities.contains(_activeFilter)).toList();
   }
 
   @override
@@ -96,7 +107,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   sliver: SliverList.separated(
                     itemCount: _visibleShops.length,
                     separatorBuilder: (_, __) => SizedBox(height: 14 * scale),
-                    itemBuilder: (context, i) => _shopCard(context, scale, _visibleShops[i]),
+                    itemBuilder: (context, i) => ShopCard(
+                      shop: _visibleShops[i],
+                      scale: scale,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => CoffeeShopDetailScreen(shopName: _visibleShops[i].name),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
                 SliverToBoxAdapter(
@@ -258,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 22 * s),
-        itemCount: filterLabels.length + 1,
+        itemCount: HomeScreen.filterLabels.length + 1,
         separatorBuilder: (_, __) => SizedBox(width: 8 * s),
         itemBuilder: (context, i) {
           if (i == 0) {
@@ -276,7 +297,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           }
-          final label = filterLabels[i - 1];
+          final label = HomeScreen.filterLabels[i - 1];
           final active = label == _activeFilter;
           return GestureDetector(
             onTap: () => setState(() => _activeFilter = label),
@@ -297,107 +318,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         },
-      ),
-    );
-  }
-
-  // --- Shop card --------------------------------------------------------------
-  Widget _shopCard(BuildContext context, double s, ShopListItem shop) {
-    final contentColor = shop.contentColor(context);
-    final isDarkCard = contentColor == AppColors.cream;
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => CoffeeShopDetailScreen(shopName: shop.name),
-          ),
-        );
-      },
-      child: Container(
-        height: 300 * s,
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20 * s),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.25),
-              blurRadius: 4 * s,
-              offset: Offset(0, 4 * s),
-            ),
-          ],
-        ),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Container(color: shop.bgColor),
-            Positioned(
-              right: 10 * s,
-              top: 10 * s,
-              child: Container(
-                width: 27 * s,
-                height: 27 * s,
-                decoration: const BoxDecoration(color: AppColors.gold, shape: BoxShape.circle),
-                child: Icon(
-                  shop.favorited ? Icons.favorite : Icons.favorite_border,
-                  size: 15 * s,
-                  color: AppColors.brownDark,
-                ),
-              ),
-            ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                color: isDarkCard
-                    ? Colors.black.withOpacity(0.16)
-                    : AppColors.brownDark.withOpacity(0.06),
-                padding: EdgeInsets.fromLTRB(14 * s, 10 * s, 14 * s, 10 * s),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    RichText(
-                      text: TextSpan(children: [
-                        TextSpan(
-                          text: shop.name,
-                          style: GoogleFonts.playfairDisplay(
-                            fontSize: 23 * s,
-                            fontWeight: FontWeight.w600,
-                            color: contentColor,
-                          ),
-                        ),
-                        TextSpan(
-                          text: '  ·  ${shop.distance}',
-                          style: GoogleFonts.inter(
-                            fontSize: 12 * s,
-                            color: contentColor.withOpacity(0.75),
-                          ),
-                        ),
-                      ]),
-                    ),
-                    SizedBox(height: 6 * s),
-                    Wrap(
-                      spacing: 6 * s,
-                      runSpacing: 6 * s,
-                      children: shop.amenities.map((label) => Container(
-                        padding: EdgeInsets.symmetric(horizontal: 9 * s, vertical: 4 * s),
-                        decoration: BoxDecoration(
-                          color: contentColor.withOpacity(isDarkCard ? 0.2 : 0.1),
-                          borderRadius: BorderRadius.circular(10 * s),
-                        ),
-                        child: Text(
-                          label,
-                          style: GoogleFonts.inter(fontSize: 10 * s, color: contentColor),
-                        ),
-                      )).toList(),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -457,12 +377,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _navIcon(IconData icon, {bool active = false}) {
-    return Container(
-      width: 42,
-      height: 42,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
+  Widget _navIcon(IconData icon, {bool active = false, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 42,
+        height: 42,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: active ? AppColors.tan : Colors.transparent,
       ),
@@ -470,6 +392,7 @@ class _HomeScreenState extends State<HomeScreen> {
         icon,
         size: 20,
         color: active ? AppColors.brownDark : AppColors.tan.withOpacity(0.6),
+      ),
       ),
     );
   }

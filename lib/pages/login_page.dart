@@ -1,3 +1,5 @@
+import 'package:brewstreet_app/pages/home_screen.dart';
+import 'package:brewstreet_app/pages/sign_in_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'sign_in_page.dart';
@@ -121,6 +123,14 @@ class LoginPage extends StatelessWidget {
                       fontSize: 18,
                       color: Color.fromRGBO(223, 217, 185, 1.0),
                     ),
+                    onPressed: () {
+                      // Navigate to the home page.
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const HomeScreen(),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
