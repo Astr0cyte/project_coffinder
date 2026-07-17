@@ -70,10 +70,18 @@ final List<DiaryNote> notes = [
         Text(
           "Write your thoughts below",
           style: TextStyle(
-            color: Colors.grey,
+            color: Color(0xFF7E654C),
             fontFamily: GoogleFonts.quicksand().fontFamily,
           ),
         ),
+
+        const Align(
+								alignment: Alignment(0, -0.50),
+								child: Divider(
+									color: Color.fromRGBO(228, 225, 208, 1),
+									thickness: 1, 
+								),
+							),
 
         const SizedBox(height: 18),
 

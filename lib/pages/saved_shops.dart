@@ -22,11 +22,19 @@ class SavedShops extends StatelessWidget {
         Text(
           "Your saved coffee shops",
           style: TextStyle(
-            color: Colors.grey,
+            color: Color(0xFF7E654C),
             fontFamily: GoogleFonts.quicksand().fontFamily,
           ),
         ),
 
+        const Align(
+								alignment: Alignment(0, -0.50),
+								child: Divider(
+									color: Color.fromRGBO(228, 225, 208, 1),
+									thickness: 1, 
+								),
+							),
+        
         const SizedBox(height: 18),
 
         if (shops.isEmpty)
@@ -35,7 +43,7 @@ class SavedShops extends StatelessWidget {
             child: Text(
               "No saved shops yet. Tap the heart on a shop to save it here.",
               style: TextStyle(
-                color: Colors.grey,
+                color: Color(0xFF7E654C),
                 fontFamily: GoogleFonts.quicksand().fontFamily,
               ),
             ),

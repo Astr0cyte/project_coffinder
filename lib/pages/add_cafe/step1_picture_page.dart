@@ -93,27 +93,27 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
-        title: const Text(
+        title: Text(
           'Remove this photo?',
-          style: TextStyle(color: _textColor, fontWeight: FontWeight.w600),
+          style: GoogleFonts.quicksand(color: _textColor, fontWeight: FontWeight.w600),
         ),
         content: Text(
           'You can upload a different image afterwards.',
-          style: TextStyle(color: _textColor.withOpacity(0.7)),
+          style: GoogleFonts.quicksand(color: _textColor.withOpacity(0.7)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
             child: Text(
               'Cancel',
-              style: TextStyle(color: _textColor.withOpacity(0.6)),
+              style: GoogleFonts.quicksand(color: _textColor.withOpacity(0.6)),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text(
+            child: Text(
               'Delete',
-              style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
+              style: GoogleFonts.quicksand(color: Colors.red, fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -153,28 +153,30 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
                 const SizedBox(height: 20),
                 Text(
                   'Step 1',
-                  style: TextStyle(
+                  style: GoogleFonts.playfairDisplay(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                     color: _textColor,
                   ),
                 ),
                 const SizedBox(height: 5),
-                const Text(
+                Text(
                   'Picture of café',
-                  style: TextStyle(
-                    fontSize: 45,
-                    fontWeight: FontWeight.w500,
-                    color: _textColor,
+                  style: GoogleFonts.playfairDisplay(
+                    fontSize: 40,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF402F11),
                   ),
                 ),
+                const SizedBox(height: 10),
                 Text(
                   'First view of cafe',
-                  style: TextStyle(
-                    fontSize: 18,
+                  style: GoogleFonts.quicksand(
+                    fontSize: 16,
                     color: _textColor.withOpacity(0.8),
                   ),
                 ),
+                const SizedBox(height: 4),
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
@@ -190,10 +192,10 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
                             width: double.infinity,
                             height: 450,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF2EFDE),
+                              color: const Color(0xffF7F2E8),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: const Color(0xFFC9B892),
+                                color: const Color(0xffDCCFB8),
                                 width: 1.5,
                                 style: BorderStyle.solid,
                               ),
@@ -212,8 +214,8 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
                                   const SizedBox(height: 12),
                                   Text(
                                     'Drop your image here, or Browse',
-                                    style: TextStyle(
-                                      fontSize: 18,
+                                    style: GoogleFonts.quicksand(
+                                      fontSize: 16,
                                       color: _textColor.withOpacity(0.9),
                                     ),
                                   ),
@@ -265,17 +267,17 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
                                         decoration: BoxDecoration(
                                           color: _textColor.withOpacity(0.5), // Màu chủ đạo + độ trong suốt 50%
                                         ),
-                                        child: const Row(
+                                        child: Row(
                                           children: [
-                                            Icon(
+                                            const Icon(
                                                 Icons.touch_app_rounded,
                                                 color: Colors.white,
                                                 size: 16
                                             ),
-                                            SizedBox(width: 4),
+                                            const SizedBox(width: 4),
                                             Text(
                                               'Hold to remove',
-                                              style: TextStyle(
+                                              style: GoogleFonts.quicksand(
                                                 color: Colors.white,
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w500,
@@ -311,7 +313,7 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
                                     children: [
                                       Text(
                                         'Uploading...',
-                                        style: TextStyle(
+                                        style: GoogleFonts.quicksand(
                                           fontSize: 13,
                                           color: _textColor.withOpacity(0.7),
                                         ),

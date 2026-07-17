@@ -53,7 +53,7 @@ class _DiaryGlossaryPageState extends State<DiaryGlossaryPage> {
 							const Align(
 								alignment: Alignment(0, -0.50),
 								child: Divider(
-									color: Color.fromRGBO(239, 236, 220, 1.0),
+									color: Color.fromRGBO(228, 225, 208, 1),
 									thickness: 1, 
 									indent: 30,
 									endIndent: 30,

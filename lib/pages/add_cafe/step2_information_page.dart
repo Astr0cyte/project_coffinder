@@ -92,25 +92,26 @@ class _Step2InformationPageState extends State<Step2InformationPage> {
                 const SizedBox(height: 20),
                 Text(
                   'Step 2',
-                  style: TextStyle(
+                  style: GoogleFonts.playfairDisplay(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                     color: _textColor,
                   ),
                 ),
                 const SizedBox(height: 5),
-                const Text(
-                  'Information of café',
-                  style: TextStyle(
-                    fontSize: 45,
-                    fontWeight: FontWeight.w500,
-                    color: _textColor,
+                Text(
+                  'Café \ninformation',
+                  style: GoogleFonts.playfairDisplay(
+                    fontSize: 40,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF402F11),
                   ),
                 ),
+                const SizedBox(height: 30),
                 Text(
                   'Address, Time, status',
-                  style: TextStyle(
-                    fontSize: 18,
+                  style: GoogleFonts.quicksand(
+                    fontSize: 16,
                     color: _textColor.withOpacity(0.8),
                   ),
                 ),
@@ -119,30 +120,30 @@ class _Step2InformationPageState extends State<Step2InformationPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 20),
                         LabeledUnderlineField(
-                          label: 'CAFE NAME',
+                          label: 'Cafe Name',
                           required: true,
                           controller: _cafeNameController,
                           hintText: 'Phuc Long...',
                         ),
                         const SizedBox(height: 28),
                         LabeledUnderlineField(
-                          label: 'AREA',
+                          label: 'Area',
                           required: true,
                           controller: _areaController,
                           hintText: 'HCMC ...',
                         ),
                         const SizedBox(height: 28),
                         LabeledUnderlineField(
-                          label: 'ADDRESS',
+                          label: 'Address',
                           required: true,
                           controller: _addressController,
                           hintText: 'District 1 ...',
                         ),
                         const SizedBox(height: 28),
                         LabeledUnderlineField(
-                          label: 'OPEN TIME',
+                          label: 'Open Time',
                           required: true,
                           controller: _openTimeController,
                           hintText: '7:00 am - 9:00 pm...',
