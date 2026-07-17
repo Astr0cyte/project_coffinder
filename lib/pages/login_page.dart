@@ -1,181 +1,349 @@
-import 'home_screen.dart';
-import 'sign_in_page.dart';
+// import 'home_screen.dart';
+// import 'sign_in_page.dart';
+// import 'package:flutter/material.dart';
+// import 'package:google_fonts/google_fonts.dart';
+//
+//
+// class LoginPage extends StatelessWidget {
+//   const LoginPage({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: Scaffold(
+//         body: Container(
+//           decoration: const BoxDecoration(
+//             color: Color.fromRGBO(250, 249, 244, 1.0),
+//           ),
+//
+//           child: Stack(
+//             children: [
+//               // Welcome to + BrewStreet! (2 separate Text widgets)
+//               Align(
+//                 alignment: Alignment(0, -0.7),
+//                 child: Column(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     // "Welcome to"
+//                     Text(
+//                       "Welcome to",
+//                       style: GoogleFonts.playfairDisplay(
+//                         fontSize: 24,
+//                         fontWeight: FontWeight.w600,
+//                         color: Color.fromRGBO(126, 101, 76, 1.0),
+//                       ),
+//                     ),
+//
+//                     // "BrewStreet!"
+//                     Text(
+//                       "BrewStreet",
+//                       style: GoogleFonts.playfairDisplay(
+//                         fontSize: 36,
+//                         fontWeight: FontWeight.w600,
+//                         color: Color.fromRGBO(126, 101, 76, 1.0),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//
+//               Align(
+//                 alignment: Alignment(0, 0.1),
+//                 child: Text(
+//                   "Discover hidden gems in Saigon!",
+//                   style: GoogleFonts.questrial(
+//                     fontSize: 18,
+//                     fontWeight: FontWeight.w600,
+//                     color: Color.fromRGBO(126, 101, 76, 1.0),
+//                   ),
+//                 ),
+//               ),
+//
+//               // Logo
+//               Align(
+//                 alignment: Alignment(0, -0.25),
+//                 child: Stack(
+//                   clipBehavior: Clip.none,
+//                   children: [
+//
+//                     // Circle
+//                     Container(
+//                       width: 160,
+//                       height: 160,
+//                       decoration: BoxDecoration(
+//                         color: Color.fromRGBO(238, 233, 220, 1.0),
+//                         shape: BoxShape.circle,
+//                         border: Border.all(
+//                           color: Color.fromRGBO(203, 187, 144, 1.0),
+//                           width: 1.0,
+//                         ),
+//                       ),
+//                     ),
+//
+//                     // Mascot
+//                     Positioned(
+//                       top: 0,
+//                       left: -10,
+//                       child: Image.asset(
+//                         'assets/logo.png',
+//                         width: 175,
+//                         height: 175,
+//                         fit: BoxFit.contain,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//
+//               // "Continue as guest" button
+//               Align(
+//                 alignment: Alignment(0, 0.57),
+//                 child: FilledButton(
+//                   style: FilledButton.styleFrom(
+//                     side: const BorderSide(
+//                       color: Color.fromRGBO(133, 115, 98, 1.0),
+//                     ),
+//                     fixedSize: const Size(327, 48),
+//                     elevation: 1.0,
+//                     shadowColor: Colors.black,
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadiusGeometry.circular(10),
+//                     ),
+//                     backgroundColor: Color.fromRGBO(126, 101, 76, 1.0),
+//                     foregroundColor: Color.fromRGBO(223, 217, 185, 1.0),
+//                   ),
+//                   onPressed: () {
+//                     // Navigate to the home page.
+//                     Navigator.of(context).push(
+//                       MaterialPageRoute(
+//                         builder: (_) => const HomeScreen(),
+//                       ),
+//                     );
+//                   },
+//                   child: IconButton(
+//                     icon: Text(
+//                       "Continue as guest",
+//                       style: GoogleFonts.questrial(
+//                         fontSize: 18,
+//                         color: Color.fromRGBO(223, 217, 185, 1.0),
+//                       ),
+//                     ),
+//                     onPressed: () {
+//                       // Navigate to the home page.
+//                       Navigator.of(context).push(
+//                         MaterialPageRoute(
+//                           builder: (_) => const HomeScreen(),
+//                         ),
+//                       );
+//                     },
+//                   ),
+//                 ),
+//               ),
+//
+//               // "Sign in or create account" button
+//               Align(
+//                 alignment: Alignment(0, 0.70),
+//                 child: FilledButton(
+//                   style: FilledButton.styleFrom(
+//                     side: const BorderSide(
+//                       color: Color.fromRGBO(230, 230, 230, 1),
+//                     ),
+//                     fixedSize: const Size(327, 48),
+//                     elevation: 1.0,
+//                     shadowColor: const Color.fromARGB(255, 144, 144, 144),
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadiusGeometry.circular(10),
+//                     ),
+//                     backgroundColor: Color.fromRGBO(255, 255, 255, 1),
+//                     foregroundColor: Color.fromRGBO(184, 184, 184, 1),
+//                   ),
+//                   onPressed: () {
+//                     // Navigate to the sign-in screen.
+//                     Navigator.of(context).push(
+//                       MaterialPageRoute(
+//                         builder: (_) => const SignInPage(),
+//                       ),
+//                     );
+//                   },
+//                   child: Text(
+//                     "Sign in or create account",
+//                     style: GoogleFonts.questrial(
+//                       fontSize: 16,
+//                       color: Color.fromRGBO(175, 175, 175, 1),
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// Đổi import từ home_screen sang main_screen
+import 'main_screen.dart';
+import 'sign_in_page.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Container(
-          decoration: const BoxDecoration(
-            color: Color.fromRGBO(250, 249, 244, 1.0),
-          ),
-
-          child: Stack(
-            children: [
-              // Welcome to + BrewStreet! (2 separate Text widgets)
-              Align(
-                alignment: Alignment(0, -0.7),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // "Welcome to"
-                    Text(
-                      "Welcome to",
-                      style: GoogleFonts.playfairDisplay(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        color: Color.fromRGBO(126, 101, 76, 1.0),
-                      ),
+    // CHỈ return Scaffold, KHÔNG bọc MaterialApp ở đây nữa
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          color: Color.fromRGBO(250, 249, 244, 1.0),
+        ),
+        child: Stack(
+          children: [
+            // Welcome to + BrewStreet!
+            Align(
+              alignment: const Alignment(0, -0.7),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Welcome to",
+                    style: GoogleFonts.playfairDisplay(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                      color: const Color.fromRGBO(126, 101, 76, 1.0),
                     ),
-
-                    // "BrewStreet!"
-                    Text(
-                      "BrewStreet",
-                      style: GoogleFonts.playfairDisplay(
-                        fontSize: 36,
-                        fontWeight: FontWeight.w600,
-                        color: Color.fromRGBO(126, 101, 76, 1.0),
-                      ),
+                  ),
+                  Text(
+                    "BrewStreet",
+                    style: GoogleFonts.playfairDisplay(
+                      fontSize: 36,
+                      fontWeight: FontWeight.w600,
+                      color: const Color.fromRGBO(126, 101, 76, 1.0),
                     ),
-                  ],
+                  ),
+                ],
+              ),
+            ),
+
+            Align(
+              alignment: const Alignment(0, 0.1),
+              child: Text(
+                "Discover hidden gems in Saigon!",
+                style: GoogleFonts.questrial(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: const Color.fromRGBO(126, 101, 76, 1.0),
                 ),
               ),
+            ),
 
-              Align(
-                alignment: Alignment(0, 0.1),
+            // Logo
+            Align(
+              alignment: const Alignment(0, -0.25),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    width: 160,
+                    height: 160,
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(238, 233, 220, 1.0),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color.fromRGBO(203, 187, 144, 1.0),
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    left: -10,
+                    child: Image.asset(
+                      'assets/logo.png',
+                      width: 175,
+                      height: 175,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // "Continue as guest" button
+            Align(
+              alignment: const Alignment(0, 0.57),
+              child: FilledButton(
+                style: FilledButton.styleFrom(
+                  side: const BorderSide(
+                    color: Color.fromRGBO(133, 115, 98, 1.0),
+                  ),
+                  fixedSize: const Size(327, 48),
+                  elevation: 1.0,
+                  shadowColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadiusGeometry.circular(10),
+                  ),
+                  backgroundColor: const Color.fromRGBO(126, 101, 76, 1.0),
+                  foregroundColor: const Color.fromRGBO(223, 217, 185, 1.0),
+                ),
+                onPressed: () {
+                  // Dùng pushReplacement để chuyển thẳng vào MainScreen (chứa Navbar)
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (_) => const MainScreen(),
+                    ),
+                  );
+                },
+                // Đã xóa IconButton lồng bên trong, chỉ dùng Text
                 child: Text(
-                  "Discover hidden gems in Saigon!",
+                  "Continue as guest",
                   style: GoogleFonts.questrial(
                     fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Color.fromRGBO(126, 101, 76, 1.0),
+                    color: const Color.fromRGBO(223, 217, 185, 1.0),
                   ),
                 ),
               ),
+            ),
 
-              // Logo
-              Align(
-                alignment: Alignment(0, -0.25),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-
-                    // Circle
-                    Container(
-                      width: 160,
-                      height: 160,
-                      decoration: BoxDecoration(
-                        color: Color.fromRGBO(238, 233, 220, 1.0),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Color.fromRGBO(203, 187, 144, 1.0),
-                          width: 1.0,
-                        ),
-                      ),
-                    ),
-
-                    // Mascot
-                    Positioned(
-                      top: 0,
-                      left: -10,
-                      child: Image.asset(
-                        'assets/logo.png',
-                        width: 175,
-                        height: 175,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // "Continue as guest" button
-              Align(
-                alignment: Alignment(0, 0.57),
-                child: FilledButton(
-                  style: FilledButton.styleFrom(
-                    side: const BorderSide(
-                      color: Color.fromRGBO(133, 115, 98, 1.0),
-                    ),
-                    fixedSize: const Size(327, 48),
-                    elevation: 1.0,
-                    shadowColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(10),
-                    ),
-                    backgroundColor: Color.fromRGBO(126, 101, 76, 1.0),
-                    foregroundColor: Color.fromRGBO(223, 217, 185, 1.0),
+            // "Sign in or create account" button
+            Align(
+              alignment: const Alignment(0, 0.70),
+              child: FilledButton(
+                style: FilledButton.styleFrom(
+                  side: const BorderSide(
+                    color: Color.fromRGBO(230, 230, 230, 1),
                   ),
-                  onPressed: () {
-                    // Navigate to the home page.
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const HomeScreen(),
-                      ),
-                    );
-                  },
-                  child: IconButton(
-                    icon: Text(
-                      "Continue as guest",
-                      style: GoogleFonts.questrial(
-                        fontSize: 18,
-                        color: Color.fromRGBO(223, 217, 185, 1.0),
-                      ),
+                  fixedSize: const Size(327, 48),
+                  elevation: 1.0,
+                  shadowColor: const Color.fromARGB(255, 144, 144, 144),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadiusGeometry.circular(10),
+                  ),
+                  backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
+                  foregroundColor: const Color.fromRGBO(184, 184, 184, 1),
+                ),
+                onPressed: () {
+                  // Chuyển sang trang Đăng nhập/Đăng ký
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const SignInPage(),
                     ),
-                    onPressed: () {
-                      // Navigate to the home page.
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const HomeScreen(),
-                        ),
-                      );
-                    },
+                  );
+                },
+                child: Text(
+                  "Sign in or create account",
+                  style: GoogleFonts.questrial(
+                    fontSize: 16,
+                    color: const Color.fromRGBO(175, 175, 175, 1),
                   ),
                 ),
               ),
-
-              // "Sign in or create account" button
-              Align(
-                alignment: Alignment(0, 0.70),
-                child: FilledButton(
-                  style: FilledButton.styleFrom(
-                    side: const BorderSide(
-                      color: Color.fromRGBO(230, 230, 230, 1),
-                    ),
-                    fixedSize: const Size(327, 48),
-                    elevation: 1.0,
-                    shadowColor: const Color.fromARGB(255, 144, 144, 144),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(10),
-                    ),
-                    backgroundColor: Color.fromRGBO(255, 255, 255, 1),
-                    foregroundColor: Color.fromRGBO(184, 184, 184, 1),
-                  ),
-                  onPressed: () {
-                    // Navigate to the sign-in screen.
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const SignInPage(),
-                      ),
-                    );
-                  },
-                  child: Text(
-                    "Sign in or create account",
-                    style: GoogleFonts.questrial(
-                      fontSize: 16,
-                      color: Color.fromRGBO(175, 175, 175, 1),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

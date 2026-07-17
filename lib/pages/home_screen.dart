@@ -1,11 +1,7 @@
-import 'diary_page.dart';
-import 'add_cafe/step1_picture_page.dart';
-import '../states/add_cafe_state.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 import 'coffee_shop_detail_screen.dart';
-import 'profile_page.dart';
 import '../widgets/shop_card.dart';
 
 class ShopListItem {
@@ -43,8 +39,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   static const double designWidth = 402;
 
-  bool _navVisible = true;
-  double _lastOffset = 0;
   String _activeFilter = 'All';
   bool _searchOpen = false;
   final _searchController = TextEditingController();
@@ -55,22 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  bool _handleScroll(ScrollNotification notification) {
-    final offset = notification.metrics.pixels;
-    final max = notification.metrics.maxScrollExtent;
-    final delta = offset - _lastOffset;
-    if (offset <= 0 || offset >= max) {
-      if (!_navVisible) setState(() => _navVisible = true);
-    } else if (delta > 6 && _navVisible) {
-      setState(() => _navVisible = false);
-    } else if (delta < -6 && !_navVisible) {
-      setState(() => _navVisible = true);
-    }
-    _lastOffset = offset;
-    return false;
-  }
-
-
   List<ShopListItem> get _visibleShops {
     if (_activeFilter == 'All') return HomeScreen.shops;
     return HomeScreen.shops.where((s) => s.amenities.contains(_activeFilter)).toList();
@@ -80,19 +58,16 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.cream,
-      extendBody: true,
-      bottomNavigationBar: _bottomNav(),
+      // Đã xóa extendBody và bottomNavigationBar ở đây
       body: SafeArea(
         bottom: false,
         child: LayoutBuilder(
           builder: (context, constraints) {
             final scale = constraints.maxWidth / designWidth;
-            return NotificationListener<ScrollNotification>(
-              onNotification: _handleScroll,
-              child: CustomScrollView(
+            // Đã xóa NotificationListener vì MainScreen sẽ tự động bắt được sự kiện cuộn
+            return CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(child: _header(context, scale)),
-                //SliverToBoxAdapter(child: _resultsLabel(scale)),
                 SliverToBoxAdapter(child: _filterChips(scale)),
                 SliverPadding(
                   padding: EdgeInsets.fromLTRB(20 * scale, 12 * scale, 20 * scale, 0),
@@ -114,6 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
+                    // Lớp padding đáy (110 * scale) vẫn được giữ nguyên để
+                    // danh sách cuộn lên trên không bị cái Navbar của MainScreen che khuất
                     padding: EdgeInsets.fromLTRB(20 * scale, 16 * scale, 20 * scale, 110 * scale),
                     child: Text(
                       '${_visibleShops.length} Coffeeshops Found',
@@ -126,7 +103,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ],
-            ),
             );
           },
         ),
@@ -203,9 +179,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  
-  
 
   // --- Filter chips (search icon leads the row) -----------------------------
   Widget _filterChips(double s) {
@@ -310,84 +283,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         },
-      ),
-    );
-  }
-
-  // --- Floating pill nav bar -----------------------------------------------
-  Widget _bottomNav() {
-    return IgnorePointer(
-      ignoring: !_navVisible,
-      child: AnimatedSlide(
-        duration: const Duration(milliseconds: 220),
-        curve: Curves.easeOut,
-        offset: _navVisible ? Offset.zero : const Offset(0, 1.6),
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 180),
-          opacity: _navVisible ? 1 : 0,
-          child: Container(
-            color: Colors.transparent,
-            child: SafeArea(
-              top: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(32, 0, 32, 16),
-                child: Container(
-                  height: 64,
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  decoration: BoxDecoration(
-                    color: AppColors.brownDark,
-                    borderRadius: BorderRadius.circular(32),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.25),
-                        blurRadius: 16,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children:[
-                      _navIcon(Icons.home, active: true, onTap: () {}),
-                      _navIcon(Icons.bookmark_border, onTap: () {Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => DiaryPage()),
-                        );
-                      }),
-                      _navIcon(Icons.history, onTap: () {}),
-                      _navIcon(Icons.add, onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => Step1PicturePage(state: AddCafeState())),
-                      )),
-                      _navIcon(Icons.person_outline, onTap: () {Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => ProfilePage()),
-                        );
-                      }),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _navIcon(IconData icon, {bool active = false, required VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 42,
-        height: 42,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: active ? AppColors.tan : Colors.transparent,
-      ),
-      child: Icon(
-        icon,
-        size: 20,
-        color: active ? AppColors.brownDark : AppColors.tan.withOpacity(0.6),
-      ),
       ),
     );
   }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../states/add_cafe_state.dart';
 import '../../widgets/step_flow_header.dart';
-import '../../widgets/app_bottom_nav_bar.dart';
 import '../../widgets/flow_primary_button.dart';
 
 class Step4StoryPage extends StatefulWidget {
@@ -14,8 +13,6 @@ class Step4StoryPage extends StatefulWidget {
   });
 
   final AddCafeState state;
-
-  /// Called when the user taps "Post". Hook up your submit/API call here.
   final void Function(BuildContext context, AddCafeState state)? onPost;
 
   @override
@@ -25,8 +22,6 @@ class Step4StoryPage extends StatefulWidget {
 class _Step4StoryPageState extends State<Step4StoryPage> {
   static const _maxStoryLength = 400;
   late final TextEditingController _storyController;
-
-  // Khai báo ScrollController cho TỔNG THỂ toàn bộ trang
   final ScrollController _scrollController = ScrollController();
 
   static const _textColor = Color(0xFF7E654C);
@@ -97,7 +92,7 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
                         onSkip: _handleSkip,
                       ),
                       const SizedBox(height: 20),
-                      Text(
+                      const Text(
                         'Step 4',
                         style: TextStyle(
                           fontSize: 20,
@@ -123,7 +118,6 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
                       ),
                       const SizedBox(height: 24),
 
-                      // Khung nhập text (Story)
                       Container(
                         decoration: BoxDecoration(
                           color: const Color(0xFFF2EFDE),
@@ -176,7 +170,6 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
                       ),
                       const SizedBox(height: 12),
 
-                      // Khung Preview Ảnh
                       Container(
                         width: double.infinity,
                         height: 450,
@@ -221,8 +214,6 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
                                   borderRadius: BorderRadius.circular(14),
                                 ),
                               ),
-
-                            // Nút 4.8 Sao
                             Positioned(
                               top: 12,
                               right: 12,
@@ -253,8 +244,6 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
                                 ),
                               ),
                             ),
-
-                            // Chữ Tên quán & Tính năng
                             Positioned(
                               bottom: 16,
                               left: 16,
@@ -297,7 +286,6 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
                       ),
                       const SizedBox(height: 36),
 
-                      // Nút Post giờ đây sẽ luôn hiện và có thể bấm được bất kể step4Valid
                       FlowPrimaryButton(
                         label: 'Post',
                         onPressed: _handlePost,
@@ -310,7 +298,6 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
             ),
           ),
         ),
-        bottomNavigationBar: const AppBottomNavBar(currentIndex: 1),
       ),
     );
   }

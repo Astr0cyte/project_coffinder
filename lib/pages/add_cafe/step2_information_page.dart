@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../states/add_cafe_state.dart';
 import '../../widgets/step_flow_header.dart';
-import '../../widgets/app_bottom_nav_bar.dart';
 import '../../widgets/flow_primary_button.dart';
 import '../../widgets/labeled_underline_field.dart';
 import 'step3_characteristics_page.dart';
@@ -90,7 +89,7 @@ class _Step2InformationPageState extends State<Step2InformationPage> {
                   onSkip: _handleSkip,
                 ),
                 const SizedBox(height: 20),
-                Text(
+                const Text(
                   'Step 2',
                   style: TextStyle(
                     fontSize: 20,
@@ -161,7 +160,6 @@ class _Step2InformationPageState extends State<Step2InformationPage> {
             ),
           ),
         ),
-        bottomNavigationBar: const AppBottomNavBar(currentIndex: 1),
       ),
     );
   }

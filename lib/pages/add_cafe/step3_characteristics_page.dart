@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../states/add_cafe_state.dart';
 import '../../widgets/step_flow_header.dart';
-import '../../widgets/app_bottom_nav_bar.dart';
 import '../../widgets/flow_primary_button.dart';
 import '../../widgets/selectable_chip_group.dart';
 import 'step4_story_page.dart';
@@ -35,12 +34,10 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
     'Friendly staff',
   ];
 
-  // Danh sách lưu trữ các Vibe/Feature do người dùng tự thêm
   final List<String> _customVibes = [];
   final List<String> _customFeatures = [];
 
   late final List<TextEditingController> _drinkControllers;
-
   final ScrollController _drinksScrollController = ScrollController();
 
   static const _textColor = Color(0xFF7E654C);
@@ -73,13 +70,11 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
     setState(() {});
   }
 
-  // Hàm xoá món uống
   void _removeDrinkSlot(int index) {
     setState(() {
       _drinkControllers[index].dispose();
       _drinkControllers.removeAt(index);
     });
-    // Đồng bộ với State: Xoá phần tử tương ứng trong state
     if (index < widget.state.signatureDrinks.length) {
       widget.state.signatureDrinks.removeAt(index);
     }
@@ -99,7 +94,6 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
     }
   }
 
-  // Hàm hiển thị Popup thêm Vibe / Feature
   void _showAddCustomItemDialog(String type) {
     final TextEditingController textController = TextEditingController();
 
@@ -141,7 +135,7 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                       if (!_customVibes.contains(val) && !_vibeOptions.contains(val)) {
                         _customVibes.add(val);
                         if (!widget.state.vibes.contains(val)) {
-                          widget.state.toggleVibe(val); // Tự động chọn luôn sau khi thêm
+                          widget.state.toggleVibe(val);
                         }
                       }
                     } else if (type == 'Feature') {
@@ -204,7 +198,7 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                   onSkip: _handleSkip,
                 ),
                 const SizedBox(height: 20),
-                Text(
+                const Text(
                   'Step 3',
                   style: TextStyle(
                     fontSize: 20,
@@ -268,7 +262,6 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                             ),
                           ),
                         ),
-                        // Nơi hiển thị các Vibe tự thêm (có khả năng xoá)
                         if (_customVibes.isNotEmpty) ...[
                           const SizedBox(height: 8),
                           Wrap(
@@ -296,7 +289,7 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                                   setState(() {
                                     _customVibes.remove(vibe);
                                     if (state.vibes.contains(vibe)) {
-                                      state.toggleVibe(vibe); // Bỏ chọn trong state
+                                      state.toggleVibe(vibe);
                                     }
                                   });
                                 },
@@ -339,7 +332,6 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                             ),
                           ),
                         ),
-                        // Nơi hiển thị các Feature tự thêm (có khả năng xoá)
                         if (_customFeatures.isNotEmpty) ...[
                           const SizedBox(height: 8),
                           Wrap(
@@ -377,7 +369,7 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                         ],
 
                         const SizedBox(height: 28),
-                        Text(
+                        const Text(
                           'Signature drink',
                           style: TextStyle(
                             fontSize: 15,
@@ -475,7 +467,6 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                                           ),
                                         ),
                                       ),
-                                      // Thêm nút xoá ở cuối mỗi dòng Signature Drink
                                       IconButton(
                                         padding: EdgeInsets.zero,
                                         constraints: const BoxConstraints(),
@@ -526,7 +517,6 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
             ),
           ),
         ),
-        bottomNavigationBar: const AppBottomNavBar(currentIndex: 1),
       ),
     );
   }

@@ -1,11 +1,10 @@
 import 'dart:io';
-import 'dart:ui'; // Đã thêm import này để dùng ImageFilter cho hiệu ứng Blur
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../states/add_cafe_state.dart';
 import '../../widgets/step_flow_header.dart';
-import '../../widgets/app_bottom_nav_bar.dart';
 import '../../widgets/flow_primary_button.dart';
 import 'step2_information_page.dart';
 
@@ -16,11 +15,7 @@ class Step1PicturePage extends StatefulWidget {
     this.onPickImage,
   });
 
-  /// Shared state across the whole 4-step flow.
   final AddCafeState state;
-
-  /// Called when the user taps the dropzone. If null, defaults to
-  /// opening the device gallery via `image_picker`.
   final VoidCallback? onPickImage;
 
   @override
@@ -70,8 +65,6 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
     if (picked == null) return;
 
     widget.state.setUploading(true, progress: 0);
-    // Simulated upload progress — replace with real upload progress
-    // callbacks if you're sending the file to a server.
     for (var i = 1; i <= 5; i++) {
       await Future.delayed(const Duration(milliseconds: 120));
       if (!mounted) return;
@@ -81,8 +74,6 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
     widget.state.setUploading(false, progress: 1);
   }
 
-  /// Long-press on an already-uploaded image asks for confirmation, then
-  /// clears it so the user can pick a different one.
   Future<void> _handleLongPressImage() async {
     if (widget.state.imagePath == null) return;
 
@@ -128,8 +119,6 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
   @override
   Widget build(BuildContext context) {
     final state = widget.state;
-
-    // Nút Continue sáng lên nếu đã có hình (khác null) và không đang upload.
     final bool canContinue = state.imagePath != null && !state.isUploading;
 
     return Theme(
@@ -151,7 +140,7 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
                   onSkip: _handleSkip,
                 ),
                 const SizedBox(height: 20),
-                Text(
+                const Text(
                   'Step 1',
                   style: TextStyle(
                     fontSize: 20,
@@ -177,6 +166,7 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
+                    padding: const EdgeInsets.only(bottom: 110),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -201,8 +191,7 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
                             child: state.imagePath == null
                                 ? Center(
                               child: Column(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
                                     Icons.cloud_upload_outlined,
@@ -242,28 +231,26 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
                                         child: Icon(
                                           Icons.image,
                                           size: 40,
-                                          color:
-                                          _textColor.withOpacity(0.3),
+                                          color: _textColor.withOpacity(0.3),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                                // Đã cập nhật lại nhãn thành blur (glassmorphism) và màu _textColor
                                 Positioned(
                                   right: 12,
                                   top: 12,
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(20),
                                     child: BackdropFilter(
-                                      filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0), // Mức độ làm mờ
+                                      filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 12,
                                           vertical: 6,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: _textColor.withOpacity(0.5), // Màu chủ đạo + độ trong suốt 50%
+                                          color: _textColor.withOpacity(0.5),
                                         ),
                                         child: const Row(
                                           children: [
@@ -306,8 +293,7 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
                               children: [
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Uploading...',
@@ -318,15 +304,12 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
                                       ),
                                       const SizedBox(height: 6),
                                       ClipRRect(
-                                        borderRadius:
-                                        BorderRadius.circular(4),
+                                        borderRadius: BorderRadius.circular(4),
                                         child: LinearProgressIndicator(
                                           value: state.uploadProgress,
                                           minHeight: 4,
-                                          backgroundColor:
-                                          const Color(0xFFE3DACB),
-                                          valueColor:
-                                          const AlwaysStoppedAnimation(
+                                          backgroundColor: const Color(0xFFE3DACB),
+                                          valueColor: const AlwaysStoppedAnimation(
                                             Color(0xFF8A6A50),
                                           ),
                                         ),
@@ -335,31 +318,26 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                Icon(Icons.pause_circle_outline,
-                                    color: _textColor.withOpacity(0.6)),
+                                Icon(Icons.pause_circle_outline, color: _textColor.withOpacity(0.6)),
                                 const SizedBox(width: 6),
-                                Icon(Icons.close,
-                                    color: _textColor.withOpacity(0.6),
-                                    size: 20),
+                                Icon(Icons.close, color: _textColor.withOpacity(0.6), size: 20),
                               ],
                             ),
                           ),
                         ],
                         const SizedBox(height: 20),
+                        FlowPrimaryButton(
+                          label: 'Continue',
+                          onPressed: canContinue ? _handleContinue : null,
+                        ),
                       ],
                     ),
                   ),
                 ),
-                FlowPrimaryButton(
-                  label: 'Continue',
-                  onPressed: canContinue ? _handleContinue : null,
-                ),
-                const SizedBox(height: 12),
               ],
             ),
           ),
         ),
-        bottomNavigationBar: const AppBottomNavBar(currentIndex: 1),
       ),
     );
   }
