@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../model/diary_note.dart';
+import '../models/diary_note.dart';
 
 class AddNoteDialog extends StatefulWidget {
   const AddNoteDialog({super.key});

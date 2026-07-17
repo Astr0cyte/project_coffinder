@@ -1,9 +1,10 @@
+import 'package:brewstreet_app/models/coffee_glossary_item.dart';
+import 'package:brewstreet_app/widgets/coffee_glossary_card.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:project_coffinder/widgets/coffee_glossary_card.dart';
-import 'package:project_coffinder/models/coffee_glossary_item.dart';
+
 
 class DiaryGlossaryPage extends StatefulWidget {
   DiaryGlossaryPage({super.key});

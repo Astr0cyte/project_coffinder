@@ -1,10 +1,10 @@
-import '../model/diary_note.dart';
+import '../../models/diary_note.dart';
 import '/widgets/add_note_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../widgets/diary_note_card.dart';
-import '../widgets/diary_scaffold.dart';
-import 'saved_shops.dart';
+import '../../widgets/diary_note_card.dart';
+import '../../widgets/diary_scaffold.dart';
+import '../saved_shops.dart';
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
