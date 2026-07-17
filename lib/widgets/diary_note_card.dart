@@ -5,6 +5,8 @@ class DiaryNoteCard extends StatelessWidget {
   final String body;
   final bool expanded;
   final VoidCallback onToggle;
+  final VoidCallback? onEdit;
+  
 
   const DiaryNoteCard({
     super.key,
@@ -12,7 +14,10 @@ class DiaryNoteCard extends StatelessWidget {
     required this.body,
     required this.expanded,
     required this.onToggle,
+    this.onEdit,
   });
+
+  bool get _isLongNote => body.length > 120 || body.split('\n').length > 4;
 
   @override
   Widget build(BuildContext context) {
@@ -36,28 +41,37 @@ class DiaryNoteCard extends StatelessWidget {
                   title,
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
+                    fontSize: 16,
                   ),
                 ),
               ),
-              IconButton(
-                icon: Icon(
-                  expanded
-                      ? Icons.keyboard_arrow_up
-                      : Icons.keyboard_arrow_down,
+
+              if (onEdit != null)
+                IconButton(
+                  icon: const Icon(Icons.edit_outlined),
+                  onPressed: onEdit,
                 ),
-                onPressed: onToggle,
-              ),
+
+              if (_isLongNote)
+                IconButton(
+                  icon: Icon(
+                    expanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                  ),
+                  onPressed: onToggle,
+                ),
             ],
           ),
 
           const SizedBox(height: 12),
 
-          Text(body),
-
-          if (expanded) ...[
-            const SizedBox(height: 10),
-            const Center(child: Text("•••")),
-          ],
+          Text(
+            body,
+            maxLines: _isLongNote && !expanded ? 3 : null,
+            overflow:
+                _isLongNote && !expanded ? TextOverflow.ellipsis : TextOverflow.visible,
+          ),
         ],
       ),
     );

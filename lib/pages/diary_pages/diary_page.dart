@@ -90,6 +90,19 @@ final List<DiaryNote> notes = [
                     note.expanded = !note.expanded;
                   });
                 },
+                onEdit: () async {
+                  final DiaryNote? editedNote = await showDialog<DiaryNote>(
+                    context: context,
+                    builder: (_) => AddNoteDialog(note: note),
+                  );
+
+                  if (editedNote != null) {
+                    setState(() {
+                      note.title = editedNote.title;
+                      note.body = editedNote.body;
+                    });
+                  }
+                },
               ),
             );
           }).toList(),
