@@ -1,3 +1,5 @@
+import 'package:brewstreet_app/pages/saved_shops.dart';
+import 'package:brewstreet_app/widgets/diary_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
@@ -14,6 +16,18 @@ class DiaryGlossaryPage extends StatefulWidget {
 
 class _DiaryGlossaryPageState extends State<DiaryGlossaryPage> {
 
+  late int selectedTab;
+  final int _glossaryTab = 0;
+  final int _savedShopsTab = 1;
+  final int _draftReviewsTab = 2;
+  final int _notesTab = 3;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedTab = _glossaryTab;
+  }
+
   Future<List<CoffeeGlossaryItem>> loadCoffeeData() async {
     // Read raw text from file
     final String jsonString = await rootBundle.loadString('assets/data/coffees.json');
@@ -27,6 +41,30 @@ class _DiaryGlossaryPageState extends State<DiaryGlossaryPage> {
 
   @override
   Widget build(BuildContext context) {
+    
+      // 1 - Navigation bar instance
+      const tabs = [
+        "Glossary",
+        "Saved Shops",
+        "Draft Reviews",
+        "Notes",
+      ];
+    
+    final bool showingSavedShops = selectedTab == _savedShopsTab;
+
+    return DiaryScaffold(
+      tabs: tabs,
+      selectedIndex: selectedTab,
+      onSelected: (index) {
+        setState(() {
+          selectedTab = index;
+        });
+      },
+      child: showingSavedShops ? const SavedShops() : buildGlossaryTab(),
+    );
+  }
+
+  Widget buildGlossaryTab() {
     return Scaffold(
         body: Container(
           decoration: const BoxDecoration(
@@ -35,7 +73,6 @@ class _DiaryGlossaryPageState extends State<DiaryGlossaryPage> {
 
           child: Stack(
 						children: [
-							// 1 - Navigation bar instance
 
 							// 2 - Descriptive phrase
 							Align(
