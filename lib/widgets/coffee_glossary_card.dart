@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:project_coffinder/models/coffee_glossary_item.dart';
+import '/models/coffee_glossary_item.dart';
 
 class CoffeeGlossaryCard extends StatefulWidget {
   final CoffeeGlossaryItem coffee;
 
-  CoffeeGlossaryCard({super.key, required this.coffee});
+  const CoffeeGlossaryCard({super.key, required this.coffee});
 
   @override
   State<CoffeeGlossaryCard> createState() => _CoffeeGlossaryCardState();
@@ -17,18 +17,18 @@ class _CoffeeGlossaryCardState extends State<CoffeeGlossaryCard> {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment(0, -0.35),
+      alignment: const Alignment(0, -0.35),
       child: Container(
         width: 348,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: Color.fromRGBO(250, 249, 239, 1.0),
+          color: const Color.fromRGBO(250, 249, 239, 1.0),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Color.fromRGBO(222, 212, 186, 1.0),
+            color: const Color.fromRGBO(222, 212, 186, 1.0),
             width: 1,
           ),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               offset: Offset(0, 2),
               color: Color.fromRGBO(204, 203, 199, 1.0),
@@ -38,7 +38,7 @@ class _CoffeeGlossaryCardState extends State<CoffeeGlossaryCard> {
         ),
 
         child: AnimatedSize(
-          duration: Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 300),
           alignment: Alignment.topCenter,
           curve: Curves.easeInOut,
           child: Column(
@@ -73,7 +73,7 @@ class _CoffeeGlossaryCardState extends State<CoffeeGlossaryCard> {
                           style: GoogleFonts.quicksand(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
-                            color: Color(0xFF7E654C),
+                            color: const Color(0xFF7E654C),
                           ),
                         ),
                       ),
@@ -111,7 +111,7 @@ class _CoffeeGlossaryCardState extends State<CoffeeGlossaryCard> {
                         widget.coffee.vietName,
                         style: GoogleFonts.playfairDisplay(
                           fontSize: 18,
-                          color: Color(0xFF402F11),
+                          color: const Color(0xFF402F11),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -136,7 +136,7 @@ class _CoffeeGlossaryCardState extends State<CoffeeGlossaryCard> {
                               widget.coffee.pronunciation,
                               style: GoogleFonts.quicksand(
                                 fontSize: 14,
-                                color: Color(0xFF402F11),
+                                color: const Color(0xFF402F11),
                               ),
                             ),
                             
@@ -158,7 +158,7 @@ class _CoffeeGlossaryCardState extends State<CoffeeGlossaryCard> {
                                     widget.coffee.description,
                                     style: GoogleFonts.quicksand(
                                       fontSize: 12,
-                                      color: Color(0xFF402F11),
+                                      color: const Color(0xFF402F11),
                                     ),
                                   ),
                                 ],

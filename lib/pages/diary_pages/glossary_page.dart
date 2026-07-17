@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:project_coffinder/widgets/coffee_glossary_card.dart';
-import 'package:project_coffinder/models/coffee_glossary_item.dart';
+import '/widgets/coffee_glossary_card.dart';
+import '/models/coffee_glossary_item.dart';
 
 class DiaryGlossaryPage extends StatefulWidget {
-  DiaryGlossaryPage({super.key});
+  const DiaryGlossaryPage({super.key});
 
 @override
   State<DiaryGlossaryPage> createState() => _DiaryGlossaryPageState();
@@ -39,18 +39,18 @@ class _DiaryGlossaryPageState extends State<DiaryGlossaryPage> {
 
 							// 2 - Descriptive phrase
 							Align(
-								alignment: Alignment(-0.18, -0.55),
+								alignment: const Alignment(-0.18, -0.55),
 								child: Text(
 									"Vietnamese pronunciation of popular coffees",
 									style: GoogleFonts.quicksand(
 										fontSize: 16,
-										color: Color.fromRGBO(126, 101, 76, 1.0),
+										color: const Color.fromRGBO(126, 101, 76, 1.0),
 									),
 								),
 							),
 
 							// 3 - Divider line
-							Align(
+							const Align(
 								alignment: Alignment(0, -0.50),
 								child: Divider(
 									color: Color.fromRGBO(239, 236, 220, 1.0),
