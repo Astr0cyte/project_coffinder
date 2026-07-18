@@ -5,6 +5,7 @@ import '../widgets/place_header.dart';
 import '../widgets/rating_cups.dart';
 import '../widgets/feature_chip_selector.dart';
 import '../widgets/experience_input.dart';
+import '../services/review_service.dart';
 
 class PostPage extends StatefulWidget {
   const PostPage({
@@ -12,10 +13,12 @@ class PostPage extends StatefulWidget {
     required this.placeName,
     required this.placeAddress,
     this.onSubmit,
+    required this.cafeId,
   });
 
   final String placeName;
   final String placeAddress;
+  final String cafeId;
 
   /// Called with the final [ReviewState] when the user taps "Post Review".
   final ValueChanged<ReviewState>? onSubmit;
@@ -49,9 +52,35 @@ class _PostPageState extends State<PostPage> {
     super.dispose();
   }
 
-  void _handlePostReview() {
-    widget.onSubmit?.call(_state);
-  }
+      Future<void> _handlePostReview() async {
+      try {
+        await ReviewService().postReview(
+          cafeId: widget.cafeId,
+          cafeName: widget.placeName,
+          review: _state,
+        );
+
+        widget.onSubmit?.call(_state);
+
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Review posted successfully!"),
+          ),
+        );
+
+        Navigator.pop(context);
+      } catch (e) {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed to post review: $e"),
+          ),
+        );
+      }
+    }
 
   @override
   Widget build(BuildContext context) {

@@ -17,9 +17,14 @@ class AmenityChip {
 }
 
 class CoffeeShopDetailScreen extends StatelessWidget {
-  const CoffeeShopDetailScreen({super.key, this.shopName = 'Phuc Long'});
+  const CoffeeShopDetailScreen({super.key, required this.cafeId,
+    required this.shopName,
+    required this.address});
 
+  final String cafeId;
   final String shopName;
+  final String address;
+
 
   // Figma frame was 402 x 874 (iPhone-sized). We scale every position
   // proportionally to whatever the real device width is.
@@ -389,7 +394,7 @@ class CoffeeShopDetailScreen extends StatelessWidget {
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_) => PostPage(placeName: shopName, placeAddress: ''),
+              builder: (_) => PostPage(cafeId: shop.id, placeName: shopName, placeAddress: ''),
             ),
           );
         },

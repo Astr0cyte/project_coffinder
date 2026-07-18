@@ -7,29 +7,34 @@ import 'coffee_shop_detail_screen.dart';
 import '../widgets/shop_card.dart';
 
 class ShopListItem {
+  final String id;
   final String name;
+  final String address;
   final Color bgColor;
   final bool favorited;
   final String distance;
   final List<String> amenities;
-  const ShopListItem(this.name, this.bgColor, this.favorited, this.distance, this.amenities);
 
-  /// Text/icon color that stays readable against [bgColor].
-  Color contentColor(BuildContext context) {
-    final brightness = ThemeData.estimateBrightnessForColor(bgColor);
-    return brightness == Brightness.dark ? AppColors.cream : AppColors.brownDark;
-  }
+  const ShopListItem(
+    this.id,
+    this.name,
+    this.address,
+    this.bgColor,
+    this.favorited,
+    this.distance,
+    this.amenities,
+  );
 }
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   static const shops = [
-    ShopListItem('Phuc Long', AppColors.brownMid, false, '350 m away', ['A/C', 'Wi-Fi', 'Quiet']),
-    ShopListItem('Lotus Leaf Cafe', AppColors.cardBg, false, '0.8 km away', ['Pets', 'Friendly']),
-    ShopListItem('Sunset Terrace Coffee', AppColors.brownDark, true, '1.2 km away', ['Quiet', 'Wi-Fi']),
-    ShopListItem('Ban Mai Coffee House', AppColors.tan, true, '1.5 km away', ['A/C', 'Friendly']),
-    ShopListItem('Old Quarter Coffee', AppColors.chipLight, false, '2.0 km away', ['Pets', 'Wi-Fi', 'Quiet']),
+    ShopListItem('1', 'Phuc Long', '123 Nguyen Hue Street, District 1, HCMC', AppColors.brownMid, false, '350 m away', ['A/C', 'Wi-Fi', 'Quiet']),
+    ShopListItem('2', 'Lotus Leaf Cafe', '456 Le Lai Street, District 1, HCMC', AppColors.cardBg, false, '0.8 km away', ['Pets', 'Friendly']),
+    ShopListItem('3', 'Sunset Terrace Coffee', '789 Tran Hung Dao Street, District 1, HCMC', AppColors.brownDark, true, '1.2 km away', ['Quiet', 'Wi-Fi']),
+    ShopListItem('4', 'Ban Mai Coffee House', '321 Pham Ngu Lao Street, District 1, HCMC', AppColors.tan, true, '1.5 km away', ['A/C', 'Friendly']),
+    ShopListItem('5', 'Old Quarter Coffee', '654 Bui Vien Street, District 1, HCMC', AppColors.chipLight, false, '2.0 km away', ['Pets', 'Wi-Fi', 'Quiet']),
   ];
 
   static const filterLabels = ['All', 'Quiet', 'Wi-Fi', 'A/C', 'Pets', 'Friendly'];
@@ -106,7 +111,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (_) => CoffeeShopDetailScreen(shopName: _visibleShops[i].name),
+                            builder: (_) => CoffeeShopDetailScreen(
+                              cafeId: _visibleShops[i].id,
+                              shopName: _visibleShops[i].name,
+                              address: _visibleShops[i].address,
+                            ),
                           ),
                         );
                       },
