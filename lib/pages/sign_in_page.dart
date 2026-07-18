@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../services/auth_service.dart';
 import '../states/sign_in_state.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/social_login_button.dart';
@@ -8,6 +10,7 @@ import '../widgets/top_gradient_backdrop.dart';
 import '../pages/login_page.dart';
 import 'register_page.dart';
 import 'forgot_password_page.dart';
+import 'home_screen.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({
@@ -19,7 +22,6 @@ class SignInPage extends StatefulWidget {
     this.onSignUp,
   });
 
-  /// Called with email/password when the user taps "Log In".
   final void Function(String email, String password)? onSubmit;
   final VoidCallback? onForgotPassword;
   final VoidCallback? onGoogleSignIn;
@@ -34,6 +36,7 @@ class _SignInPageState extends State<SignInPage> {
   late final SignInState _state;
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
+  bool _isLoading = false;
 
   static const _textColor = Color(0xFF3E2A20);
   static const _backgroundColor = Color(0xFFFAF6EE);
@@ -62,14 +65,47 @@ class _SignInPageState extends State<SignInPage> {
     super.dispose();
   }
 
-  void _handleLogIn() {
-    widget.onSubmit?.call(_state.email, _state.password);
+  Future<void> _handleLogIn() async {
+    if (widget.onSubmit != null) {
+      widget.onSubmit!(_state.email, _state.password);
+      return;
+    }
+    setState(() => _isLoading = true);
+    try {
+      await AuthService.instance.signIn(_state.email, _state.password);
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        (_) => false,
+      );
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_authErrorMessage(e.code))),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
-  /// Goes back to LoginPage. If SignInPage was pushed on top of it (the
-  /// normal case), a simple pop returns there. If for some reason there's
-  /// nothing to pop to (e.g. SignInPage was opened as the first route),
-  /// falls back to pushing LoginPage explicitly.
+  String _authErrorMessage(String code) {
+    switch (code) {
+      case 'user-not-found':
+        return 'No account found with this email.';
+      case 'wrong-password':
+      case 'invalid-credential':
+        return 'Incorrect email or password.';
+      case 'invalid-email':
+        return 'Please enter a valid email address.';
+      case 'user-disabled':
+        return 'This account has been disabled.';
+      case 'too-many-requests':
+        return 'Too many attempts. Please try again later.';
+      default:
+        return 'Sign in failed. Please try again.';
+    }
+  }
+
   void _handleBack(BuildContext context) {
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
@@ -128,8 +164,6 @@ class _SignInPageState extends State<SignInPage> {
                                       'assets/logo.png',
                                       fit: BoxFit.contain,
                                       errorBuilder: (context, error, stackTrace) {
-                                        // Falls back to the drawn mascot only if the
-                                        // asset fails to load.
                                         return const MascotAvatar(size: 72);
                                       },
                                     ),
@@ -208,12 +242,12 @@ class _SignInPageState extends State<SignInPage> {
                                   ),
                                   GestureDetector(
                                     onTap: widget.onForgotPassword ??
-                                            () => Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (_) =>
-                                            const ForgotPasswordPage(),
-                                          ),
-                                        ),
+                                        () => Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (_) =>
+                                                    const ForgotPasswordPage(),
+                                              ),
+                                            ),
                                     child: const Text(
                                       'Forgot Password ?',
                                       style: TextStyle(
@@ -229,34 +263,56 @@ class _SignInPageState extends State<SignInPage> {
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
-                                  onPressed: _state.canSubmit ? _handleLogIn : null,
+                                  onPressed: _state.canSubmit && !_isLoading
+                                      ? _handleLogIn
+                                      : null,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: _buttonColor,
-                                    disabledBackgroundColor: _buttonColor.withOpacity(0.5),
+                                    disabledBackgroundColor:
+                                        _buttonColor.withOpacity(0.5),
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(vertical: 16),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(28),
                                     ),
                                   ),
-                                  child: const Text(
-                                    'Log In',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFFDFD9B9)),
-                                  ),
+                                  child: _isLoading
+                                      ? const SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : const Text(
+                                          'Log In',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xFFDFD9B9),
+                                          ),
+                                        ),
                                 ),
                               ),
                               const SizedBox(height: 20),
                               Row(
                                 children: [
-                                  Expanded(child: Divider(color: _textColor.withOpacity(0.15))),
+                                  Expanded(
+                                      child: Divider(
+                                          color: _textColor.withOpacity(0.15))),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                                    padding:
+                                        const EdgeInsets.symmetric(horizontal: 12),
                                     child: Text(
                                       'Or',
-                                      style: TextStyle(color: _textColor.withOpacity(0.5)),
+                                      style: TextStyle(
+                                          color: _textColor.withOpacity(0.5)),
                                     ),
                                   ),
-                                  Expanded(child: Divider(color: _textColor.withOpacity(0.15))),
+                                  Expanded(
+                                      child: Divider(
+                                          color: _textColor.withOpacity(0.15))),
                                 ],
                               ),
                               const SizedBox(height: 20),
@@ -268,7 +324,8 @@ class _SignInPageState extends State<SignInPage> {
                               const SizedBox(height: 12),
                               SocialLoginButton(
                                 label: 'Continue with Facebook',
-                                icon: const Icon(Icons.facebook, color: Color(0xFF1877F2), size: 22),
+                                icon: const Icon(Icons.facebook,
+                                    color: Color(0xFF1877F2), size: 22),
                                 onPressed: widget.onFacebookSignIn ?? () {},
                               ),
                               const SizedBox(height: 28),
@@ -286,12 +343,12 @@ class _SignInPageState extends State<SignInPage> {
                                     ),
                                     GestureDetector(
                                       onTap: widget.onSignUp ??
-                                              () => Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (_) =>
-                                              const RegisterPage(),
-                                            ),
-                                          ),
+                                          () => Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (_) =>
+                                                      const RegisterPage(),
+                                                ),
+                                              ),
                                       child: const Text(
                                         'Sign Up',
                                         style: TextStyle(

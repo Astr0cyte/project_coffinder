@@ -2,16 +2,42 @@ import 'home_screen.dart';
 import 'sign_in_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../services/auth_service.dart';
 
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  bool _guestLoading = false;
+
+  Future<void> _continueAsGuest() async {
+    setState(() => _guestLoading = true);
+    try {
+      await AuthService.instance.signInAsGuest();
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        (_) => false,
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not continue as guest. Please try again.')),
+      );
+    } finally {
+      if (mounted) setState(() => _guestLoading = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Container(
+    return Scaffold(
+      body: Container(
           decoration: const BoxDecoration(
             color: Color.fromRGBO(250, 249, 244, 1.0),
           ),
@@ -112,31 +138,23 @@ class LoginPage extends StatelessWidget {
                     backgroundColor: Color.fromRGBO(126, 101, 76, 1.0),
                     foregroundColor: Color.fromRGBO(223, 217, 185, 1.0),
                   ),
-                  onPressed: () {
-                    // Navigate to the home page.
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const HomeScreen(),
-                      ),
-                    );
-                  },
-                  child: IconButton(
-                    icon: Text(
-                      "Continue as guest",
-                      style: GoogleFonts.questrial(
-                        fontSize: 18,
-                        color: Color.fromRGBO(223, 217, 185, 1.0),
-                      ),
-                    ),
-                    onPressed: () {
-                      // Navigate to the home page.
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const HomeScreen(),
+                  onPressed: _guestLoading ? null : _continueAsGuest,
+                  child: _guestLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Color.fromRGBO(223, 217, 185, 1.0),
+                          ),
+                        )
+                      : Text(
+                          "Continue as guest",
+                          style: GoogleFonts.questrial(
+                            fontSize: 18,
+                            color: Color.fromRGBO(223, 217, 185, 1.0),
+                          ),
                         ),
-                      );
-                    },
-                  ),
                 ),
               ),
 
@@ -177,7 +195,6 @@ class LoginPage extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 }

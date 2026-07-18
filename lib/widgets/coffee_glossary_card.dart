@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:project_coffinder/models/coffee_glossary_item.dart';
+import '/models/coffee_glossary_item.dart';
 
 class CoffeeGlossaryCard extends StatefulWidget {
   final CoffeeGlossaryItem coffee;

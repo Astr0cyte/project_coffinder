@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "32669944636",
+    "project_id": "brewstreet-279b5",
+    "storage_bucket": "brewstreet-279b5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:32669944636:android:ec576320ca3ecb5a59ec39",
+        "android_client_info": {
+          "package_name": "com.example.project_coffinder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSRuQ82_zaX_NSI2Tdb4Ab8a_vUn9QZ2k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

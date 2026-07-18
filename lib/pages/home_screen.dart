@@ -1,11 +1,16 @@
+import 'package:brewstreet_app/pages/login_page.dart';
+
 import 'diary_page.dart';
 import 'add_cafe/step1_picture_page.dart';
 import '../states/add_cafe_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 import 'coffee_shop_detail_screen.dart';
 import 'profile_page.dart';
+import 'sign_in_page.dart';
+import 'register_page.dart';
 import '../widgets/shop_card.dart';
 
 class ShopListItem {
@@ -136,7 +141,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // --- Header: profile row + brand title -----------------------------------
   Widget _header(BuildContext context, double s) {
-    const userName = 'Ashneil Dass';
+    final user = FirebaseAuth.instance.currentUser;
+    final isGuest = user == null || user.isAnonymous;
     return Padding(
       padding: EdgeInsets.fromLTRB(22 * s, 20 * s, 22 * s, 4 * s),
       child: Column(
@@ -152,42 +158,61 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Icon(Icons.coffee, size: 22 * s, color: AppColors.brownDark),
               ),
               SizedBox(width: 12 * s),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Hello,',
-                      style: GoogleFonts.inter(fontSize: 14 * s, color: AppColors.brownMid),
-                    ),
-                    Text(
-                      userName,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
-                        fontSize: 17 * s,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.brownDark,
+              if (isGuest) ...[
+                const Spacer(),
+                _authButton(
+                  label: 'Login',
+                  filled: false,
+                  scale: s,
+                  onTap: () => _openAuthPage(const SignInPage()),
+                ),
+                SizedBox(width: 8 * s),
+                _authButton(
+                  label: 'Sign up',
+                  filled: true,
+                  scale: s,
+                  onTap: () => _openAuthPage(const RegisterPage()),
+                ),
+              ] else ...[
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Hello,',
+                        style: GoogleFonts.inter(fontSize: 14 * s, color: AppColors.brownMid),
                       ),
-                    ),
-                  ],
+                      Text(
+                        (user.displayName?.trim().isNotEmpty ?? false)
+                            ? user.displayName!
+                            : 'there',
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          fontSize: 17 * s,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.brownDark,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(width: 8 * s),
-              GestureDetector(
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Notifications tapped')),
-                  );
-                },
-                child: Container(
-                  width: 44 * s,
-                  height: 44 * s,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(color: AppColors.chipLight, shape: BoxShape.circle),
-                  child: Icon(Icons.notifications_none, size: 20 * s, color: AppColors.brownDark),
+                SizedBox(width: 8 * s),
+                GestureDetector(
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Notifications tapped')),
+                    );
+                  },
+                  child: Container(
+                    width: 44 * s,
+                    height: 44 * s,
+                    alignment: Alignment.center,
+                    decoration: const BoxDecoration(color: AppColors.chipLight, shape: BoxShape.circle),
+                    child: Icon(Icons.notifications_none, size: 20 * s, color: AppColors.brownDark),
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
           SizedBox(height: 4 * s),
@@ -206,6 +231,41 @@ class _HomeScreenState extends State<HomeScreen> {
 
   
   
+
+  Future<void> _openAuthPage(Widget page) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => page),
+    );
+    // Refresh the header in case the user signed in / registered.
+    if (mounted) setState(() {});
+  }
+
+  Widget _authButton({
+    required String label,
+    required bool filled,
+    required double scale,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 9 * scale),
+        decoration: BoxDecoration(
+          color: filled ? AppColors.brownDark : Colors.transparent,
+          borderRadius: BorderRadius.circular(20 * scale),
+          border: Border.all(color: AppColors.brownDark, width: 1),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.inter(
+            fontSize: 13 * scale,
+            fontWeight: FontWeight.w600,
+            color: filled ? AppColors.cream : AppColors.brownDark,
+          ),
+        ),
+      ),
+    );
+  }
 
   // --- Filter chips (search icon leads the row) -----------------------------
   Widget _filterChips(double s) {

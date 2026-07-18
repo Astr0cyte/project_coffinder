@@ -1,9 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../services/auth_service.dart';
 import '../states/register_state.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/mascot_avatar.dart';
 import '../widgets/top_gradient_backdrop.dart';
+import 'home_screen.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({
@@ -12,7 +15,6 @@ class RegisterPage extends StatefulWidget {
     this.onLogIn,
   });
 
-  /// Called with the completed [RegisterState] when the user taps "Register".
   final void Function(RegisterState state)? onSubmit;
   final VoidCallback? onLogIn;
 
@@ -28,6 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
   late final TextEditingController _dobController;
   late final TextEditingController _phoneController;
   late final TextEditingController _passwordController;
+  bool _isLoading = false;
 
   static const _textColor = Color(0xFF3E2A20);
   static const _backgroundColor = Color(0xFFFAF6EE);
@@ -84,12 +87,50 @@ class _RegisterPageState extends State<RegisterPage> {
     if (picked != null) {
       _state.setDateOfBirth(picked);
       _dobController.text =
-      '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
+          '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
     }
   }
 
-  void _handleRegister() {
-    widget.onSubmit?.call(_state);
+  Future<void> _handleRegister() async {
+    if (widget.onSubmit != null) {
+      widget.onSubmit!(_state);
+      return;
+    }
+    setState(() => _isLoading = true);
+    try {
+      await AuthService.instance.register(
+        email: _state.email,
+        password: _state.password,
+        displayName: '${_state.firstName} ${_state.lastName}',
+      );
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        (_) => false,
+      );
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_authErrorMessage(e.code))),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  String _authErrorMessage(String code) {
+    switch (code) {
+      case 'email-already-in-use':
+        return 'An account already exists with this email.';
+      case 'invalid-email':
+        return 'Please enter a valid email address.';
+      case 'weak-password':
+        return 'Password must be at least 6 characters.';
+      case 'operation-not-allowed':
+        return 'Email/password sign-up is not enabled.';
+      default:
+        return 'Registration failed. Please try again.';
+    }
   }
 
   @override
@@ -116,7 +157,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     return SingleChildScrollView(
                       child: ConstrainedBox(
                         constraints:
-                        BoxConstraints(minHeight: constraints.maxHeight),
+                            BoxConstraints(minHeight: constraints.maxHeight),
                         child: IntrinsicHeight(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -141,8 +182,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                       'assets/logo.png',
                                       fit: BoxFit.contain,
                                       errorBuilder: (context, error, stackTrace) {
-                                        // Falls back to the drawn mascot only if
-                                        // the asset fails to load.
                                         return const MascotAvatar(size: 72);
                                       },
                                     ),
@@ -199,10 +238,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 controller: _phoneController,
                                 flagEmoji: _state.countryFlagEmoji,
                                 dialCode: _state.countryDialCode,
-                                onCountryTap: () {
-                                  // Hook up a real country picker here if needed;
-                                  // kept minimal since it's outside this form's scope.
-                                },
+                                onCountryTap: () {},
                               ),
                               const SizedBox(height: 12),
                               AuthTextField(
@@ -223,13 +259,16 @@ class _RegisterPageState extends State<RegisterPage> {
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
-                                  onPressed: _state.canSubmit ? _handleRegister : null,
+                                  onPressed: _state.canSubmit && !_isLoading
+                                      ? _handleRegister
+                                      : null,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: _buttonColor,
                                     disabledBackgroundColor:
-                                    _buttonColor.withOpacity(0.5),
+                                        _buttonColor.withOpacity(0.5),
                                     foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 16),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(14),
                                       side: const BorderSide(
@@ -238,13 +277,22 @@ class _RegisterPageState extends State<RegisterPage> {
                                       ),
                                     ),
                                   ),
-                                  child: const Text(
-                                    'Register',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
+                                  child: _isLoading
+                                      ? const SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : const Text(
+                                          'Register',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
                                 ),
                               ),
                               const SizedBox(height: 20),
@@ -261,7 +309,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     ),
                                     GestureDetector(
                                       onTap: widget.onLogIn ??
-                                              () => _handleBack(context),
+                                          () => _handleBack(context),
                                       child: const Text(
                                         'Log in',
                                         style: TextStyle(
@@ -315,9 +363,6 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 }
 
-/// Country-code + phone number row: a small flag/dial-code pill on the
-/// left, and a regular phone number field on the right — matches the
-/// "🇺🇸 (454) 726-0592" row in the mockup.
 class _PhoneField extends StatelessWidget {
   const _PhoneField({
     required this.controller,
