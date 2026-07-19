@@ -1,26 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../pages/app_colors.dart';
-import '../pages/home_screen.dart' show ShopListItem;
 
 /// Reusable coffee-shop card, used by HomeScreen's shop list and by
 /// SavedShops (the Diary page's "Saved Shops" tab).
 class ShopCard extends StatelessWidget {
-  final ShopListItem shop;
+  final String shopName;
+  final String imageUrl;
+  final double rating;
+  final List<String> tags;
   final double scale;
   final VoidCallback? onTap;
 
   const ShopCard({
     super.key,
-    required this.shop,
-    this.scale = 1.0,
+    required this.shopName,
+    required this.imageUrl,
+    required this.rating,
+    required this.tags,
+    this.scale = 1,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final s = scale;
-    final contentColor = shop.contentColor(context);
+    final contentColor = AppColors.brownDark;
     final isDarkCard = contentColor == AppColors.cream;
 
     return GestureDetector(
@@ -41,7 +46,7 @@ class ShopCard extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Container(color: shop.bgColor),
+            Container(color: AppColors.cream),
             Positioned(
               right: 10 * s,
               top: 10 * s,
@@ -50,7 +55,7 @@ class ShopCard extends StatelessWidget {
                 height: 27 * s,
                 decoration: const BoxDecoration(color: AppColors.gold, shape: BoxShape.circle),
                 child: Icon(
-                  shop.favorited ? Icons.favorite : Icons.favorite_border,
+                  Icons.favorite,
                   size: 15 * s,
                   color: AppColors.brownDark,
                 ),
@@ -72,7 +77,7 @@ class ShopCard extends StatelessWidget {
                     RichText(
                       text: TextSpan(children: [
                         TextSpan(
-                          text: shop.name,
+                          text: shopName,
                           style: GoogleFonts.playfairDisplay(
                             fontSize: 23 * s,
                             fontWeight: FontWeight.w600,
@@ -80,7 +85,7 @@ class ShopCard extends StatelessWidget {
                           ),
                         ),
                         TextSpan(
-                          text: '  ·  ${shop.distance}',
+                          text: ' ${rating.toStringAsFixed(1)} ★',
                           style: GoogleFonts.inter(
                             fontSize: 12 * s,
                             color: contentColor.withOpacity(0.75),
@@ -92,7 +97,7 @@ class ShopCard extends StatelessWidget {
                     Wrap(
                       spacing: 6 * s,
                       runSpacing: 6 * s,
-                      children: shop.amenities
+                      children: tags
                           .map((label) => Container(
                                 padding: EdgeInsets.symmetric(horizontal: 9 * s, vertical: 4 * s),
                                 decoration: BoxDecoration(
