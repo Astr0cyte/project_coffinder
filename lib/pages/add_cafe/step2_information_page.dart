@@ -109,7 +109,7 @@ class _Step2InformationPageState extends State<Step2InformationPage> {
                 ),
                 const SizedBox(height: 30),
                 Text(
-                  'Address, Time, status',
+                  'Address, opening hours, etc',
                   style: GoogleFonts.quicksand(
                     fontSize: 16,
                     color: _textColor.withOpacity(0.8),

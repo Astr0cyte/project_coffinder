@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Colors pulled directly from the Figma design (BrewStreet / Phuc Long).
+/// Colors pulled directly from the Figma design.
 class AppColors {
   static const cream = Color(0xFFFAF9F4);
   static const gold = Color(0xFFDFD9B9);

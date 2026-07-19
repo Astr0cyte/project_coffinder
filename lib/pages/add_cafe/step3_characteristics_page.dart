@@ -223,7 +223,7 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  "Cafe's characteristics",
+                  "Cafe characteristics",
                   style: GoogleFonts.playfairDisplay(
                     fontSize: 40,
                     fontWeight: FontWeight.w600,
@@ -232,7 +232,7 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                 ),
                 const SizedBox(height: 30),
                 Text(
-                  'Vibe, features, and best sellers',
+                  'Share details about the vibe, features, and best sellers',
                   style: GoogleFonts.quicksand(
                     fontSize: 16,
                     color: _textColor.withOpacity(0.8),
@@ -404,7 +404,7 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
 
                         const SizedBox(height: 28),
                         Text(
-                          'Signature drink',
+                          'Signature beverage',
                           style: GoogleFonts.quicksand(
                             fontSize: 15,
                             fontWeight: FontWeight.w700,

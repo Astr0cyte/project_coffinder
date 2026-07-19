@@ -222,8 +222,8 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
                                   const SizedBox(height: 2),
                                   Text(
                                     'Support JPG, PNG ...',
-                                    style: TextStyle(
-                                      fontSize: 14,
+                                    style: GoogleFonts.quicksand(
+                                      fontSize: 12,
                                       color: _textColor.withOpacity(0.6),
                                     ),
                                   ),

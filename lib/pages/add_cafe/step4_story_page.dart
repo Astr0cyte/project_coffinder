@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:brewstreet_app/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../states/add_cafe_state.dart';
@@ -29,9 +30,10 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
   // Khai báo ScrollController cho TỔNG THỂ toàn bộ trang
   final ScrollController _scrollController = ScrollController();
 
-  static const _textColor = Color(0xFF7E654C);
+  static const _textColor = AppColors.brownMid;
+  static const _textTitleColor = AppColors.brownTitle;
   static const _backgroundColor = Color(0xFFFAF9F4);
-  static const _cardColor = Color(0xFF8A6A50);
+  static const _cardColor = AppColors.brownMid;
 
   @override
   void initState() {
@@ -99,25 +101,26 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
                       const SizedBox(height: 20),
                       Text(
                         'Step 4',
-                        style: TextStyle(
+                        style: GoogleFonts.playfairDisplay(
                           fontSize: 20,
                           fontWeight: FontWeight.w500,
                           color: _textColor,
                         ),
                       ),
                       const SizedBox(height: 5),
-                      const Text(
+                      Text(
                         'Story',
-                        style: TextStyle(
+                        style: GoogleFonts.playfairDisplay(
                           fontSize: 45,
-                          fontWeight: FontWeight.w500,
-                          color: _textColor,
+                          fontWeight: FontWeight.w600,
+                          color: _textTitleColor,
                         ),
                       ),
+                      const SizedBox(height: 30),
                       Text(
-                        'What makes your coffee shop special?',
-                        style: TextStyle(
-                          fontSize: 18,
+                        'What makes the coffee shop special?',
+                        style: GoogleFonts.quicksand(
+                          fontSize: 16,
                           color: _textColor.withOpacity(0.8),
                         ),
                       ),
@@ -143,21 +146,21 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
                                     maxLength}) =>
                               null,
                               style: const TextStyle(
-                                fontSize: 15,
+                                fontSize: 14,
                                 color: _textColor,
                               ),
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: 'Write your ideas here ...',
-                                hintStyle: TextStyle(
+                                hintStyle: GoogleFonts.quicksand(
                                   color: _textColor.withOpacity(0.4),
                                 ),
                               ),
                             ),
                             Text(
                               '${_storyController.text.length}/$_maxStoryLength',
-                              style: TextStyle(
-                                fontSize: 12,
+                              style: GoogleFonts.quicksand(
+                                fontSize: 10,
                                 color: _textColor.withOpacity(0.5),
                               ),
                             ),
@@ -166,10 +169,10 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
                       ),
                       const SizedBox(height: 28),
 
-                      const Text(
+                      Text(
                         'Preview',
-                        style: TextStyle(
-                          fontSize: 22,
+                        style: GoogleFonts.quicksand(
+                          fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: _textColor,
                         ),
@@ -184,7 +187,7 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
                           color: const Color(0xFFF2EFDE),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: const Color(0xFFC9B892),
+                            color: const Color.fromARGB(255, 165, 137, 109),
                             width: 1.5,
                             style: BorderStyle.solid,
                           ),
@@ -235,15 +238,15 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: const Row(
+                                child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.star,
+                                    const Icon(Icons.star,
                                         size: 14, color: Color(0xFFF5B301)),
-                                    SizedBox(width: 4),
+                                    const SizedBox(width: 4),
                                     Text(
                                       '4.8',
-                                      style: TextStyle(
+                                      style: GoogleFonts.quicksand(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
                                         color: _textColor,
@@ -267,9 +270,9 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
                                     displayName.isEmpty
                                         ? 'Your cafe name'
                                         : displayName,
-                                    style: const TextStyle(
+                                    style: GoogleFonts.playfairDisplay(
                                       fontSize: 22,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                     ),
                                     maxLines: 2,
@@ -282,7 +285,7 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
                                         ? 'Area · Features'
                                         : state.area)
                                         : '350 m away · $tagsLabel',
-                                    style: TextStyle(
+                                    style: GoogleFonts.quicksand(
                                       fontSize: 14,
                                       color: Colors.white.withOpacity(0.9),
                                     ),
