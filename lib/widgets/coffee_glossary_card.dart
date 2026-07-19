@@ -1,3 +1,4 @@
+import 'package:brewstreet_app/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '/models/coffee_glossary_item.dart';
@@ -22,10 +23,10 @@ class _CoffeeGlossaryCardState extends State<CoffeeGlossaryCard> {
         width: double.infinity,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: const Color.fromRGBO(250, 249, 239, 1.0),
+          color: AppColors.defaultCard,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: const Color.fromRGBO(222, 212, 186, 1.0),
+            color: AppColors.defaultCardBorder,
             width: 1,
           ),
           boxShadow: const [

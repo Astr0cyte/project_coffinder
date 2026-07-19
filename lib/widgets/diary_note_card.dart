@@ -1,4 +1,6 @@
+import 'package:brewstreet_app/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class DiaryNoteCard extends StatelessWidget {
   final String title;
@@ -20,10 +22,10 @@ class DiaryNoteCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xffF7F2E8),
+        color: AppColors.defaultCard,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xffDCCFB8),
+          color: AppColors.defaultCardBorder,
         ),
       ),
       child: Column(
@@ -34,7 +36,8 @@ class DiaryNoteCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
+                  style: GoogleFonts.quicksand(
+                    color: AppColors.brownMid,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -52,7 +55,13 @@ class DiaryNoteCard extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          Text(body),
+          Text(
+            body,
+            style: GoogleFonts.quicksand(
+              color: AppColors.brownMid,
+              fontWeight: FontWeight.w500
+            ),
+          ),
 
           if (expanded) ...[
             const SizedBox(height: 10),

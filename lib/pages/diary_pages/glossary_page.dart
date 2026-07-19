@@ -1,3 +1,4 @@
+import 'package:brewstreet_app/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
@@ -29,7 +30,7 @@ class _DiaryGlossaryPageState extends State<DiaryGlossaryPage> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Color.fromRGBO(250, 249, 244, 1.0),
+        color: AppColors.cream,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,7 +39,7 @@ class _DiaryGlossaryPageState extends State<DiaryGlossaryPage> {
           Text(
               "Vietnamese pronunciation of popular coffees",
               style: GoogleFonts.quicksand(
-                color: const Color.fromRGBO(126, 101, 76, 1.0),
+                color: AppColors.brownMid,
               ),
             ),
 
@@ -47,7 +48,7 @@ class _DiaryGlossaryPageState extends State<DiaryGlossaryPage> {
           const Align(
             alignment: Alignment(0, -0.50),
             child: Divider(
-              color: Color.fromRGBO(228, 225, 208, 1),
+              color: AppColors.gold,
               thickness: 1,
             ),
           ),
