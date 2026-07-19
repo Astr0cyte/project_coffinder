@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'login_page.dart';
 
 class SettingsPopup extends StatelessWidget {
   const SettingsPopup({super.key});
@@ -107,8 +109,14 @@ class SettingsPopup extends StatelessWidget {
                   color: const Color(0xFF7E654C),
                 ),
               ),
-              onTap: () {
-                Navigator.pop(context);
+              onTap: () async {
+                await FirebaseAuth.instance.signOut();
+                if (context.mounted) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => const LoginPage()),
+                    (_) => false,
+                  );
+                }
               },
             ),
           ],
