@@ -14,6 +14,8 @@ class ShopListItem {
   final bool favorited;
   final String distance;
   final List<String> amenities;
+  final String imageUrl;
+  final double rating;
 
   const ShopListItem(
     this.id,
@@ -22,8 +24,10 @@ class ShopListItem {
     this.bgColor,
     this.favorited,
     this.distance,
-    this.amenities,
-  );
+    this.amenities, {
+    this.imageUrl = '',
+    this.rating = 0.0,
+  });
 }
 
 class HomeScreen extends StatefulWidget {
@@ -106,7 +110,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemCount: _visibleShops.length,
                     separatorBuilder: (_, __) => SizedBox(height: 14 * scale),
                     itemBuilder: (context, i) => ShopCard(
-                      shop: _visibleShops[i],
+                      shopName: _visibleShops[i].name,
+                      imageUrl: _visibleShops[i].imageUrl,
+                      rating: _visibleShops[i].rating,
+                      tags: _visibleShops[i].amenities,
                       scale: scale,
                       onTap: () {
                         Navigator.of(context).push(

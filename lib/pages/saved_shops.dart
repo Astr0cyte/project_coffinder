@@ -46,11 +46,18 @@ class SavedShops extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 15),
                 child: ShopCard(
-                  shop: shop,
+                  shopName: shop.name,
+                  imageUrl: shop.imageUrl,
+                  rating: shop.rating,
+                  tags: shop.amenities,
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (_) => CoffeeShopDetailScreen(shopName: shop.name),
+                        builder: (_) => CoffeeShopDetailScreen(
+                          cafeId: shop.id,
+                          shopName: shop.name,
+                          address: shop.address,
+                        ),
                       ),
                     );
                   },

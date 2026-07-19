@@ -394,7 +394,7 @@ class CoffeeShopDetailScreen extends StatelessWidget {
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_) => PostPage(cafeId: shop.id, placeName: shopName, placeAddress: ''),
+              builder: (_) => PostPage(cafeId: shopName, placeName: shopName, placeAddress: ''),
             ),
           );
         },

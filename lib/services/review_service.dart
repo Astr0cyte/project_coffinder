@@ -33,7 +33,7 @@ class ReviewService {
       "created_at": FieldValue.serverTimestamp(),
 
       // Store selected features
-      "features": review.selectedFeatures,
+      "features": review.selectedFeatures.map((f) => f.label).toList(),
 
       // If you're using this field
       "draft_reviews": "",
