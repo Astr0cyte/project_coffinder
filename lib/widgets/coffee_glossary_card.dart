@@ -19,7 +19,7 @@ class _CoffeeGlossaryCardState extends State<CoffeeGlossaryCard> {
     return Align(
       alignment: const Alignment(0, -0.35),
       child: Container(
-        width: 348,
+        width: double.infinity,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: const Color.fromRGBO(250, 249, 239, 1.0),
