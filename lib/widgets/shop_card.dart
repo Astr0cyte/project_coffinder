@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../pages/app_colors.dart';
+import '../theme/app_colors.dart';
 import '../pages/home_screen.dart' show ShopListItem;
 
 /// Reusable coffee-shop card, used by HomeScreen's shop list and by

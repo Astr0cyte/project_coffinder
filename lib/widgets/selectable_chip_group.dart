@@ -1,4 +1,6 @@
+import 'package:brewstreet_app/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// A generic wrap of selectable pill-shaped chips. Unlike
 /// `FeatureChipSelector` (which is tied to the `PlaceFeature` enum for the
@@ -23,7 +25,7 @@ class SelectableChipGroup extends StatelessWidget {
 
   // Khai báo các màu đồng bộ với format cũ
   static const _textColor = Color(0xFF7E654C);
-  static const _unselectedBgColor = Color(0xFFF2EFDE);
+  static const _unselectedBgColor = AppColors.chipLight;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +49,7 @@ class SelectableChipGroup extends StatelessWidget {
               ),
               child: Text(
                 option,
-                style: TextStyle(
+                style: GoogleFonts.quicksand(
                   color: isSelected ? Colors.white : _textColor,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,

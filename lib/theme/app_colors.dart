@@ -10,5 +10,9 @@ class AppColors {
   static const tan = Color(0xFFDED4BA);
   static const cardBg = Color(0xFFF5F1DC);
   static const cardBorder = Color(0xFFDED4BA);
-  static const chipLight = Color(0xFFEFECDC);
+  static const chipLight = Color(0xFFECE4D5);
+  static const chipDark = Color(0xff4B3217);
 }
+
+
+

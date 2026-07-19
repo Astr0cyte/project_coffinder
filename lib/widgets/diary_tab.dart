@@ -1,3 +1,4 @@
+import 'package:brewstreet_app/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -25,19 +26,22 @@ class DiaryTab extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: selected
-              ? const Color(0xff4B3217)
-              : const Color(0xffECE4D5),
+              ? AppColors.chipDark
+              : AppColors.chipLight,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: const Color(0xffD8CCBA),
+            color: selected 
+              ? const Color(0xFF6E573E)
+              : const Color(0xffD8CCBA),
+              width: 1
           ),
         ),
         child: Text(
           text,
-          style: TextStyle(
-            color: selected ? Colors.white : const Color(0xff7A6755),
+          style: GoogleFonts.quicksand(
+            color: selected ? AppColors.cream : const Color(0xff7A6755),
             fontSize: 12,
-            fontWeight: GoogleFonts.quicksand().fontWeight,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ),

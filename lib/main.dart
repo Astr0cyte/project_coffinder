@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
+import 'theme/app_colors.dart';
 import 'pages/login_page.dart';
 
 void main() => runApp(const CafeApp());
