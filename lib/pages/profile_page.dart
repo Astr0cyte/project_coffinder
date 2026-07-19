@@ -1,507 +1,288 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../models/review_model.dart';
+import '../models/user_model.dart';
+import '../services/auth_service.dart';
+import '../services/follow_service.dart';
+import '../services/review_service.dart';
+import '../services/user_service.dart';
+import '../widgets/follow_button.dart';
+import '../widgets/profile_stat.dart';
+import '../widgets/review_list_item.dart';
 import 'settings_popup.dart';
 
+class ProfilePage extends StatefulWidget {
+  /// uid của profile đang xem. Null = đang xem profile của chính mình.
+  /// Khi mở profile người khác, gọi:
+  /// Navigator.push(context, MaterialPageRoute(builder: (_) => ProfilePage(userId: otherUid)));
+  final String? userId;
 
-class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key, this.userId});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  // Tăng biến này để ép FutureBuilder đếm lại followers sau khi follow/unfollow.
+  int _followRefreshTick = 0;
+
   @override
   Widget build(BuildContext context) {
+    final currentUser = AuthService.instance.currentUser;
+
+    // Chưa đăng nhập (hoặc đang ở chế độ khách) -> không có uid để load Firestore
+    if (currentUser == null) {
+      return const Scaffold(
+        backgroundColor: Color(0xFFFAF9F4),
+        body: Center(child: Text('Bạn chưa đăng nhập')),
+      );
+    }
+
+    // profileUid: uid của profile đang hiển thị.
+    // isOwnProfile: false thì mới cho hiện nút Follow (không tự follow bản thân).
+    final profileUid = widget.userId ?? currentUser.uid;
+    final isOwnProfile = profileUid == currentUser.uid;
+
     return Scaffold(
-      backgroundColor: Color(0xFFFAF9F4),
+      backgroundColor: const Color(0xFFFAF9F4),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back),
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            hoverColor: Colors.transparent,
-                            onPressed: () {
-                             Navigator.pop(context);
-                            },
-                        ),
-                        Spacer(),
-                        IconButton(
-                          icon: const Icon(Icons.settings_outlined),
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          hoverColor: Colors.transparent,
-                          color: const Color(0xFF402F11),
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (_) => const SettingsPopup(),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
+        child: StreamBuilder<UserModel>(
+          // Lắng nghe realtime document users/{uid} trên Firestore.
+          // Mỗi khi dữ liệu đổi (vd sau khi Settings cập nhật tên/ảnh),
+          // UI ở đây tự vẽ lại mà không cần setState thủ công.
+          stream: UserService.instance.streamUser(profileUid),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Lỗi tải hồ sơ: ${snapshot.error}'));
+            }
 
-                    Center(
-                      child: CircleAvatar(
-                        radius: 35,
-                        backgroundImage: AssetImage('assets/images/profile.jpg'),
-                      ),
-                    ),
+            final user = snapshot.data ?? UserModel.empty(profileUid);
 
-                          SizedBox(width: 16.0),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Center(
-                                child: Text(
-                                  'John Doe',
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'PlayfairDisplay',
-                                    color: Color(0xFF402F11),
-                                  ),
-                                ),
-                              ),
-                              Center(
-                                child: Text(
-                                  '@Username',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Quicksand',
-                                    color: Color(0xFF7E654C),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 4.0),
-                              Center(
-                                child: Text(
-                                  'Coffee app',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400,
-                                    fontFamily: 'Inter',
-                                    color: Color(0xFF7E654C),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+            // Nested StreamBuilder: lắng nghe toàn bộ review của profile đang xem.
+            // Tách riêng khỏi user data vì đây là 2 collection khác nhau.
+            return StreamBuilder<List<ReviewModel>>(
+              stream: ReviewService.instance.streamUserReviews(profileUid),
+              builder: (context, reviewSnapshot) {
+                final reviews = reviewSnapshot.data ?? [];
+                final pinned = reviews.where((r) => r.pinned).toList();
+                final history = reviews.where((r) => !r.pinned).toList();
 
-                          const SizedBox(height: 20.0),
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Column(
-                              children: [
-                                Text(
-                                  '42',
-                                style: GoogleFonts.playfairDisplay(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF402F11),
-                                ),
-                                ),
-                                Text(
-                                  'Posts',
-                                style: GoogleFonts.inter(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xFF7E654C),
-                                ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(width: 16.0),
-                            Column(
-                              children: [
-                                Text(
-                                  '128',
-                                style: GoogleFonts.playfairDisplay(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF402F11),
-                                ),
-                                ),
-                                Text(
-                                  'Followers',
-                                  style: GoogleFonts.inter(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xFF7E654C),
-                                ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(width: 16.0),
-                            Column(
-                              children: [
-                                Text(
-                                  '56',
-                                  style: GoogleFonts.playfairDisplay(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF402F11),
-                                ),
-                                ),
-                                Text(
-                                  'Following',
-                                  style: GoogleFonts.inter(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xFF7E654C),
-                                ),
-                                ),
-                              ],
-                            )
-                          ],
-                        )
-                      ],
-                ),
-
-                SizedBox(height: 20.0),
-
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Go to food page
-                    },
-                    child: Text(
-                      'Follow',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFFDED4BA),
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF402F11),
-                      padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                    ),
-                  ),
-            ),
-            SizedBox(height: 20.0),
-
-            Divider(
-              color: Color(0xFFDED4BA),
-              thickness: 1,
-                ),
-
-            const SizedBox(height: 5.0),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Favourite Coffee Shop',
-                style: GoogleFonts.playfairDisplay(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF402F11),
-                ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(12.0),
-              decoration: BoxDecoration(
-                color: const Color(0xFFDED4BA),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE8DFC8), // light beige
-                        border: Border.all(
-                          color: const Color(0xFFD6C7A8),
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.image_outlined,
-                          size: 28,
-                          color: Color(0xFF7E654C),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12.0),
-
-                  Expanded(
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
-                        // Name + Pinned badge
-                        Row(
-                          children: [
-                            Text(
-                              "L'Usine",
-                              style: GoogleFonts.inter(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF402F11),
-                              ),
-                            ),
-                            const Spacer(),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 3,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF7E654C),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                "Pinned",
-                                style: GoogleFonts.inter(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
+                        _buildHeader(
+                          context,
+                          user,
+                          postCount: reviews.length,
+                          profileUid: profileUid,
+                          isOwnProfile: isOwnProfile,
                         ),
-
-                        const SizedBox(height: 6),
-
-                        Row(
-                          children: const [
-                            Icon(Icons.coffee, size: 14, color: Color(0xFF7E654C)),
-                            SizedBox(width: 3),
-                            Icon(Icons.coffee, size: 14, color: Color(0xFF7E654C)),
-                            SizedBox(width: 3),
-                            Icon(Icons.coffee, size: 14, color: Color(0xFF7E654C)),
-                            SizedBox(width: 3),
-                            Icon(Icons.coffee, size: 14, color: Color(0xFF7E654C)),
-                            SizedBox(width: 3),
-                            Icon(Icons.coffee, size: 14, color: Color(0xFFB8A78A)),
-                          ],
-                        ),
-
-                        const SizedBox(height: 6),
-
-                        Text(
-                          "My top pick for pour-over and a quiet corner to work.",
-                          style: GoogleFonts.inter(
-                            fontSize: 10.5,
-                            color: const Color(0xFF7E654C),
+                        const SizedBox(height: 20.0),
+                        if (!isOwnProfile)
+                          FollowButton(
+                            currentUid: currentUser.uid,
+                            targetUid: profileUid,
+                            onChanged: () =>
+                                setState(() => _followRefreshTick++),
                           ),
-                        ),
+                        const SizedBox(height: 20.0),
+                        const Divider(color: Color(0xFFDED4BA), thickness: 1),
+                        const SizedBox(height: 5.0),
+
+                        _sectionTitle('Favourite Coffee Shop'),
+                        const SizedBox(height: 8),
+                        if (reviewSnapshot.connectionState ==
+                            ConnectionState.waiting)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            child: CircularProgressIndicator(),
+                          )
+                        else if (pinned.isEmpty)
+                          _emptyState('Chưa có quán cà phê yêu thích nào.')
+                        else
+                          ...pinned.map(
+                                (r) => Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: ReviewListItem(review: r),
+                            ),
+                          ),
+
+                        const SizedBox(height: 25),
+                        _sectionTitle('Post History'),
+                        const SizedBox(height: 12),
+                        if (reviewSnapshot.connectionState ==
+                            ConnectionState.waiting)
+                          const SizedBox.shrink()
+                        else if (history.isEmpty)
+                          _emptyState('Chưa có bài đăng nào.')
+                        else
+                          ...history.map(
+                                (r) => Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: ReviewListItem(review: r),
+                            ),
+                          ),
                       ],
                     ),
                   ),
-                  ],
-                  ),
-                  ),
-
-                  const SizedBox(height: 25),
-
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Post History",
-                      style: GoogleFonts.playfairDisplay(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF402F11),
-                      ),
-                    ),
-                  ),
-
-                  
-
-                  Container(
-  padding: const EdgeInsets.all(12),
-  decoration: BoxDecoration(
-    color: const Color(0xFFDED4BA),
-    borderRadius: BorderRadius.circular(8),
-  ),
-  child: Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-
-      // Image placeholder
-      Container(
-        width: 64,
-        height: 64,
-        decoration: BoxDecoration(
-          color: const Color(0xFFE8DFC8),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: const Color(0xFFD6C7A8),
-          ),
-        ),
-        child: const Icon(
-          Icons.image_outlined,
-          color: Color(0xFF7E654C),
+                );
+              },
+            );
+          },
         ),
       ),
+    );
+  }
 
-      const SizedBox(width: 12),
+  /// Text hiển thị khi 1 section chưa có dữ liệu (không phải lỗi, chỉ là rỗng).
+  Widget _emptyState(String message) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      alignment: Alignment.center,
+      child: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: GoogleFonts.inter(
+          fontSize: 12,
+          color: const Color(0xFF7E654C),
+        ),
+      ),
+    );
+  }
 
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildHeader(
+      BuildContext context,
+      UserModel user, {
+        required int postCount,
+        required String profileUid,
+        required bool isOwnProfile,
+      }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
           children: [
-            Text(
-              "L'Usine",
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.bold,
+            IconButton(
+              icon: const Icon(Icons.arrow_back),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              onPressed: () => Navigator.pop(context),
+            ),
+            const Spacer(),
+            // Chỉ chủ tài khoản mới thấy nút Settings của chính họ.
+            if (isOwnProfile)
+              IconButton(
+                icon: const Icon(Icons.settings_outlined),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                hoverColor: Colors.transparent,
                 color: const Color(0xFF402F11),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => const SettingsPopup(),
+                  );
+                },
               ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        Center(
+          child: CircleAvatar(
+            radius: 35,
+            backgroundColor: const Color(0xFFDED4BA),
+            backgroundImage: user.avatarUrl.isNotEmpty
+                ? NetworkImage(user.avatarUrl) as ImageProvider
+                : const AssetImage('assets/avatar.png'),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Center(
+          child: Text(
+            user.displayName,
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'PlayfairDisplay',
+              color: Color(0xFF402F11),
             ),
-
-            const SizedBox(height: 6),
-
-            Row(
-              children: const [
-                Icon(Icons.coffee, size: 14, color: Color(0xFF7E654C)),
-                SizedBox(width: 3),
-                Icon(Icons.coffee, size: 14, color: Color(0xFF7E654C)),
-                SizedBox(width: 3),
-                Icon(Icons.coffee, size: 14, color: Color(0xFF7E654C)),
-                SizedBox(width: 3),
-                Icon(Icons.coffee, size: 14, color: Color(0xFF7E654C)),
-                SizedBox(width: 3),
-                Icon(Icons.coffee, size: 14, color: Color(0xFFB8A78A)),
-              ],
+          ),
+        ),
+        Center(
+          child: Text(
+            user.email.isNotEmpty ? user.email : '@Username',
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              fontFamily: 'Quicksand',
+              color: Color(0xFF7E654C),
             ),
-
-            const SizedBox(height: 6),
-
-            Text(
-              "My top pick for pour-over and a quiet corner to work.",
-              style: GoogleFonts.inter(fontSize: 10.5),
+          ),
+        ),
+        const SizedBox(height: 4.0),
+        Center(
+          child: Text(
+            user.role.isNotEmpty ? user.role : 'Coffee app',
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              fontFamily: 'Inter',
+              color: Color(0xFF7E654C),
             ),
-
-            const SizedBox(height: 4),
-
-            Text(
-              "2 days ago",
-              style: GoogleFonts.inter(
-                fontSize: 8,
-                color: const Color(0xFF7E654C),
-              ),
+          ),
+        ),
+        const SizedBox(height: 20.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ProfileStat(value: '$postCount', label: 'Posts'),
+            const SizedBox(width: 16.0),
+            FutureBuilder<int>(
+              key: ValueKey('followers_${profileUid}_$_followRefreshTick'),
+              future: FollowService.instance.countFollowers(profileUid),
+              builder: (context, snap) {
+                return ProfileStat(
+                  value: '${snap.data ?? 0}',
+                  label: 'Followers',
+                );
+              },
+            ),
+            const SizedBox(width: 16.0),
+            // Đây là số liệu thật duy nhất có sẵn trong schema hiện tại.
+            ProfileStat(
+              value: '${user.favoriteCafeCount}',
+              label: 'Favourites',
             ),
           ],
         ),
+      ],
+    );
+  }
+
+  Widget _sectionTitle(String title) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: GoogleFonts.playfairDisplay(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: const Color(0xFF402F11),
+        ),
       ),
-    ],
-  ),
-),
-
-                  const SizedBox(height: 12),
-
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFDED4BA),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-
-                        // Image placeholder
-                        Container(
-                          width: 64,
-                          height: 64,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE8DFC8),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: const Color(0xFFD6C7A8),
-                            ),
-                          ),
-                          child: const Icon(
-                            Icons.image_outlined,
-                            color: Color(0xFF7E654C),
-                          ),
-                        ),
-
-                        const SizedBox(width: 12),
-
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-
-                              Text(
-                                "Workshop Coffee",
-                                style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF402F11),
-                                ),
-                              ),
-
-                              const SizedBox(height: 6),
-
-                              Row(
-                                children: const [
-                                  Icon(Icons.coffee,size:14,color:Color(0xFF7E654C)),
-                                  SizedBox(width:3),
-                                  Icon(Icons.coffee,size:14,color:Color(0xFF7E654C)),
-                                  SizedBox(width:3),
-                                  Icon(Icons.coffee,size:14,color:Color(0xFF7E654C)),
-                                  SizedBox(width:3),
-                                  Icon(Icons.coffee,size:14,color:Color(0xFF7E654C)),
-                                  SizedBox(width:3),
-                                  Icon(Icons.coffee,size:14,color:Color(0xFFB8A78A)),
-                                ],
-                              ),
-
-                              const SizedBox(height: 6),
-
-                              Text(
-                                "Great espresso and atmosphere.",
-                                style: GoogleFonts.inter(
-                                  fontSize: 10.5,
-                                  color: const Color(0xFF7E654C),
-                                ),
-                              ),
-
-                              const SizedBox(height: 4),
-
-                              Text(
-                                "5 days ago",
-                                style: GoogleFonts.inter(
-                                  fontSize: 8,
-                                  color: const Color(0xFF7E654C),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                  );
-                    }
-                  }
+    );
+  }
+}
