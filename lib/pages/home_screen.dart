@@ -1,4 +1,4 @@
-import 'diary_page.dart';
+import 'diary_pages/diary_page.dart';
 import 'add_cafe/step1_picture_page.dart';
 import '../states/add_cafe_state.dart';
 import 'package:flutter/material.dart';

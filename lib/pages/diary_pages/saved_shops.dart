@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'home_screen.dart';
-import 'coffee_shop_detail_screen.dart';
-import '../widgets/shop_card.dart';
+import '../home_screen.dart';
+import '../coffee_shop_detail_screen.dart';
+import '../../widgets/shop_card.dart';
 
 /// Shown inside DiaryPage when the "Saved Shops" tab is selected.
 /// Renders the user's favorited coffee shops as a list of ShopCards.

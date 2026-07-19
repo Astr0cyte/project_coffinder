@@ -1,3 +1,4 @@
+import 'package:brewstreet_app/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'diary_top_row.dart';
@@ -22,12 +23,12 @@ class DiaryScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF8F5EF),
+      backgroundColor: AppColors.cream,
       appBar: AppBar(
-        backgroundColor: const Color(0xffF8F5EF),
+        backgroundColor: AppColors.cream,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: AppColors.brownDark),
           onPressed: () => Navigator.pop(context),
         ),
       ),
