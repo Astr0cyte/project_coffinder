@@ -206,12 +206,13 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Row(
             children: [
-              Container(
-                width: 44 * s,
-                height: 44 * s,
-                alignment: Alignment.center,
-                decoration: const BoxDecoration(color: AppColors.chipLight, shape: BoxShape.circle),
-                child: Icon(Icons.coffee, size: 22 * s, color: AppColors.brownDark),
+              ClipOval(
+                child: Image.asset(
+                  'assets/logo.png',
+                  width: 44 * s,
+                  height: 44 * s,
+                  fit: BoxFit.cover,
+                ),
               ),
               SizedBox(width: 12 * s),
               if (isGuest) ...[
@@ -469,7 +470,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           MaterialPageRoute(builder: (_) => DiaryPage()),
                         );
                       }),
-                      _navIcon(Icons.history, onTap: () {}),
+                      _navIcon(Icons.location_on_outlined, onTap: () {}),
                       _navIcon(Icons.add, onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => Step1PicturePage(state: AddCafeState())),
                       )),

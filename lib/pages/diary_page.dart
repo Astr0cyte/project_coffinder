@@ -18,7 +18,7 @@ class _DiaryPageState extends State<DiaryPage> {
   static const int _glossaryTab = 0;
   static const int _savedShopsTab = 1;
 
-  int selectedTab = 3;
+  int selectedTab = 2;
 
 final List<DiaryNote> notes = [
   DiaryNote(
@@ -45,7 +45,6 @@ final List<DiaryNote> notes = [
   final tabs = const [
     "Glossary",
     "Saved Shops",
-    "Draft Reviews",
     "Notes",
   ];
 
