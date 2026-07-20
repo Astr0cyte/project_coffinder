@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 class AppColors {
   static const cream = Color(0xFFFAF9F4);
   static const gold = Color(0xFFDFD9B9);
+  static const defaultCard = Color(0xFFFAF9EF);
+  static const defaultCardBorder = Color(0xFFDED4BA);
   static const brownTitle = Color(0xFF33260E);
   static const brownDark = Color(0xFF402F11);
   static const brownMid = Color(0xFF7E654C);

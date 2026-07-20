@@ -1,3 +1,4 @@
+import 'package:brewstreet_app/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
@@ -29,31 +30,26 @@ class _DiaryGlossaryPageState extends State<DiaryGlossaryPage> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Color.fromRGBO(250, 249, 244, 1.0),
+        color: AppColors.cream,
       ),
-      child: Stack(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           // 2 - Descriptive phrase
-          Align(
-            alignment: const Alignment(-0.18, -0.55),
-            child: Text(
+          Text(
               "Vietnamese pronunciation of popular coffees",
               style: GoogleFonts.quicksand(
-                fontSize: 16,
-                color: const Color.fromRGBO(126, 101, 76, 1.0),
+                color: AppColors.brownMid,
               ),
             ),
-          ),
-          const SizedBox(height: 20),
+
+          // const SizedBox(height: 20),
           // 3 - Divider line
           const Align(
             alignment: Alignment(0, -0.50),
             child: Divider(
-              color: Color.fromRGBO(228, 225, 208, 1),
+              color: AppColors.gold,
               thickness: 1,
-              indent: 30,
-              endIndent: 30,
             ),
           ),
 
@@ -77,8 +73,14 @@ class _DiaryGlossaryPageState extends State<DiaryGlossaryPage> {
                       itemBuilder: (context, idx) {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16),
-                          child: CoffeeGlossaryCard(
-                              coffee: coffeeGlossaryList[idx]),
+                          child: Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(
+                                  maxWidth: 600), // or 348 for mobile-centric
+                              child: CoffeeGlossaryCard(
+                                  coffee: coffeeGlossaryList[idx]),
+                            ),
+                          ),
                         );
                       });
                 }),
