@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../widgets/diary_note_card.dart';
 import '../widgets/diary_scaffold.dart';
 import 'saved_shops.dart';
+import 'diary_pages/glossary_page.dart';
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
@@ -14,6 +15,7 @@ class DiaryPage extends StatefulWidget {
 }
 
 class _DiaryPageState extends State<DiaryPage> {
+  static const int _glossaryTab = 0;
   static const int _savedShopsTab = 1;
 
   int selectedTab = 3;
@@ -49,8 +51,6 @@ final List<DiaryNote> notes = [
 
   @override
   Widget build(BuildContext context) {
-    final bool showingSavedShops = selectedTab == _savedShopsTab;
-
     return DiaryScaffold(
       tabs: tabs,
       selectedIndex: selectedTab,
@@ -59,7 +59,11 @@ final List<DiaryNote> notes = [
           selectedTab = index;
         });
       },
-      child: showingSavedShops ? const SavedShops() : _buildNotesTab(),
+      child: selectedTab == _glossaryTab
+          ? const DiaryGlossaryPage()
+          : selectedTab == _savedShopsTab
+              ? const SavedShops()
+              : _buildNotesTab(),
     );
   }
 

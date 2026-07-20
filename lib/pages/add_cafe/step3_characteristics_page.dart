@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../pages/app_colors.dart';
 import '../../states/add_cafe_state.dart';
 import '../../widgets/step_flow_header.dart';
-import '../../widgets/app_bottom_nav_bar.dart';
 import '../../widgets/flow_primary_button.dart';
+import '../../widgets/selectable_chip_group.dart';
 import 'step4_story_page.dart';
 
 class Step3CharacteristicsPage extends StatefulWidget {
@@ -28,8 +29,8 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
 
   final List<String> _customFeatures = [];
 
-  static const _textColor = Color(0xFF7E654C);
-  static const _backgroundColor = Color(0xFFFAF9F4);
+  static const _textColor = AppColors.brownMid;
+  static const _backgroundColor = AppColors.cream;
 
   @override
   void initState() {
@@ -45,9 +46,7 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
     super.dispose();
   }
 
-  // Hàm hiển thị Popup thêm Feature
-  void _showAddCustomItemDialog() {
-    const type = 'Feature';
+  void _showAddCustomFeatureDialog() {
     final TextEditingController textController = TextEditingController();
 
     showDialog(
@@ -56,15 +55,15 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
         return AlertDialog(
           backgroundColor: _backgroundColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Text(
-            'Add custom $type',
-            style: const TextStyle(color: _textColor, fontWeight: FontWeight.bold),
+          title: const Text(
+            'Add custom feature',
+            style: TextStyle(color: _textColor, fontWeight: FontWeight.bold),
           ),
           content: TextField(
             controller: textController,
             style: const TextStyle(color: _textColor),
             decoration: InputDecoration(
-              hintText: 'Enter new $type...',
+              hintText: 'Enter new feature...',
               hintStyle: TextStyle(color: _textColor.withOpacity(0.5)),
               enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: _textColor.withOpacity(0.3)),
@@ -77,14 +76,16 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel', style: TextStyle(color: _textColor.withOpacity(0.6))),
+              child: Text('Cancel',
+                  style: TextStyle(color: _textColor.withOpacity(0.6))),
             ),
             TextButton(
               onPressed: () {
                 final val = textController.text.trim();
                 if (val.isNotEmpty) {
                   setState(() {
-                    if (!_customFeatures.contains(val) && !_featureOptions.contains(val)) {
+                    if (!_customFeatures.contains(val) &&
+                        !_featureOptions.contains(val)) {
                       _customFeatures.add(val);
                       if (!widget.state.features.contains(val)) {
                         widget.state.toggleFeature(val);
@@ -94,7 +95,9 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                 }
                 Navigator.pop(context);
               },
-              child: const Text('Add', style: TextStyle(color: _textColor, fontWeight: FontWeight.bold)),
+              child: const Text('Add',
+                  style: TextStyle(
+                      color: _textColor, fontWeight: FontWeight.bold)),
             ),
           ],
         );
@@ -143,25 +146,26 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                 const SizedBox(height: 20),
                 Text(
                   'Step 3',
-                  style: TextStyle(
+                  style: GoogleFonts.playfairDisplay(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                     color: _textColor,
                   ),
                 ),
                 const SizedBox(height: 5),
-                const Text(
-                  "Cafe's characteristics",
-                  style: TextStyle(
-                    fontSize: 45,
-                    fontWeight: FontWeight.w500,
-                    color: _textColor,
+                Text(
+                  'Cafe characteristics',
+                  style: GoogleFonts.playfairDisplay(
+                    fontSize: 40,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF402F11),
                   ),
                 ),
+                const SizedBox(height: 30),
                 Text(
-                  'Features',
-                  style: TextStyle(
-                    fontSize: 18,
+                  'What features does this cafe offer?',
+                  style: GoogleFonts.quicksand(
+                    fontSize: 16,
                     color: _textColor.withOpacity(0.8),
                   ),
                 ),
@@ -173,8 +177,8 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                       children: [
                         const SizedBox(height: 24),
                         Text(
-                          'FEATURE',
-                          style: TextStyle(
+                          'Features',
+                          style: GoogleFonts.quicksand(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
                             color: _textColor.withOpacity(0.7),
@@ -182,50 +186,62 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: [
-                            ..._featureOptions.map((option) {
-                              final isSelected = state.features.contains(option);
-                              return GestureDetector(
-                                onTap: () => state.toggleFeature(option),
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 150),
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-                                  decoration: BoxDecoration(
-                                    color: isSelected ? _textColor : const Color(0xFFF2EFDE),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Text(
-                                    option,
-                                    style: TextStyle(
-                                      color: isSelected ? Colors.white : _textColor,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
+                        SelectableChipGroup(
+                          options: _featureOptions,
+                          selected: state.features,
+                          onToggle: state.toggleFeature,
+                          trailing: GestureDetector(
+                            onTap: _showAddCustomFeatureDialog,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 9),
+                              decoration: BoxDecoration(
+                                color: AppColors.chipLight,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                'More ...',
+                                style: GoogleFonts.quicksand(
+                                  color: _textColor.withOpacity(0.8),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
                                 ),
-                              );
-                            }),
-                            ..._customFeatures.map((feature) {
-                              final isSelected = state.features.contains(feature);
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (_customFeatures.isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: _customFeatures.map((feature) {
+                              final isSelected =
+                                  state.features.contains(feature);
                               return InputChip(
                                 label: Text(feature),
                                 labelStyle: TextStyle(
-                                  color: isSelected ? Colors.white : _textColor,
+                                  color:
+                                      isSelected ? Colors.white : _textColor,
                                   fontWeight: FontWeight.w500,
                                 ),
-                                backgroundColor: isSelected ? _textColor : Colors.transparent,
+                                backgroundColor: isSelected
+                                    ? _textColor
+                                    : Colors.transparent,
                                 selectedColor: _textColor,
-                                deleteIconColor: isSelected ? Colors.white70 : _textColor.withOpacity(0.6),
+                                deleteIconColor: isSelected
+                                    ? Colors.white70
+                                    : _textColor.withOpacity(0.6),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
                                   side: BorderSide(
-                                    color: isSelected ? _textColor : _textColor.withOpacity(0.3),
+                                    color: isSelected
+                                        ? _textColor
+                                        : _textColor.withOpacity(0.3),
                                   ),
                                 ),
-                                onSelected: (_) => state.toggleFeature(feature),
+                                onSelected: (_) =>
+                                    state.toggleFeature(feature),
                                 onDeleted: () {
                                   setState(() {
                                     _customFeatures.remove(feature);
@@ -235,28 +251,9 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                                   });
                                 },
                               );
-                            }),
-                            GestureDetector(
-                              onTap: () => _showAddCustomItemDialog(),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF2EFDE),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  'More ...',
-                                  style: TextStyle(
-                                    color: _textColor.withOpacity(0.8),
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
+                            }).toList(),
+                          ),
+                        ],
                         const SizedBox(height: 24),
                       ],
                     ),

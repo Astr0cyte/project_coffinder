@@ -325,7 +325,6 @@ import '../../services/auth_service.dart';
 import '../../services/cafe_service.dart';
 import '../../states/add_cafe_state.dart';
 import '../../widgets/step_flow_header.dart';
-import '../../widgets/app_bottom_nav_bar.dart';
 import '../../widgets/flow_primary_button.dart';
 import '../coffee_shop_detail_screen.dart';
 
@@ -499,25 +498,25 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
                       const SizedBox(height: 20),
                       Text(
                         'Step 4',
-                        style: TextStyle(
+                        style: GoogleFonts.playfairDisplay(
                           fontSize: 20,
                           fontWeight: FontWeight.w500,
                           color: _textColor,
                         ),
                       ),
                       const SizedBox(height: 5),
-                      const Text(
+                      Text(
                         'Story',
-                        style: TextStyle(
+                        style: GoogleFonts.playfairDisplay(
                           fontSize: 45,
-                          fontWeight: FontWeight.w500,
-                          color: _textColor,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF33260E),
                         ),
                       ),
                       Text(
-                        'What makes your coffee shop special?',
-                        style: TextStyle(
-                          fontSize: 18,
+                        'What makes the coffee shop special?',
+                        style: GoogleFonts.quicksand(
+                          fontSize: 16,
                           color: _textColor.withOpacity(0.8),
                         ),
                       ),
@@ -566,10 +565,10 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
                       ),
                       const SizedBox(height: 28),
 
-                      const Text(
+                      Text(
                         'Preview',
-                        style: TextStyle(
-                          fontSize: 22,
+                        style: GoogleFonts.quicksand(
+                          fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: _textColor,
                         ),

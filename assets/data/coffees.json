@@ -19,5 +19,26 @@
     "imagePath": "assets/coffee_images/salted_iced_coffee.png",
     "description": "Almost exclusively served iced, especially in the South where it is hotter. On rare occasions, it may be served hot. \nCà phê muối đá: Iced \nCà phê muối nóng: Hot",
     "pronunciation": "Pronunciation: Kah-Feh-Mwoy-ee"
+  },
+  {
+    "englishName": "Black \nIced Coffee",
+    "vietName": "Cà phê đen đá",
+    "imagePath": "assets/coffee_images/black_iced_coffee.png",
+    "description": "Typically served iced, but can be hot upon request. \nCà phê đen đá: Iced \nCà phê đen nóng: Hot",
+    "pronunciation": "Kah-Fey-Dehn-Nong"
+  },
+  {
+    "englishName": "Coconut \nIced Coffee",
+    "vietName": "Cà phê cốt dừa",
+    "imagePath": "assets/coffee_images/coconut_iced_coffee.png",
+    "description": "Almost exclusively served iced, especially in the South where it is hotter. On rare occasions, it may be served hot. \nCà phê muối đá: Iced \nCà phê muối nóng: Hot",
+    "pronunciation": "Kah-Fey-Cot-Dzua"
+  },
+  {
+    "englishName": "Vietnamese \nIced Latte",
+    "vietName": "Bạc xỉu đá",
+    "imagePath": "assets/coffee_images/iced_latte.png",
+    "description": "Bạc xỉu đá is a mild, milky drink with less coffee and more fresh milk. Compared to cà phê sữa đá, which has more coffee and condensed milk.",
+    "pronunciation": "Back-Sieu-Dah"
   }
 ]

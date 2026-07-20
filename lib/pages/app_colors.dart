@@ -11,4 +11,6 @@ class AppColors {
   static const cardBg = Color(0xFFF5F1DC);
   static const cardBorder = Color(0xFFDED4BA);
   static const chipLight = Color(0xFFEFECDC);
+  static const defaultCard = Color(0xFFFAF9EF);
+  static const defaultCardBorder = Color(0xFFDED4BA);
 }

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '/pages/app_colors.dart';
 import '/models/coffee_glossary_item.dart';
 
 class CoffeeGlossaryCard extends StatefulWidget {
   final CoffeeGlossaryItem coffee;
 
-  CoffeeGlossaryCard({super.key, required this.coffee});
+  const CoffeeGlossaryCard({super.key, required this.coffee});
 
   @override
   State<CoffeeGlossaryCard> createState() => _CoffeeGlossaryCardState();
@@ -17,18 +18,18 @@ class _CoffeeGlossaryCardState extends State<CoffeeGlossaryCard> {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment(0, -0.35),
+      alignment: const Alignment(0, -0.35),
       child: Container(
-        width: 348,
+        width: double.infinity,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: Color.fromRGBO(250, 249, 239, 1.0),
+          color: AppColors.defaultCard,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Color.fromRGBO(222, 212, 186, 1.0),
+            color: AppColors.defaultCardBorder,
             width: 1,
           ),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               offset: Offset(0, 2),
               color: Color.fromRGBO(204, 203, 199, 1.0),
@@ -36,9 +37,8 @@ class _CoffeeGlossaryCardState extends State<CoffeeGlossaryCard> {
             ),
           ],
         ),
-
         child: AnimatedSize(
-          duration: Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 300),
           alignment: Alignment.topCenter,
           curve: Curves.easeInOut,
           child: Column(
@@ -50,8 +50,6 @@ class _CoffeeGlossaryCardState extends State<CoffeeGlossaryCard> {
                     _isExpanded = !_isExpanded;
                   });
                 },
-
-                // Retracted section
                 child: Container(
                   height: 96,
                   color: Colors.transparent,
@@ -73,7 +71,7 @@ class _CoffeeGlossaryCardState extends State<CoffeeGlossaryCard> {
                           style: GoogleFonts.quicksand(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
-                            color: Color(0xFF7E654C),
+                            color: const Color(0xFF7E654C),
                           ),
                         ),
                       ),
@@ -90,9 +88,7 @@ class _CoffeeGlossaryCardState extends State<CoffeeGlossaryCard> {
                   ),
                 ),
               ),
-
-              // Expanded section
-              if (_isExpanded == true)
+              if (_isExpanded)
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
@@ -106,43 +102,33 @@ class _CoffeeGlossaryCardState extends State<CoffeeGlossaryCard> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Vietnamese name
                       Text(
                         widget.coffee.vietName,
                         style: GoogleFonts.playfairDisplay(
                           fontSize: 18,
-                          color: Color(0xFF402F11),
+                          color: const Color(0xFF402F11),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-
                       const SizedBox(height: 12),
-
-                      // Coloured inner box
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: const Color(0xFFF5F2E0),
-                          borderRadius: BorderRadius.circular(
-                            16,
-                          ), // Adjust this number for more or less rounding
+                          borderRadius: BorderRadius.circular(16),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Pronunciation
                             Text(
                               widget.coffee.pronunciation,
                               style: GoogleFonts.quicksand(
                                 fontSize: 14,
-                                color: Color(0xFF402F11),
+                                color: const Color(0xFF402F11),
                               ),
                             ),
-                            
                             const SizedBox(height: 8),
-
-                            // Description
                             Container(
                               width: double.infinity,
                               padding: const EdgeInsets.all(8),
@@ -150,18 +136,12 @@ class _CoffeeGlossaryCardState extends State<CoffeeGlossaryCard> {
                                 color: const Color(0xFFF0EDDB),
                                 borderRadius: BorderRadius.circular(16),
                               ),
-                              child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    widget.coffee.description,
-                                    style: GoogleFonts.quicksand(
-                                      fontSize: 12,
-                                      color: Color(0xFF402F11),
-                                    ),
-                                  ),
-                                ],
+                              child: Text(
+                                widget.coffee.description,
+                                style: GoogleFonts.quicksand(
+                                  fontSize: 12,
+                                  color: const Color(0xFF402F11),
+                                ),
                               ),
                             ),
                           ],
