@@ -703,7 +703,7 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Upload ảnh thất bại: $e')),
+          SnackBar(content: Text('Image upload failed: $e')),
         );
       }
     } finally {
@@ -853,7 +853,7 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
                   children: [
                     CircularProgressIndicator(color: Colors.white),
                     SizedBox(height: 10),
-                    Text('Đang tải ảnh lên...', style: TextStyle(color: Colors.white, fontSize: 13)),
+                    Text('Uploading image...', style: TextStyle(color: Colors.white, fontSize: 13)),
                   ],
                 ),
               ),

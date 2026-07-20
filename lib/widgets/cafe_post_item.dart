@@ -11,10 +11,10 @@ class CafePostItem extends StatelessWidget {
   String _timeAgo(DateTime? date) {
     if (date == null) return '';
     final diff = DateTime.now().difference(date);
-    if (diff.inDays >= 1) return '${diff.inDays} ngày trước';
-    if (diff.inHours >= 1) return '${diff.inHours} giờ trước';
-    if (diff.inMinutes >= 1) return '${diff.inMinutes} phút trước';
-    return 'Vừa xong';
+    if (diff.inDays >= 1) return '${diff.inDays}d ago';
+    if (diff.inHours >= 1) return '${diff.inHours}h ago';
+    if (diff.inMinutes >= 1) return '${diff.inMinutes}m ago';
+    return 'Just now';
   }
 
   @override

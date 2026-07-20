@@ -20,17 +20,17 @@ class ImageUploadService {
     final response = await http.post(uri, body: {'image': base64Image});
 
     if (response.statusCode != 200) {
-      throw Exception('Upload ảnh thất bại (mã lỗi ${response.statusCode})');
+      throw Exception('Image upload failed (status ${response.statusCode})');
     }
 
     final data = jsonDecode(response.body) as Map<String, dynamic>;
     if (data['success'] != true) {
-      throw Exception('Upload ảnh thất bại: ${data['error']?['message'] ?? 'unknown error'}');
+      throw Exception('Image upload failed: ${data['error']?['message'] ?? 'unknown error'}');
     }
 
     final url = (data['data'] as Map<String, dynamic>?)?['url'] as String?;
     if (url == null || url.isEmpty) {
-      throw Exception('imgbb không trả về URL ảnh hợp lệ.');
+      throw Exception('imgbb did not return a valid image URL.');
     }
     return url;
   }

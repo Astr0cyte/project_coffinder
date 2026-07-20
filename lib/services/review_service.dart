@@ -14,10 +14,19 @@ class ReviewService {
   Stream<List<ReviewModel>> streamUserReviews(String uid) {
     return _reviewsRef
         .where('user_id', isEqualTo: uid)
-        .orderBy('created_at', descending: true)
         .snapshots()
-        .map((snap) =>
-        snap.docs.map((d) => ReviewModel.fromSnapshot(d)).toList());
+        .map((snap) {
+          final reviews = snap.docs
+              .map((d) => ReviewModel.fromSnapshot(d))
+              .toList();
+          reviews.sort((a, b) {
+            if (a.createdAt == null && b.createdAt == null) return 0;
+            if (a.createdAt == null) return 1;
+            if (b.createdAt == null) return -1;
+            return b.createdAt!.compareTo(a.createdAt!);
+          });
+          return reviews;
+        });
   }
 
   Stream<List<ReviewModel>> streamCafeReviews(String cafeId) {

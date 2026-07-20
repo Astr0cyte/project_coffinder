@@ -51,7 +51,7 @@
 //     if (currentUser == null) {
 //       return const Scaffold(
 //         backgroundColor: Color(0xFFFAF9F4),
-//         body: Center(child: Text('Bạn chưa đăng nhập')),
+//         body: Center(child: Text('You are not logged in.')),
 //       );
 //     }
 //
@@ -69,7 +69,7 @@
 //               return const Center(child: CircularProgressIndicator());
 //             }
 //             if (snapshot.hasError) {
-//               return Center(child: Text('Lỗi tải hồ sơ: ${snapshot.error}'));
+//               return Center(child: Text('Error loading profile: ${snapshot.error}'));
 //             }
 //
 //             final user = snapshot.data ?? UserModel.empty(profileUid);
@@ -311,14 +311,17 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../models/cafe_model.dart';
+import '../models/review_model.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
 import '../services/cafe_service.dart';
 import '../services/follow_service.dart';
+import '../services/review_service.dart';
 import '../services/user_service.dart';
 import '../widgets/cafe_post_item.dart';
 import '../widgets/follow_button.dart';
 import '../widgets/profile_stat.dart';
+import '../widgets/review_list_item.dart';
 import 'app_colors.dart';
 import 'coffee_shop_detail_screen.dart';
 import 'settings_popup.dart';
@@ -342,12 +345,14 @@ class _ProfilePageState extends State<ProfilePage> {
   String? _cachedProfileUid;
   late Stream<UserModel> _userStream;
   late Stream<List<CafeModel>> _cafeStream;
+  late Stream<List<ReviewModel>> _reviewStream;
 
   void _ensureStreams(String profileUid) {
     if (_cachedProfileUid == profileUid) return;
     _cachedProfileUid = profileUid;
     _userStream = UserService.instance.streamUser(profileUid);
     _cafeStream = CafeService.instance.streamUserCafes(profileUid);
+    _reviewStream = ReviewService.instance.streamUserReviews(profileUid);
   }
 
   @override
@@ -357,7 +362,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (currentUser == null) {
       return const Scaffold(
         backgroundColor: Color(0xFFFAF9F4),
-        body: Center(child: Text('Bạn chưa đăng nhập')),
+        body: Center(child: Text('You are not logged in.')),
       );
     }
 
@@ -375,7 +380,7 @@ class _ProfilePageState extends State<ProfilePage> {
               return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {
-              return Center(child: Text('Lỗi tải hồ sơ: ${snapshot.error}'));
+              return Center(child: Text('Error loading profile: ${snapshot.error}'));
             }
 
             final user = snapshot.data ?? UserModel.empty(profileUid);
@@ -384,8 +389,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   stream: _cafeStream,
                   builder: (context, cafeSnapshot) {
                     final myCafes = cafeSnapshot.data ?? [];
-                    final isLoadingCafes =
-                        cafeSnapshot.connectionState == ConnectionState.waiting;
+
+                    return StreamBuilder<List<ReviewModel>>(
+                      stream: _reviewStream,
+                      builder: (context, reviewSnapshot) {
+                        final myReviews = reviewSnapshot.data ?? [];
+                        final isLoading =
+                            cafeSnapshot.connectionState == ConnectionState.waiting ||
+                            reviewSnapshot.connectionState == ConnectionState.waiting;
 
                     return SingleChildScrollView(
                       child: Padding(
@@ -395,7 +406,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             _buildHeader(
                               context,
                               user,
-                              postCount: myCafes.length,
+                              postCount: myCafes.length + myReviews.length,
                               profileUid: profileUid,
                               isOwnProfile: isOwnProfile,
                             ),
@@ -435,27 +446,55 @@ class _ProfilePageState extends State<ProfilePage> {
                             const SizedBox(height: 25),
                             _sectionTitle('Post History'),
                             const SizedBox(height: 12),
-                            if (isLoadingCafes)
+                            if (isLoading)
                               const Padding(
                                 padding: EdgeInsets.symmetric(vertical: 12),
                                 child: CircularProgressIndicator(),
                               )
-                            else if (cafeSnapshot.hasError)
-                              _emptyState('Error loading Post History: ${cafeSnapshot.error}')
-                            else if (myCafes.isEmpty)
-                              _emptyState('No post added.')
-                            else
-                              ...myCafes.map((c) => Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
-                                child: CafePostItem(cafe: c),
-                              )),
+                            else if (myCafes.isEmpty && myReviews.isEmpty)
+                              _emptyState('No posts yet.')
+                            else ...[
+                              if (myCafes.isNotEmpty) ...[
+                                _subSectionTitle('Coffee Shops Added'),
+                                const SizedBox(height: 8),
+                                ...myCafes.map((c) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: CafePostItem(cafe: c),
+                                )),
+                                const SizedBox(height: 8),
+                              ],
+                              if (myReviews.isNotEmpty) ...[
+                                _subSectionTitle('Reviews'),
+                                const SizedBox(height: 8),
+                                ...myReviews.map((r) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: ReviewListItem(review: r),
+                                )),
+                              ],
+                            ],
                           ],
                         ),
                       ),
                     );
+                      },
+                    );
                   },
                 );
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _subSectionTitle(String title) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: GoogleFonts.inter(
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: const Color(0xFF7E654C),
         ),
       ),
     );

@@ -452,7 +452,7 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Đăng thất bại, thử lại: $e')),
+        SnackBar(content: Text('Post failed, please try again: $e')),
       );
     } finally {
       if (mounted) setState(() => _isPosting = false);
