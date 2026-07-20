@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// A label + underlined text field, matching the "CAFE NAME *" style in
 /// the mockup (as opposed to the filled pill style used on auth screens).
@@ -29,8 +30,8 @@ class LabeledUnderlineField extends StatelessWidget {
           children: [
             Text(
               label,
-              style: TextStyle(
-                fontSize: 12,
+              style: GoogleFonts.quicksand(
+                fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: _textColor.withOpacity(0.7),
                 letterSpacing: 0.5,
@@ -38,9 +39,9 @@ class LabeledUnderlineField extends StatelessWidget {
             ),
             if (required) ...[
               const SizedBox(width: 3),
-              const Text(
+              Text(
                 '*',
-                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                style: GoogleFonts.quicksand(color: Colors.red, fontWeight: FontWeight.bold),
               ),
             ],
           ],
@@ -49,8 +50,8 @@ class LabeledUnderlineField extends StatelessWidget {
         TextField(
           controller: controller,
           keyboardType: keyboardType,
-          style: const TextStyle(
-            fontSize: 16,
+          style: GoogleFonts.quicksand(
+            fontSize: 14,
             color: _textColor,
             fontWeight: FontWeight.w500,
           ),

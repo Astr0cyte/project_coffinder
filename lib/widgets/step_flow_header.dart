@@ -1,4 +1,8 @@
+import 'dart:ffi';
+
+import 'package:brewstreet_app/pages/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// Top header used by every step of the Add Cafe flow: a back arrow, a
 /// segmented step-progress bar with "current/total" label, and a "Skip"
@@ -35,18 +39,28 @@ class StepFlowHeader extends StatelessWidget {
             ),
             Text(
               '$currentStep/$totalSteps',
-              style: TextStyle(
+              style: GoogleFonts.playfairDisplay(
                 fontSize: 13,
                 color: _textColor.withOpacity(0.5),
               ),
             ),
             GestureDetector(
-              onTap: onSkip,
+              onTap: (){
+                if (currentStep == totalSteps) {
+                  // Final state --> Delete && go straight HomeScreen
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const HomeScreen()),
+                        (route) => false,
+                  );
+                } else {
+                  if (onSkip != null) onSkip!();
+                }
+              },
               child: Row(
                 children: [
                   Text(
                     'Skip',
-                    style: TextStyle(
+                    style: GoogleFonts.playfairDisplay(
                       fontSize: 14,
                       color: _textColor.withOpacity(0.7),
                       fontWeight: FontWeight.w500,

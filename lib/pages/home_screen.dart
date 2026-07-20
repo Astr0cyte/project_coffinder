@@ -1,9 +1,9 @@
-import 'diary_page.dart';
+import 'diary_pages/diary_page.dart';
 import 'add_cafe/step1_picture_page.dart';
 import '../states/add_cafe_state.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'app_colors.dart';
+import '../theme/app_colors.dart';
 import 'coffee_shop_detail_screen.dart';
 import 'profile_page.dart';
 import '../widgets/shop_card.dart';
@@ -297,7 +297,7 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: EdgeInsets.symmetric(horizontal: 16 * s, vertical: 8 * s),
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: active ? AppColors.brownDark : AppColors.tan.withOpacity(0.57),
+                color: active ? AppColors.brownDark : AppColors.chipLight,
                 borderRadius: BorderRadius.circular(20 * s),
               ),
               child: Text(

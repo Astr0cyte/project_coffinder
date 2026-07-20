@@ -188,7 +188,7 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
           const SizedBox(height: 16),
           const SizedBox(height: 16),
 
-          // 3. Nơi hiển thị các Amenity Tags (Dùng Wrap cho các tag tự xuống dòng)
+          // 3. Amenity Tags
           Wrap(
             spacing: 8,
             runSpacing: 8,

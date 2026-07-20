@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:brewstreet_app/theme/app_colors.dart';
 
 /// Full-width rounded primary button used for "Continue" / "Post" at the
 /// bottom of each step.
@@ -12,7 +14,7 @@ class FlowPrimaryButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
 
-  static const _buttonColor = Color(0xFF8A6A50);
+  static const _buttonColor = AppColors.brownMid;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,7 @@ class FlowPrimaryButton extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style: GoogleFonts.quicksand(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
     );

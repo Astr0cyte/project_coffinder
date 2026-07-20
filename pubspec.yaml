@@ -24,10 +24,16 @@ flutter:
     - assets/google.png
     - assets/arrow_up.png
     - assets/arrow_down.png
+    - assets/images/Phuc_Long.png
+    - assets/images/profile.jpg
     - assets/coffee_images/egg_iced_coffee.png
     - assets/coffee_images/salted_iced_coffee.png
     - assets/coffee_images/traditional_iced_coffee.png
+    - assets/coffee_images/iced_latte.png
+    - assets/coffee_images/coconut_iced_coffee.png
+    - assets/coffee_images/black_iced_coffee.png
     - assets/data/coffees.json
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

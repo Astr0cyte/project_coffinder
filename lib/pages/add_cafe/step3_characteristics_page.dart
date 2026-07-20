@@ -1,3 +1,4 @@
+import 'package:brewstreet_app/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../states/add_cafe_state.dart';
@@ -43,8 +44,8 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
 
   final ScrollController _drinksScrollController = ScrollController();
 
-  static const _textColor = Color(0xFF7E654C);
-  static const _backgroundColor = Color(0xFFFAF9F4);
+  static const _textColor = AppColors.brownMid;
+  static const _backgroundColor = AppColors.cream;
 
   @override
   void initState() {
@@ -108,10 +109,12 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
       builder: (context) {
         return AlertDialog(
           backgroundColor: _backgroundColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Text(
             'Add custom $type',
-            style: const TextStyle(color: _textColor, fontWeight: FontWeight.bold),
+            style:
+                const TextStyle(color: _textColor, fontWeight: FontWeight.bold),
           ),
           content: TextField(
             controller: textController,
@@ -130,7 +133,8 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel', style: TextStyle(color: _textColor.withOpacity(0.6))),
+              child: Text('Cancel',
+                  style: TextStyle(color: _textColor.withOpacity(0.6))),
             ),
             TextButton(
               onPressed: () {
@@ -138,14 +142,17 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                 if (val.isNotEmpty) {
                   setState(() {
                     if (type == 'Vibe') {
-                      if (!_customVibes.contains(val) && !_vibeOptions.contains(val)) {
+                      if (!_customVibes.contains(val) &&
+                          !_vibeOptions.contains(val)) {
                         _customVibes.add(val);
                         if (!widget.state.vibes.contains(val)) {
-                          widget.state.toggleVibe(val); // Tự động chọn luôn sau khi thêm
+                          widget.state.toggleVibe(
+                              val); // Tự động chọn luôn sau khi thêm
                         }
                       }
                     } else if (type == 'Feature') {
-                      if (!_customFeatures.contains(val) && !_featureOptions.contains(val)) {
+                      if (!_customFeatures.contains(val) &&
+                          !_featureOptions.contains(val)) {
                         _customFeatures.add(val);
                         if (!widget.state.features.contains(val)) {
                           widget.state.toggleFeature(val);
@@ -156,7 +163,9 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                 }
                 Navigator.pop(context);
               },
-              child: const Text('Add', style: TextStyle(color: _textColor, fontWeight: FontWeight.bold)),
+              child: const Text('Add',
+                  style: TextStyle(
+                      color: _textColor, fontWeight: FontWeight.bold)),
             ),
           ],
         );
@@ -206,25 +215,26 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                 const SizedBox(height: 20),
                 Text(
                   'Step 3',
-                  style: TextStyle(
+                  style: GoogleFonts.playfairDisplay(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                     color: _textColor,
                   ),
                 ),
                 const SizedBox(height: 5),
-                const Text(
-                  "Cafe's characteristics",
-                  style: TextStyle(
-                    fontSize: 45,
-                    fontWeight: FontWeight.w500,
-                    color: _textColor,
+                Text(
+                  "Cafe characteristics",
+                  style: GoogleFonts.playfairDisplay(
+                    fontSize: 40,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF402F11),
                   ),
                 ),
+                const SizedBox(height: 30),
                 Text(
-                  'Vibe, features, and best sellers',
-                  style: TextStyle(
-                    fontSize: 18,
+                  'Share details about the vibe, features, and best sellers',
+                  style: GoogleFonts.quicksand(
+                    fontSize: 16,
                     color: _textColor.withOpacity(0.8),
                   ),
                 ),
@@ -236,8 +246,8 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                       children: [
                         const SizedBox(height: 24),
                         Text(
-                          'VIBE',
-                          style: TextStyle(
+                          'Vibe',
+                          style: GoogleFonts.quicksand(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
                             color: _textColor.withOpacity(0.7),
@@ -252,14 +262,15 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                           trailing: GestureDetector(
                             onTap: () => _showAddCustomItemDialog('Vibe'),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 9),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF2EFDE),
+                                color: AppColors.chipLight,
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
                                 'More ...',
-                                style: TextStyle(
+                                style: GoogleFonts.quicksand(
                                   color: _textColor.withOpacity(0.8),
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
@@ -278,17 +289,23 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                               final isSelected = state.vibes.contains(vibe);
                               return InputChip(
                                 label: Text(vibe),
-                                labelStyle: TextStyle(
+                                labelStyle: GoogleFonts.quicksand(
                                   color: isSelected ? Colors.white : _textColor,
                                   fontWeight: FontWeight.w500,
                                 ),
-                                backgroundColor: isSelected ? _textColor : Colors.transparent,
+                                backgroundColor: isSelected
+                                    ? _textColor
+                                    : Colors.transparent,
                                 selectedColor: _textColor,
-                                deleteIconColor: isSelected ? Colors.white70 : _textColor.withOpacity(0.6),
+                                deleteIconColor: isSelected
+                                    ? Colors.white70
+                                    : _textColor.withOpacity(0.6),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
                                   side: BorderSide(
-                                    color: isSelected ? _textColor : _textColor.withOpacity(0.3),
+                                    color: isSelected
+                                        ? _textColor
+                                        : _textColor.withOpacity(0.3),
                                   ),
                                 ),
                                 onSelected: (_) => state.toggleVibe(vibe),
@@ -296,7 +313,8 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                                   setState(() {
                                     _customVibes.remove(vibe);
                                     if (state.vibes.contains(vibe)) {
-                                      state.toggleVibe(vibe); // Bỏ chọn trong state
+                                      state.toggleVibe(
+                                          vibe); // Bỏ chọn trong state
                                     }
                                   });
                                 },
@@ -307,8 +325,8 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
 
                         const SizedBox(height: 24),
                         Text(
-                          'FEATURE',
-                          style: TextStyle(
+                          'Features',
+                          style: GoogleFonts.quicksand(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
                             color: _textColor.withOpacity(0.7),
@@ -323,14 +341,15 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                           trailing: GestureDetector(
                             onTap: () => _showAddCustomItemDialog('Feature'),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 9),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF2EFDE),
+                                color: AppColors.chipLight,
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
                                 'More ...',
-                                style: TextStyle(
+                                style: GoogleFonts.quicksand(
                                   color: _textColor.withOpacity(0.8),
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
@@ -346,20 +365,27 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                             spacing: 8,
                             runSpacing: 8,
                             children: _customFeatures.map((feature) {
-                              final isSelected = state.features.contains(feature);
+                              final isSelected =
+                                  state.features.contains(feature);
                               return InputChip(
                                 label: Text(feature),
                                 labelStyle: TextStyle(
                                   color: isSelected ? Colors.white : _textColor,
                                   fontWeight: FontWeight.w500,
                                 ),
-                                backgroundColor: isSelected ? _textColor : Colors.transparent,
+                                backgroundColor: isSelected
+                                    ? _textColor
+                                    : Colors.transparent,
                                 selectedColor: _textColor,
-                                deleteIconColor: isSelected ? Colors.white70 : _textColor.withOpacity(0.6),
+                                deleteIconColor: isSelected
+                                    ? Colors.white70
+                                    : _textColor.withOpacity(0.6),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
                                   side: BorderSide(
-                                    color: isSelected ? _textColor : _textColor.withOpacity(0.3),
+                                    color: isSelected
+                                        ? _textColor
+                                        : _textColor.withOpacity(0.3),
                                   ),
                                 ),
                                 onSelected: (_) => state.toggleFeature(feature),
@@ -378,11 +404,11 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
 
                         const SizedBox(height: 28),
                         Text(
-                          'Signature drink',
-                          style: TextStyle(
+                          'Signature beverage',
+                          style: GoogleFonts.quicksand(
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
-                            color: _textColor,
+                            color: _textColor.withOpacity(0.8),
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -418,12 +444,14 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                                   key: ValueKey(_drinkControllers[index]),
                                   padding: const EdgeInsets.only(bottom: 16),
                                   child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       ReorderableDragStartListener(
                                         index: index,
                                         child: Padding(
-                                          padding: const EdgeInsets.only(right: 12),
+                                          padding:
+                                              const EdgeInsets.only(right: 12),
                                           child: Icon(
                                             Icons.drag_indicator_rounded,
                                             size: 20,
@@ -431,42 +459,53 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                                           ),
                                         ),
                                       ),
-                                      Text(
-                                        '${index + 1}',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: _textColor.withOpacity(0.5),
+                                      Stack(children: [
+                                        const SizedBox(height: 23),
+                                        Text(
+                                          '${index + 1}',
+                                          style: GoogleFonts.quicksand(
+                                            fontSize: 12,
+                                            color: _textColor.withOpacity(0.5),
+                                          ),
                                         ),
+                                      ]
                                       ),
+                                      
                                       const SizedBox(width: 10),
+                                      
                                       Expanded(
                                         child: TextField(
                                           controller: _drinkControllers[index],
                                           onChanged: (value) => widget.state
                                               .setSignatureDrink(index, value),
-                                          style: const TextStyle(
-                                            fontSize: 15,
+                                          style: GoogleFonts.quicksand(
+                                            fontSize: 14,
                                             color: _textColor,
                                           ),
                                           decoration: InputDecoration(
                                             hintText: 'Ex: Chocolate ...',
-                                            hintStyle: TextStyle(
-                                              color: _textColor.withOpacity(0.35),
+                                            hintStyle: GoogleFonts.quicksand(
+                                              color:
+                                                  _textColor.withOpacity(0.35),
                                             ),
                                             isDense: true,
                                             contentPadding:
-                                            const EdgeInsets.only(bottom: 8),
+                                                const EdgeInsets.only(
+                                                    bottom: 8),
                                             border: UnderlineInputBorder(
                                               borderSide: BorderSide(
-                                                color: _textColor.withOpacity(0.25),
+                                                color: _textColor
+                                                    .withOpacity(0.25),
                                               ),
                                             ),
                                             enabledBorder: UnderlineInputBorder(
                                               borderSide: BorderSide(
-                                                color: _textColor.withOpacity(0.25),
+                                                color: _textColor
+                                                    .withOpacity(0.25),
                                               ),
                                             ),
-                                            focusedBorder: const UnderlineInputBorder(
+                                            focusedBorder:
+                                                const UnderlineInputBorder(
                                               borderSide: BorderSide(
                                                 color: _textColor,
                                                 width: 1.5,
@@ -479,12 +518,11 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                                       IconButton(
                                         padding: EdgeInsets.zero,
                                         constraints: const BoxConstraints(),
-                                        icon: Icon(
-                                            Icons.close,
+                                        icon: Icon(Icons.close,
                                             size: 18,
-                                            color: _textColor.withOpacity(0.5)
-                                        ),
-                                        onPressed: () => _removeDrinkSlot(index),
+                                            color: _textColor.withOpacity(0.5)),
+                                        onPressed: () =>
+                                            _removeDrinkSlot(index),
                                       ),
                                     ],
                                   ),
@@ -504,7 +542,7 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                               const SizedBox(width: 6),
                               Text(
                                 'Add another',
-                                style: TextStyle(
+                                style: GoogleFonts.quicksand(
                                   fontSize: 14,
                                   color: _textColor.withOpacity(0.7),
                                 ),
