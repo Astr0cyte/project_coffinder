@@ -562,14 +562,16 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                       ),
                     ),
                     Row(
-                      children: List.generate(
-                        5,
-                        (i) => Icon(
-                          i < r.rating ? Icons.star : Icons.star_border,
+                      children: List.generate(5, (i) => Padding(
+                        padding: const EdgeInsets.only(right: 3),
+                        child: Icon(
+                          Icons.coffee,
                           size: 14,
-                          color: AppColors.brownMid,
+                          color: i < r.rating
+                              ? const Color(0xFF7E654C)
+                              : const Color(0xFFB8A78A),
                         ),
-                      ),
+                      )),
                     ),
                   ],
                 ),

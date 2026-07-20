@@ -355,14 +355,16 @@ class _ReviewActivityCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Row(
-            children: List.generate(
-              5,
-              (i) => Icon(
-                i < review.rating ? Icons.star : Icons.star_border,
+            children: List.generate(5, (i) => Padding(
+              padding: const EdgeInsets.only(right: 3),
+              child: Icon(
+                Icons.coffee,
                 size: 14,
-                color: const Color(0xFFF5B301),
+                color: i < review.rating
+                    ? const Color(0xFF7E654C)
+                    : const Color(0xFFB8A78A),
               ),
-            ),
+            )),
           ),
           if (review.comment.isNotEmpty) ...[
             const SizedBox(height: 6),
