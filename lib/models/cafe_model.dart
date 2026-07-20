@@ -34,19 +34,23 @@ class CafeModel {
     final map = doc.data() ?? <String, dynamic>{};
     return CafeModel(
       id: doc.id,
-      cafeName: map['cafeName'] ?? '',
-      story: map['story'] ?? '',
-      openTime: map['openTime'] ?? '',
-      createdBy: map['createdBy'] ?? '',
-      features: List<String>.from(map['features'] ?? const []),
-      signatureDrinks: List<String>.from(map['signatureDrinks'] ?? const []),
-      vibes: List<String>.from(map['vibes'] ?? const []),
-      area: map['area'] ?? '',
-      address: map['address'] ?? '',
-      imageUrl: map['imageUrl'] ?? '',
+      cafeName: _str(map['cafeName']),
+      story: _str(map['story']),
+      openTime: _str(map['openTime']),
+      createdBy: _str(map['createdBy']),
+      features: _strList(map['features']),
+      signatureDrinks: _strList(map['signatureDrinks']),
+      vibes: _strList(map['vibes']),
+      area: _str(map['area']),
+      address: _str(map['address']),
+      imageUrl: _str(map['imageUrl']),
       createdAt: map['createdAt'] is Timestamp
           ? (map['createdAt'] as Timestamp).toDate()
           : null,
     );
   }
+
+  static String _str(dynamic v) => v is String ? v : '';
+  static List<String> _strList(dynamic v) =>
+      v is List ? v.whereType<String>().toList() : [];
 }

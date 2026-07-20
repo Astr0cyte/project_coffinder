@@ -161,7 +161,6 @@ class _Step2InformationPageState extends State<Step2InformationPage> {
             ),
           ),
         ),
-        bottomNavigationBar: const AppBottomNavBar(currentIndex: 1),
       ),
     );
   }

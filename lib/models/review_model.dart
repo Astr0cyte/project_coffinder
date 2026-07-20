@@ -8,6 +8,7 @@ class ReviewModel {
   final String id;
   final String userId;
   final String cafeId;
+  final String displayName;
   final String comment;
   final int rating;
   final bool pinned;
@@ -17,6 +18,7 @@ class ReviewModel {
     required this.id,
     required this.userId,
     required this.cafeId,
+    required this.displayName,
     required this.comment,
     required this.rating,
     required this.pinned,
@@ -29,6 +31,7 @@ class ReviewModel {
       id: doc.id,
       userId: map['user_id'] ?? '',
       cafeId: map['cafe_id'] ?? '',
+      displayName: map['display_name'] ?? 'Anonymous',
       comment: map['comment'] ?? '',
       rating: (map['rating'] ?? 0) is int
           ? (map['rating'] ?? 0) as int

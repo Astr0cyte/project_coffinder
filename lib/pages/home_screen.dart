@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:brewstreet_app/pages/login_page.dart';
 
 import 'diary_page.dart';
 import 'add_cafe/step1_picture_page.dart';
+import '../models/cafe_model.dart';
+import '../services/cafe_service.dart';
 import '../states/add_cafe_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +23,8 @@ class ShopListItem {
   final bool favorited;
   final String distance;
   final List<String> amenities;
-  const ShopListItem(this.name, this.bgColor, this.favorited, this.distance, this.amenities);
+  final String imageUrl;
+  const ShopListItem(this.name, this.bgColor, this.favorited, this.distance, this.amenities, {this.imageUrl = ''});
 
   /// Text/icon color that stays readable against [bgColor].
   Color contentColor(BuildContext context) {
@@ -31,14 +36,6 @@ class ShopListItem {
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
-  static const shops = [
-    ShopListItem('Phuc Long', AppColors.brownMid, false, '350 m away', ['A/C', 'Wi-Fi', 'Quiet']),
-    ShopListItem('Lotus Leaf Cafe', AppColors.cardBg, false, '0.8 km away', ['Pets', 'Friendly']),
-    ShopListItem('Sunset Terrace Coffee', AppColors.brownDark, true, '1.2 km away', ['Quiet', 'Wi-Fi']),
-    ShopListItem('Ban Mai Coffee House', AppColors.tan, true, '1.5 km away', ['A/C', 'Friendly']),
-    ShopListItem('Old Quarter Coffee', AppColors.chipLight, false, '2.0 km away', ['Pets', 'Wi-Fi', 'Quiet']),
-  ];
-
   static const filterLabels = ['All', 'Quiet', 'Wi-Fi', 'A/C', 'Pets', 'Friendly'];
 
   @override
@@ -47,6 +44,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   static const double designWidth = 402;
+  static const _cardColors = [
+    AppColors.brownMid,
+    AppColors.cardBg,
+    AppColors.brownDark,
+    AppColors.tan,
+    AppColors.chipLight,
+  ];
 
   bool _navVisible = true;
   double _lastOffset = 0;
@@ -54,9 +58,30 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _searchOpen = false;
   final _searchController = TextEditingController();
 
+  List<CafeModel> _cafes = [];
+  bool _loading = true;
+  String? _error;
+  late final StreamSubscription<List<CafeModel>> _cafesSub;
+
+  @override
+  void initState() {
+    super.initState();
+    _cafesSub = CafeService.instance.streamAllCafes().listen(
+      (cafes) {
+        if (mounted) setState(() { _cafes = cafes; _loading = false; _error = null; });
+      },
+      onError: (e) {
+        debugPrint('streamAllCafes error: $e');
+        if (mounted) setState(() { _loading = false; _error = e.toString(); });
+      },
+      cancelOnError: false,
+    );
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
+    _cafesSub.cancel();
     super.dispose();
   }
 
@@ -76,9 +101,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 
-  List<ShopListItem> get _visibleShops {
-    if (_activeFilter == 'All') return HomeScreen.shops;
-    return HomeScreen.shops.where((s) => s.amenities.contains(_activeFilter)).toList();
+  List<CafeModel> get _visibleCafes {
+    if (_activeFilter == 'All') return _cafes;
+    return _cafes.where((c) => c.features.contains(_activeFilter)).toList();
   }
 
   @override
@@ -99,29 +124,57 @@ class _HomeScreenState extends State<HomeScreen> {
                 SliverToBoxAdapter(child: _header(context, scale)),
                 //SliverToBoxAdapter(child: _resultsLabel(scale)),
                 SliverToBoxAdapter(child: _filterChips(scale)),
+                if (_loading)
+                  const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                else if (_error != null)
+                  SliverFillRemaining(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Text(
+                          'Could not load cafes:\n$_error',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.inter(color: AppColors.brownMid, fontSize: 13),
+                        ),
+                      ),
+                    ),
+                  )
+                else ...[
                 SliverPadding(
                   padding: EdgeInsets.fromLTRB(20 * scale, 12 * scale, 20 * scale, 0),
                   sliver: SliverList.separated(
-                    itemCount: _visibleShops.length,
+                    itemCount: _visibleCafes.length,
                     separatorBuilder: (_, __) => SizedBox(height: 14 * scale),
-                    itemBuilder: (context, i) => ShopCard(
-                      shop: _visibleShops[i],
-                      scale: scale,
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => CoffeeShopDetailScreen(shopName: _visibleShops[i].name),
-                          ),
-                        );
-                      },
-                    ),
+                    itemBuilder: (context, i) {
+                      final cafe = _visibleCafes[i];
+                      return ShopCard(
+                        shop: ShopListItem(
+                          cafe.cafeName,
+                          _cardColors[i % _cardColors.length],
+                          false,
+                          cafe.area,
+                          cafe.features,
+                          imageUrl: cafe.imageUrl,
+                        ),
+                        scale: scale,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => CoffeeShopDetailScreen(cafe: cafe),
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(20 * scale, 16 * scale, 20 * scale, 110 * scale),
                     child: Text(
-                      '${_visibleShops.length} Coffeeshops Found',
+                      '${_visibleCafes.length} Coffeeshops Found',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.inter(
                         fontSize: 13 * scale,
@@ -130,6 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
+                ], // end else
               ],
             ),
             );
@@ -357,7 +411,7 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: EdgeInsets.symmetric(horizontal: 16 * s, vertical: 8 * s),
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: active ? AppColors.brownDark : AppColors.tan.withOpacity(0.57),
+                color: active ? AppColors.brownDark : AppColors.tan.withOpacity(0.67),
                 borderRadius: BorderRadius.circular(20 * s),
               ),
               child: Text(

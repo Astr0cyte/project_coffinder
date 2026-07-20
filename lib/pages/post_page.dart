@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../services/review_service.dart';
 import '../states/review_state.dart';
 import '../widgets/place_header.dart';
 import '../widgets/rating_cups.dart';
@@ -11,14 +13,12 @@ class PostPage extends StatefulWidget {
     super.key,
     required this.placeName,
     required this.placeAddress,
-    this.onSubmit,
+    required this.cafeId,
   });
 
   final String placeName;
   final String placeAddress;
-
-  /// Called with the final [ReviewState] when the user taps "Post Review".
-  final ValueChanged<ReviewState>? onSubmit;
+  final String cafeId;
 
   @override
   State<PostPage> createState() => _PostPageState();
@@ -27,6 +27,7 @@ class PostPage extends StatefulWidget {
 class _PostPageState extends State<PostPage> {
   late final ReviewState _state;
   late final TextEditingController _experienceController;
+  bool _isPosting = false;
 
   @override
   void initState() {
@@ -49,15 +50,42 @@ class _PostPageState extends State<PostPage> {
     super.dispose();
   }
 
-  void _handlePostReview() {
-    widget.onSubmit?.call(_state);
+  Future<void> _handlePostReview() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You need to be logged in to post a review.')),
+      );
+      return;
+    }
+
+    setState(() => _isPosting = true);
+    try {
+      await ReviewService.instance.createReview(
+        uid: user.uid,
+        cafeId: widget.cafeId,
+        displayName: user.displayName?.trim().isNotEmpty == true
+            ? user.displayName!
+            : 'Anonymous',
+        comment: _state.experience,
+        rating: _state.rating,
+      );
+      if (!mounted) return;
+      Navigator.of(context).pop();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to post review: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isPosting = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     const backgroundColor = Color(0xFFFAF9F4);
     const textColor = Color(0xFF402F11);
-    const yellowButton = Color(0xFFF5EFD8);
     return Scaffold(
       backgroundColor: backgroundColor,
       body: SafeArea(
@@ -86,7 +114,7 @@ class _PostPageState extends State<PostPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 8.9),
                   child: Text(
                     'Share your visit',
-                    style: GoogleFonts.playfairDisplay( // Updated to playfairDisplay
+                    style: GoogleFonts.playfairDisplay(
                       textStyle: const TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.w700,
@@ -98,11 +126,8 @@ class _PostPageState extends State<PostPage> {
                 ),
                 const Divider(color: Color(0xFFE3DACB)),
                 const SizedBox(height: 20),
-
-                // --- NEW PADDED SECTION ---
-                // Wrapping the rest of the content in a Padding and Column
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0), // Adjust this for more/less indent
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -119,7 +144,6 @@ class _PostPageState extends State<PostPage> {
                       const SizedBox(height: 12),
                       RatingCups(rating: _state.rating, onChanged: _state.setRating),
                       const SizedBox(height: 28),
-
                       Text(
                         'What features did you like?',
                         style: GoogleFonts.quicksand(
@@ -136,7 +160,6 @@ class _PostPageState extends State<PostPage> {
                         onToggle: _state.toggleFeature,
                       ),
                       const SizedBox(height: 28),
-
                       Text(
                         'Your experience',
                         style: GoogleFonts.quicksand(
@@ -150,38 +173,47 @@ class _PostPageState extends State<PostPage> {
                       const SizedBox(height: 12),
                       ExperienceInput(controller: _experienceController),
                       const SizedBox(height: 28),
-
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: _state.canSubmit ? _handlePostReview : null,
+                          onPressed: (_state.canSubmit && !_isPosting)
+                              ? _handlePostReview
+                              : null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF7E654C),
-                            disabledBackgroundColor: const Color(0xFF8A6A50).withAlpha(128),
+                            backgroundColor: const Color(0xFF7E654C),
+                            disabledBackgroundColor:
+                                const Color(0xFF8A6A50).withAlpha(128),
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(28),
                             ),
                           ),
-                          child: Text(
-                            'Post Review',
-                            style: GoogleFonts.quicksand(
-                              textStyle: const TextStyle(
-                                fontSize: 16,
-                                color: Color(0xFFDED4BA),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                          child: _isPosting
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Text(
+                                  'Post Review',
+                                  style: GoogleFonts.quicksand(
+                                    textStyle: const TextStyle(
+                                      fontSize: 16,
+                                      color: Color(0xFFDED4BA),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                         ),
                       ),
                       const SizedBox(height: 24),
                     ],
                   ),
                 ),
-                // --- END PADDED SECTION ---
-
               ],
             ),
           ),

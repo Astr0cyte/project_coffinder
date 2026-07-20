@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../pages/app_colors.dart';
@@ -41,7 +43,15 @@ class ShopCard extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Container(color: shop.bgColor),
+            shop.imageUrl.isNotEmpty
+                ? Image.network(
+                    shop.imageUrl,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                    errorBuilder: (_, __, ___) => Container(color: shop.bgColor),
+                  )
+                : Container(color: shop.bgColor),
             Positioned(
               right: 10 * s,
               top: 10 * s,
@@ -60,53 +70,56 @@ class ShopCard extends StatelessWidget {
               left: 0,
               right: 0,
               bottom: 0,
-              child: Container(
-                color: isDarkCard
-                    ? Colors.black.withOpacity(0.16)
-                    : AppColors.brownDark.withOpacity(0.06),
-                padding: EdgeInsets.fromLTRB(14 * s, 10 * s, 14 * s, 10 * s),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    RichText(
-                      text: TextSpan(children: [
-                        TextSpan(
-                          text: shop.name,
-                          style: GoogleFonts.playfairDisplay(
-                            fontSize: 23 * s,
-                            fontWeight: FontWeight.w600,
-                            color: contentColor,
-                          ),
+              child: ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                  child: Container(
+                    color: Colors.black.withOpacity(0.25),
+                    padding: EdgeInsets.fromLTRB(14 * s, 10 * s, 14 * s, 10 * s),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RichText(
+                          text: TextSpan(children: [
+                            TextSpan(
+                              text: shop.name,
+                              style: GoogleFonts.playfairDisplay(
+                                fontSize: 23 * s,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.cream,
+                              ),
+                            ),
+                            TextSpan(
+                              text: '  ·  ${shop.distance}',
+                              style: GoogleFonts.inter(
+                                fontSize: 12 * s,
+                                color: AppColors.cream.withOpacity(0.75),
+                              ),
+                            ),
+                          ]),
                         ),
-                        TextSpan(
-                          text: '  ·  ${shop.distance}',
-                          style: GoogleFonts.inter(
-                            fontSize: 12 * s,
-                            color: contentColor.withOpacity(0.75),
-                          ),
+                        SizedBox(height: 6 * s),
+                        Wrap(
+                          spacing: 6 * s,
+                          runSpacing: 6 * s,
+                          children: shop.amenities
+                              .map((label) => Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 9 * s, vertical: 4 * s),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.15),
+                                      borderRadius: BorderRadius.circular(10 * s),
+                                    ),
+                                    child: Text(
+                                      label,
+                                      style: GoogleFonts.inter(fontSize: 10 * s, color: AppColors.cream),
+                                    ),
+                                  ))
+                              .toList(),
                         ),
-                      ]),
+                      ],
                     ),
-                    SizedBox(height: 6 * s),
-                    Wrap(
-                      spacing: 6 * s,
-                      runSpacing: 6 * s,
-                      children: shop.amenities
-                          .map((label) => Container(
-                                padding: EdgeInsets.symmetric(horizontal: 9 * s, vertical: 4 * s),
-                                decoration: BoxDecoration(
-                                  color: contentColor.withOpacity(isDarkCard ? 0.2 : 0.1),
-                                  borderRadius: BorderRadius.circular(10 * s),
-                                ),
-                                child: Text(
-                                  label,
-                                  style: GoogleFonts.inter(fontSize: 10 * s, color: contentColor),
-                                ),
-                              ))
-                          .toList(),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),

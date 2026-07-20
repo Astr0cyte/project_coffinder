@@ -1,50 +1,54 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../models/cafe_model.dart';
+import '../models/review_model.dart';
+import '../services/review_service.dart';
 import 'app_colors.dart';
 import 'post_page.dart';
 
-class ReviewData {
-  final String name;
-  final String stars;
-  final String text;
-  const ReviewData(this.name, this.stars, this.text);
+class CoffeeShopDetailScreen extends StatefulWidget {
+  const CoffeeShopDetailScreen({super.key, required this.cafe});
+
+  final CafeModel cafe;
+
+  @override
+  State<CoffeeShopDetailScreen> createState() => _CoffeeShopDetailScreenState();
 }
 
-class AmenityChip {
-  final String label;
-  final bool active;
-  const AmenityChip(this.label, this.active);
-}
-
-class CoffeeShopDetailScreen extends StatelessWidget {
-  const CoffeeShopDetailScreen({super.key, this.shopName = 'Phuc Long'});
-
-  final String shopName;
-
-  // Figma frame was 402 x 874 (iPhone-sized). We scale every position
-  // proportionally to whatever the real device width is.
+class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
   static const double designWidth = 402;
   static const double designHeight = 874;
 
-  // The first review has real content from the Figma file ("Mike").
-  // The other two were still unresolved placeholders ("????") there —
-  // cleaned-up placeholder content below for those two, replace with real data.
-  static const reviews = [
-    ReviewData('Mike', '★★★★★',
-        'Great atmosphere and the coffee is amazing. Perfect place to work or relax.'),
-    ReviewData('Anh Doh', '★★★★☆',
-        'Great wifi and quiet enough to work from. Will come back.'),
-    ReviewData('4Q', '★★★★★',
-        'Friendly staff and a beautiful space. Loved the ambience.'),
-  ];
+  List<ReviewModel> _reviews = [];
+  late final StreamSubscription<List<ReviewModel>> _reviewsSub;
 
-  static const amenities = [
-    AmenityChip('Air conditioned', true),
-    AmenityChip('Quiet', true),
-    AmenityChip('Friendly staff', true),
-    AmenityChip('Wi-Fi', false),
-    AmenityChip('Pets', false),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _reviewsSub = ReviewService.instance
+        .streamCafeReviews(widget.cafe.id)
+        .listen(
+          (reviews) { if (mounted) setState(() => _reviews = reviews); },
+          onError: (e) => debugPrint('streamCafeReviews error: $e'),
+        );
+  }
+
+  @override
+  void dispose() {
+    _reviewsSub.cancel();
+    super.dispose();
+  }
+
+  double get _averageRating {
+    if (_reviews.isEmpty) return 0;
+    return _reviews.map((r) => r.rating).reduce((a, b) => a + b) /
+        _reviews.length;
+  }
+
+  String _starsString(int rating) =>
+      '★' * rating + '☆' * (5 - rating);
 
   @override
   Widget build(BuildContext context) {
@@ -81,14 +85,22 @@ class CoffeeShopDetailScreen extends StatelessWidget {
     );
   }
 
-  // --- Hero photo -----------------------------------------------------
   Widget _heroImage(double s) {
+    final cafe = widget.cafe;
     return Positioned(
       left: -4 * s,
       top: -50 * s,
       width: 407 * s,
       height: 450 * s,
-      child: Container(color: AppColors.brownMid),
+      child: cafe.imageUrl.isNotEmpty
+          ? Image.network(
+              cafe.imageUrl,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+              errorBuilder: (_, __, ___) => Container(color: AppColors.brownMid),
+            )
+          : Container(color: AppColors.brownMid),
     );
   }
 
@@ -110,7 +122,6 @@ class CoffeeShopDetailScreen extends StatelessWidget {
     );
   }
 
-  // --- Header text ------------------------------------------------------
   Widget _title(double s) {
     return Positioned(
       left: 15 * s,
@@ -130,7 +141,7 @@ class CoffeeShopDetailScreen extends StatelessWidget {
           ],
         ),
         child: Text(
-          shopName,
+          widget.cafe.cafeName,
           style: GoogleFonts.playfairDisplay(
             fontSize: 26 * s,
             fontWeight: FontWeight.w600,
@@ -142,12 +153,17 @@ class CoffeeShopDetailScreen extends StatelessWidget {
   }
 
   Widget _quote(double s) {
+    final text = widget.cafe.story.isNotEmpty
+        ? '"${widget.cafe.story}"'
+        : '"Where every cup tells a story"';
     return Positioned(
       left: 21 * s,
       top: 414 * s,
       width: 280 * s,
       child: Text(
-        '“Where every cup tells a story”',
+        text,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
         style: GoogleFonts.playfairDisplay(
           fontSize: 18 * s,
           fontWeight: FontWeight.w400,
@@ -158,8 +174,8 @@ class CoffeeShopDetailScreen extends StatelessWidget {
     );
   }
 
-  // --- Address / phone overlay ------------------------------------------
   Widget _locationCard(double s) {
+    final cafe = widget.cafe;
     return Positioned(
       left: 16 * s,
       top: 342 * s,
@@ -182,29 +198,30 @@ class CoffeeShopDetailScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              '123 Nguyen Hue Street, District 1, HCMC',
+              cafe.address.isNotEmpty ? cafe.address : cafe.area,
               style: GoogleFonts.inter(
                 fontSize: 14 * s,
                 fontWeight: FontWeight.w400,
                 color: AppColors.gold,
               ),
             ),
-            SizedBox(height: 6 * s),
-            Text(
-              'Phone number: 686868686',
-              style: GoogleFonts.inter(
-                fontSize: 12 * s,
-                fontWeight: FontWeight.w400,
-                color: AppColors.gold,
+            if (cafe.openTime.isNotEmpty) ...[
+              SizedBox(height: 6 * s),
+              Text(
+                'Open: ${cafe.openTime}',
+                style: GoogleFonts.inter(
+                  fontSize: 12 * s,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.gold,
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),
     );
   }
 
-  // --- Top buttons --------------------------------------------------------
   Widget _circleButton(double s, double left, IconData icon, VoidCallback onTap) {
     return Positioned(
       left: left * s,
@@ -231,15 +248,12 @@ class CoffeeShopDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _backButton(BuildContext context, double s) {
-    return _circleButton(s, 20, Icons.arrow_back, () => Navigator.maybePop(context));
-  }
+  Widget _backButton(BuildContext context, double s) =>
+      _circleButton(s, 20, Icons.arrow_back, () => Navigator.maybePop(context));
 
-  Widget _heartButton(double s) {
-    return _circleButton(s, 349, Icons.favorite_border, () {});
-  }
+  Widget _heartButton(double s) =>
+      _circleButton(s, 349, Icons.favorite_border, () {});
 
-  // --- Amenity chips ------------------------------------------------------
   Widget _amenityChips(double s) {
     return Positioned(
       left: 16 * s,
@@ -248,23 +262,17 @@ class CoffeeShopDetailScreen extends StatelessWidget {
       child: Wrap(
         spacing: 8 * s,
         runSpacing: 8 * s,
-        children: amenities.map((a) {
+        children: widget.cafe.features.map((label) {
           return Container(
             padding: EdgeInsets.symmetric(horizontal: 14 * s, vertical: 6 * s),
             decoration: BoxDecoration(
-              color: a.active ? AppColors.brownDark : AppColors.chipLight,
+              color: AppColors.brownDark,
               borderRadius: BorderRadius.circular(40 * s),
-              border: Border.all(
-                color: a.active ? AppColors.brownMid : AppColors.cardBorder,
-                width: 0.5,
-              ),
+              border: Border.all(color: AppColors.brownMid, width: 0.5),
             ),
             child: Text(
-              a.label,
-              style: GoogleFonts.inter(
-                fontSize: 10 * s,
-                color: a.active ? AppColors.tan : AppColors.brownMid,
-              ),
+              label,
+              style: GoogleFonts.inter(fontSize: 10 * s, color: AppColors.tan),
             ),
           );
         }).toList(),
@@ -272,8 +280,13 @@ class CoffeeShopDetailScreen extends StatelessWidget {
     );
   }
 
-  // --- Reviews -------------------------------------------------------------
   Widget _reviewsHeader(double s) {
+    final count = _reviews.length;
+    final avg = _averageRating;
+    final subtitle = count == 0
+        ? 'No reviews yet'
+        : '${avg.toStringAsFixed(1)}  ·  $count ${count == 1 ? 'review' : 'reviews'}';
+
     return Positioned(
       left: 20 * s,
       top: 556 * s,
@@ -291,7 +304,7 @@ class CoffeeShopDetailScreen extends StatelessWidget {
           ),
           SizedBox(height: 6 * s),
           Text(
-            '4.8  ·  128 reviews',
+            subtitle,
             style: GoogleFonts.inter(fontSize: 13 * s, color: AppColors.brownMid),
           ),
         ],
@@ -300,6 +313,22 @@ class CoffeeShopDetailScreen extends StatelessWidget {
   }
 
   Widget _reviewsCarousel(double s) {
+    if (_reviews.isEmpty) {
+      return Positioned(
+        left: 20 * s,
+        top: 604 * s,
+        width: 362 * s,
+        child: Text(
+          'Be the first to leave a review!',
+          style: GoogleFonts.inter(
+            fontSize: 13 * s,
+            fontStyle: FontStyle.italic,
+            color: AppColors.brownMid,
+          ),
+        ),
+      );
+    }
+
     return Positioned(
       left: 0,
       top: 604 * s,
@@ -308,14 +337,14 @@ class CoffeeShopDetailScreen extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 20 * s, vertical: 8 * s),
-        itemCount: reviews.length,
+        itemCount: _reviews.length,
         separatorBuilder: (_, __) => SizedBox(width: 16 * s),
-        itemBuilder: (context, i) => _reviewCard(s, reviews[i]),
+        itemBuilder: (context, i) => _reviewCard(s, _reviews[i]),
       ),
     );
   }
 
-  Widget _reviewCard(double s, ReviewData r) {
+  Widget _reviewCard(double s, ReviewModel r) {
     return Container(
       width: 260 * s,
       height: 140 * s,
@@ -340,7 +369,8 @@ class CoffeeShopDetailScreen extends StatelessWidget {
               Container(
                 width: 36 * s,
                 height: 36 * s,
-                decoration: const BoxDecoration(color: AppColors.tan, shape: BoxShape.circle),
+                decoration:
+                    const BoxDecoration(color: AppColors.tan, shape: BoxShape.circle),
               ),
               SizedBox(width: 10 * s),
               Expanded(
@@ -348,7 +378,8 @@ class CoffeeShopDetailScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      r.name,
+                      r.displayName,
+                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.inter(
                         fontSize: 13 * s,
                         fontWeight: FontWeight.w600,
@@ -356,8 +387,9 @@ class CoffeeShopDetailScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      r.stars,
-                      style: GoogleFonts.inter(fontSize: 12 * s, color: AppColors.brownMid),
+                      _starsString(r.rating),
+                      style: GoogleFonts.inter(
+                          fontSize: 12 * s, color: AppColors.brownMid),
                     ),
                   ],
                 ),
@@ -367,10 +399,11 @@ class CoffeeShopDetailScreen extends StatelessWidget {
           SizedBox(height: 10 * s),
           Expanded(
             child: Text(
-              r.text,
+              r.comment,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.inter(fontSize: 12 * s, color: AppColors.brownMid),
+              style:
+                  GoogleFonts.inter(fontSize: 12 * s, color: AppColors.brownMid),
             ),
           ),
         ],
@@ -378,7 +411,6 @@ class CoffeeShopDetailScreen extends StatelessWidget {
     );
   }
 
-  // --- Sticky CTA ------------------------------------------------------------
   Widget _ctaButton(BuildContext context, double s) {
     return Positioned(
       left: 37 * s,
@@ -389,7 +421,11 @@ class CoffeeShopDetailScreen extends StatelessWidget {
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_) => PostPage(placeName: shopName, placeAddress: ''),
+              builder: (_) => PostPage(
+                placeName: widget.cafe.cafeName,
+                placeAddress: widget.cafe.address,
+                cafeId: widget.cafe.id,
+              ),
             ),
           );
         },
@@ -400,7 +436,8 @@ class CoffeeShopDetailScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(20 * s),
             border: Border.all(color: AppColors.brownDark, width: 0.5),
             boxShadow: const [
-              BoxShadow(color: Color(0x40000000), blurRadius: 4, offset: Offset(0, 4)),
+              BoxShadow(
+                  color: Color(0x40000000), blurRadius: 4, offset: Offset(0, 4)),
             ],
           ),
           child: Text(

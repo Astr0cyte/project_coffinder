@@ -320,12 +320,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../models/cafe_model.dart';
 import '../../services/auth_service.dart';
 import '../../services/cafe_service.dart';
 import '../../states/add_cafe_state.dart';
 import '../../widgets/step_flow_header.dart';
 import '../../widgets/app_bottom_nav_bar.dart';
 import '../../widgets/flow_primary_button.dart';
+import '../coffee_shop_detail_screen.dart';
 
 class Step4StoryPage extends StatefulWidget {
   const Step4StoryPage({
@@ -410,7 +412,7 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
     setState(() => _isPosting = true);
 
     try {
-      await CafeService.instance.createCafe(
+      final cafeId = await CafeService.instance.createCafe(
         cafeName: state.cafeName,
         area: state.area,
         address: state.address,
@@ -424,11 +426,29 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
       );
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Post cafe successfully!')),
+
+      final newCafe = CafeModel(
+        id: cafeId,
+        cafeName: state.cafeName,
+        story: state.story,
+        openTime: state.openTime,
+        createdBy: currentUser.uid,
+        features: state.features.toList(),
+        signatureDrinks: state.signatureDrinks
+            .where((d) => d.trim().isNotEmpty)
+            .toList(),
+        vibes: state.vibes.toList(),
+        area: state.area,
+        address: state.address,
+        imageUrl: state.imageUrl ?? '',
+        createdAt: DateTime.now(),
       );
-      // Quay về màn hình gốc (thường là Home) sau khi đăng thành công.
-      Navigator.of(context).popUntil((route) => route.isFirst);
+
+      // Navigate to the new cafe's detail page, clearing the add-cafe stack.
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => CoffeeShopDetailScreen(cafe: newCafe)),
+        (route) => route.isFirst,
+      );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -690,7 +710,6 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
             ),
           ),
         ),
-        bottomNavigationBar: const AppBottomNavBar(currentIndex: 1),
       ),
     );
   }

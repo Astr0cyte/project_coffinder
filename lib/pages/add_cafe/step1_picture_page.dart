@@ -800,7 +800,6 @@ class _Step1PicturePageState extends State<Step1PicturePage> {
             ),
           ),
         ),
-        bottomNavigationBar: const AppBottomNavBar(currentIndex: 1),
       ),
     );
   }

@@ -51,6 +51,7 @@
 
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import '../models/cafe_model.dart';
 
 class CafeService {
@@ -64,6 +65,29 @@ class CafeService {
     final doc = await _cafesRef.doc(cafeId).get();
     if (!doc.exists) return null;
     return CafeModel.fromSnapshot(doc);
+  }
+
+  /// Stream all cafes, newest first.
+  Stream<List<CafeModel>> streamAllCafes() {
+    return _cafesRef
+        .snapshots()
+        .map((snap) {
+          final cafes = <CafeModel>[];
+          for (final doc in snap.docs) {
+            try {
+              cafes.add(CafeModel.fromSnapshot(doc));
+            } catch (e) {
+              debugPrint('Skipping malformed cafe doc ${doc.id}: $e');
+            }
+          }
+          cafes.sort((a, b) {
+            if (a.createdAt == null && b.createdAt == null) return 0;
+            if (a.createdAt == null) return 1;
+            if (b.createdAt == null) return -1;
+            return b.createdAt!.compareTo(a.createdAt!);
+          });
+          return cafes;
+        });
   }
 
   /// Lắng nghe realtime toàn bộ quán do 1 user đăng (Post History thật sự).
