@@ -311,17 +311,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../models/cafe_model.dart';
-import '../models/review_model.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
 import '../services/cafe_service.dart';
 import '../services/follow_service.dart';
-import '../services/review_service.dart';
 import '../services/user_service.dart';
 import '../widgets/cafe_post_item.dart';
 import '../widgets/follow_button.dart';
 import '../widgets/profile_stat.dart';
-import '../widgets/review_list_item.dart';
+import 'app_colors.dart';
+import 'coffee_shop_detail_screen.dart';
 import 'settings_popup.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -342,14 +341,12 @@ class _ProfilePageState extends State<ProfilePage> {
   // bị reset về loading (flicker "hiện rồi biến mất").
   String? _cachedProfileUid;
   late Stream<UserModel> _userStream;
-  late Stream<List<ReviewModel>> _reviewStream;
   late Stream<List<CafeModel>> _cafeStream;
 
   void _ensureStreams(String profileUid) {
     if (_cachedProfileUid == profileUid) return;
     _cachedProfileUid = profileUid;
     _userStream = UserService.instance.streamUser(profileUid);
-    _reviewStream = ReviewService.instance.streamUserReviews(profileUid);
     _cafeStream = CafeService.instance.streamUserCafes(profileUid);
   }
 
@@ -383,16 +380,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
             final user = snapshot.data ?? UserModel.empty(profileUid);
 
-            // reviews: dùng cho "Favourite Coffee Shop" (review được pin).
-            // cafes: dùng cho "Post History" (quán user đã đăng) - đây là
-            // chỗ bị thiếu trước đây khiến Post History luôn trống.
-            return StreamBuilder<List<ReviewModel>>(
-              stream: _reviewStream,
-              builder: (context, reviewSnapshot) {
-                final reviews = reviewSnapshot.data ?? [];
-                final pinned = reviews.where((r) => r.pinned).toList();
-
-                return StreamBuilder<List<CafeModel>>(
+            return StreamBuilder<List<CafeModel>>(
                   stream: _cafeStream,
                   builder: (context, cafeSnapshot) {
                     final myCafes = cafeSnapshot.data ?? [];
@@ -425,20 +413,23 @@ class _ProfilePageState extends State<ProfilePage> {
 
                             _sectionTitle('Favourite Coffee Shop'),
                             const SizedBox(height: 8),
-                            if (reviewSnapshot.connectionState ==
-                                ConnectionState.waiting)
-                              const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 12),
-                                child: CircularProgressIndicator(),
-                              )
-                            else if (pinned.isEmpty)
-                              _emptyState('No favourite cafe added.')
+                            if (user.pinnedCafeId.isEmpty)
+                              _emptyState('No favourite cafe pinned yet.')
                             else
-                              ...pinned.map(
-                                    (r) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 12),
-                                  child: ReviewListItem(review: r),
-                                ),
+                              FutureBuilder<CafeModel?>(
+                                key: ValueKey(user.pinnedCafeId),
+                                future: CafeService.instance.getCafe(user.pinnedCafeId),
+                                builder: (context, snap) {
+                                  if (snap.connectionState == ConnectionState.waiting) {
+                                    return const Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 12),
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+                                  final cafe = snap.data;
+                                  if (cafe == null) return _emptyState('Pinned cafe not found.');
+                                  return _pinnedCafeCard(context, cafe);
+                                },
                               ),
 
                             const SizedBox(height: 25),
@@ -450,24 +441,20 @@ class _ProfilePageState extends State<ProfilePage> {
                                 child: CircularProgressIndicator(),
                               )
                             else if (cafeSnapshot.hasError)
-                              _emptyState('Lỗi tải Post History: ${cafeSnapshot.error}')
+                              _emptyState('Error loading Post History: ${cafeSnapshot.error}')
                             else if (myCafes.isEmpty)
-                                _emptyState('No post added.')
-                              else
-                                ...myCafes.map(
-                                      (c) => Padding(
-                                    padding: const EdgeInsets.only(bottom: 12),
-                                    child: CafePostItem(cafe: c),
-                                  ),
-                                ),
+                              _emptyState('No post added.')
+                            else
+                              ...myCafes.map((c) => Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: CafePostItem(cafe: c),
+                              )),
                           ],
                         ),
                       ),
                     );
                   },
                 );
-              },
-            );
           },
         ),
       ),
@@ -599,6 +586,108 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       ],
+    );
+  }
+
+  Widget _pinnedCafeCard(BuildContext context, CafeModel cafe) {
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => CoffeeShopDetailScreen(cafe: cafe)),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.cardBg,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.cardBorder),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                bottomLeft: Radius.circular(16),
+              ),
+              child: cafe.imageUrl.isNotEmpty
+                  ? Image.network(
+                      cafe.imageUrl,
+                      width: 90,
+                      height: 90,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                          width: 90, height: 90, color: AppColors.brownMid),
+                    )
+                  : Container(width: 90, height: 90, color: AppColors.brownMid),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.push_pin, size: 13, color: AppColors.brownMid),
+                        const SizedBox(width: 4),
+                        Text(
+                          'My Favourite',
+                          style: GoogleFonts.inter(
+                              fontSize: 11, color: AppColors.brownMid),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      cafe.cafeName,
+                      style: GoogleFonts.playfairDisplay(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF402F11),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      cafe.address.isNotEmpty ? cafe.address : cafe.area,
+                      style: GoogleFonts.inter(
+                          fontSize: 12, color: AppColors.brownMid),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (cafe.averageRating > 0) ...[
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          const Icon(Icons.star, size: 12, color: AppColors.brownMid),
+                          const SizedBox(width: 3),
+                          Text(
+                            cafe.averageRating.toStringAsFixed(1),
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF402F11),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(right: 12),
+              child: Icon(Icons.chevron_right, color: AppColors.brownMid),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

@@ -56,13 +56,27 @@ class ShopCard extends StatelessWidget {
               right: 10 * s,
               top: 10 * s,
               child: Container(
-                width: 27 * s,
-                height: 27 * s,
-                decoration: const BoxDecoration(color: AppColors.gold, shape: BoxShape.circle),
-                child: Icon(
-                  shop.favorited ? Icons.favorite : Icons.favorite_border,
-                  size: 15 * s,
-                  color: AppColors.brownDark,
+                padding: EdgeInsets.symmetric(horizontal: 8 * s, vertical: 4 * s),
+                decoration: BoxDecoration(
+                  color: AppColors.gold,
+                  borderRadius: BorderRadius.circular(12 * s),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.star, size: 11 * s, color: AppColors.brownDark),
+                    SizedBox(width: 3 * s),
+                    Text(
+                      shop.rating > 0
+                          ? shop.rating.toStringAsFixed(1)
+                          : 'New',
+                      style: GoogleFonts.inter(
+                        fontSize: 11 * s,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.brownDark,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

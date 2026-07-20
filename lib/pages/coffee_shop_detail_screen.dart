@@ -1,10 +1,14 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/cafe_model.dart';
 import '../models/review_model.dart';
+import '../models/user_model.dart';
 import '../services/review_service.dart';
+import '../services/saved_cafe_service.dart';
+import '../services/user_service.dart';
 import 'app_colors.dart';
 import 'post_page.dart';
 
@@ -18,11 +22,17 @@ class CoffeeShopDetailScreen extends StatefulWidget {
 }
 
 class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
-  static const double designWidth = 402;
-  static const double designHeight = 874;
+  bool _isFavorite = false;
+  bool _savingInProgress = false;
+  bool _isPinned = false;
+  bool _pinningInProgress = false;
+  String? _sortOrder;
 
   List<ReviewModel> _reviews = [];
   late final StreamSubscription<List<ReviewModel>> _reviewsSub;
+  StreamSubscription<bool>? _savedSub;
+  StreamSubscription<UserModel>? _userSub;
+  final GlobalKey<PopupMenuButtonState<String>> _popupKey = GlobalKey();
 
   @override
   void initState() {
@@ -33,346 +43,511 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
           (reviews) { if (mounted) setState(() => _reviews = reviews); },
           onError: (e) => debugPrint('streamCafeReviews error: $e'),
         );
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null && !user.isAnonymous) {
+      _savedSub = SavedCafeService.instance
+          .streamIsSaved(user.uid, widget.cafe.id)
+          .listen(
+            (saved) { if (mounted) setState(() => _isFavorite = saved); },
+            onError: (e) => debugPrint('streamIsSaved error: $e'),
+          );
+      _userSub = UserService.instance.streamUser(user.uid).listen(
+        (u) {
+          if (mounted) setState(() => _isPinned = u.pinnedCafeId == widget.cafe.id);
+        },
+        onError: (e) => debugPrint('streamUser error: $e'),
+      );
+    }
   }
 
   @override
   void dispose() {
     _reviewsSub.cancel();
+    _savedSub?.cancel();
+    _userSub?.cancel();
     super.dispose();
+  }
+
+  Future<void> _toggleSaved() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null || user.isAnonymous) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Sign in to save coffee shops.')),
+      );
+      return;
+    }
+    if (_savingInProgress) return;
+    setState(() => _savingInProgress = true);
+    try {
+      await SavedCafeService.instance.toggle(user.uid, widget.cafe.id);
+    } catch (e) {
+      debugPrint('toggleSaved error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not update saved shops. Try again.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _savingInProgress = false);
+    }
+  }
+
+  Future<void> _togglePin() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null || user.isAnonymous) return;
+    if (_pinningInProgress) return;
+    setState(() => _pinningInProgress = true);
+    try {
+      if (_isPinned) {
+        await UserService.instance.unpinCafe(user.uid);
+      } else {
+        await UserService.instance.pinCafe(user.uid, widget.cafe.id);
+      }
+    } catch (e) {
+      debugPrint('togglePin error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not update pinned shop. Try again.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _pinningInProgress = false);
+    }
   }
 
   double get _averageRating {
     if (_reviews.isEmpty) return 0;
-    return _reviews.map((r) => r.rating).reduce((a, b) => a + b) /
-        _reviews.length;
+    return _reviews.map((r) => r.rating).reduce((a, b) => a + b) / _reviews.length;
   }
 
-  String _starsString(int rating) =>
-      '★' * rating + '☆' * (5 - rating);
+  List<ReviewModel> get _sortedReviews {
+    final list = List<ReviewModel>.from(_reviews);
+    if (_sortOrder == 'high_to_low') {
+      list.sort((a, b) => b.rating.compareTo(a.rating));
+    } else if (_sortOrder == 'low_to_high') {
+      list.sort((a, b) => a.rating.compareTo(b.rating));
+    }
+    return list;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: AppColors.cream,
-      body: SafeArea(
-        top: false,
-        bottom: false,
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final scale = constraints.maxWidth / designWidth;
-            return SizedBox(
-              width: constraints.maxWidth,
-              height: designHeight * scale,
-              child: Stack(
-                children: [
-                  _heroImage(scale),
-                  _heroGradient(scale),
-                  _title(scale),
-                  _quote(scale),
-                  _locationCard(scale),
-                  _backButton(context, scale),
-                  _heartButton(scale),
-                  _amenityChips(scale),
-                  _reviewsHeader(scale),
-                  _reviewsCarousel(scale),
-                  _ctaButton(context, scale),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _heroImage(double s) {
-    final cafe = widget.cafe;
-    return Positioned(
-      left: -4 * s,
-      top: -50 * s,
-      width: 407 * s,
-      height: 450 * s,
-      child: cafe.imageUrl.isNotEmpty
-          ? Image.network(
-              cafe.imageUrl,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity,
-              errorBuilder: (_, __, ___) => Container(color: AppColors.brownMid),
-            )
-          : Container(color: AppColors.brownMid),
-    );
-  }
-
-  Widget _heroGradient(double s) {
-    return Positioned(
-      left: -40 * s,
-      top: -3 * s,
-      width: 452 * s,
-      height: 133 * s,
-      child: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFFD9D9D9), Color(0x00737373)],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _title(double s) {
-    return Positioned(
-      left: 15 * s,
-      top: 302 * s,
-      width: 250 * s,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 18 * s, vertical: 12 * s),
-        decoration: BoxDecoration(
-          color: AppColors.brownMid.withOpacity(0.8),
-          borderRadius: BorderRadius.circular(20 * s),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 8 * s,
-              offset: Offset(0, 3 * s),
-            ),
-          ],
-        ),
-        child: Text(
-          widget.cafe.cafeName,
-          style: GoogleFonts.playfairDisplay(
-            fontSize: 26 * s,
-            fontWeight: FontWeight.w600,
-            color: AppColors.gold,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _quote(double s) {
-    final text = widget.cafe.story.isNotEmpty
-        ? '"${widget.cafe.story}"'
-        : '"Where every cup tells a story"';
-    return Positioned(
-      left: 21 * s,
-      top: 414 * s,
-      width: 280 * s,
-      child: Text(
-        text,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        style: GoogleFonts.playfairDisplay(
-          fontSize: 18 * s,
-          fontWeight: FontWeight.w400,
-          fontStyle: FontStyle.italic,
-          color: AppColors.brownDark,
-        ),
-      ),
-    );
-  }
-
-  Widget _locationCard(double s) {
-    final cafe = widget.cafe;
-    return Positioned(
-      left: 16 * s,
-      top: 342 * s,
-      width: 370 * s,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 18 * s, vertical: 12 * s),
-        decoration: BoxDecoration(
-          color: AppColors.brownMid.withOpacity(0.8),
-          borderRadius: BorderRadius.circular(20 * s),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 8 * s,
-              offset: Offset(0, 3 * s),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              cafe.address.isNotEmpty ? cafe.address : cafe.area,
-              style: GoogleFonts.inter(
-                fontSize: 14 * s,
-                fontWeight: FontWeight.w400,
-                color: AppColors.gold,
-              ),
-            ),
-            if (cafe.openTime.isNotEmpty) ...[
-              SizedBox(height: 6 * s),
-              Text(
-                'Open: ${cafe.openTime}',
-                style: GoogleFonts.inter(
-                  fontSize: 12 * s,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.gold,
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _circleButton(double s, double left, IconData icon, VoidCallback onTap) {
-    return Positioned(
-      left: left * s,
-      top: 27 * s,
-      width: 36 * s,
-      height: 36 * s,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white.withOpacity(0.55),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.25),
-                blurRadius: 6 * s,
-                offset: Offset(0, 2 * s),
-              ),
-            ],
-          ),
-          child: Icon(icon, size: 16 * s, color: AppColors.brownDark),
-        ),
-      ),
-    );
-  }
-
-  Widget _backButton(BuildContext context, double s) =>
-      _circleButton(s, 20, Icons.arrow_back, () => Navigator.maybePop(context));
-
-  Widget _heartButton(double s) =>
-      _circleButton(s, 349, Icons.favorite_border, () {});
-
-  Widget _amenityChips(double s) {
-    return Positioned(
-      left: 16 * s,
-      top: 474 * s,
-      width: 370 * s,
-      child: Wrap(
-        spacing: 8 * s,
-        runSpacing: 8 * s,
-        children: widget.cafe.features.map((label) {
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: 14 * s, vertical: 6 * s),
-            decoration: BoxDecoration(
-              color: AppColors.brownDark,
-              borderRadius: BorderRadius.circular(40 * s),
-              border: Border.all(color: AppColors.brownMid, width: 0.5),
-            ),
-            child: Text(
-              label,
-              style: GoogleFonts.inter(fontSize: 10 * s, color: AppColors.tan),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _reviewsHeader(double s) {
-    final count = _reviews.length;
-    final avg = _averageRating;
-    final subtitle = count == 0
-        ? 'No reviews yet'
-        : '${avg.toStringAsFixed(1)}  ·  $count ${count == 1 ? 'review' : 'reviews'}';
-
-    return Positioned(
-      left: 20 * s,
-      top: 556 * s,
-      width: 300 * s,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
         children: [
-          Text(
-            'Reviews',
-            style: GoogleFonts.playfairDisplay(
-              fontSize: 18 * s,
-              fontWeight: FontWeight.w600,
-              color: AppColors.brownDark,
-            ),
-          ),
-          SizedBox(height: 6 * s),
-          Text(
-            subtitle,
-            style: GoogleFonts.inter(fontSize: 13 * s, color: AppColors.brownMid),
+          _shopImage(screenHeight),
+          _backButton(),
+          _heartButton(),
+          if (_isFavorite) _pinButton(),
+          DraggableScrollableSheet(
+            initialChildSize: 0.6,
+            minChildSize: 0.6,
+            maxChildSize: 0.70,
+            builder: (context, scrollController) {
+              return Container(
+                decoration: const BoxDecoration(
+                  color: AppColors.cream,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 20),
+
+                      // Shop name
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16),
+                        child: Text(
+                          widget.cafe.cafeName,
+                          style: GoogleFonts.playfairDisplay(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.brownDark,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 6),
+
+                      // Address + open time
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                        child: Text.rich(
+                          TextSpan(
+                            style: GoogleFonts.quicksand(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w300,
+                              color: AppColors.brownDark,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: widget.cafe.address.isNotEmpty
+                                    ? widget.cafe.address
+                                    : widget.cafe.area,
+                              ),
+                              if (widget.cafe.openTime.isNotEmpty)
+                                TextSpan(
+                                  text: '\nOpen: ${widget.cafe.openTime}',
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // Story / description
+                      if (widget.cafe.story.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          child: FractionallySizedBox(
+                            alignment: Alignment.centerLeft,
+                            widthFactor: 0.75,
+                            child: Text(
+                              '"${widget.cafe.story}"',
+                              style: GoogleFonts.quicksand(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                                fontStyle: FontStyle.italic,
+                                color: AppColors.brownDark,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                      // Amenity chips
+                      if (widget.cafe.features.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          child: Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: widget.cafe.features.map((label) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.brownDark,
+                                  borderRadius: BorderRadius.circular(999),
+                                  border: Border.all(color: AppColors.brownMid, width: 1),
+                                ),
+                                child: Text(
+                                  label,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 12,
+                                    color: AppColors.tan,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+
+                      // Reviews header + filter button
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Reviews',
+                                  style: GoogleFonts.playfairDisplay(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.brownDark,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  _reviews.isEmpty
+                                      ? 'No reviews yet'
+                                      : '${_averageRating.toStringAsFixed(1)} · ${_reviews.length} ${_reviews.length == 1 ? 'review' : 'reviews'}',
+                                  style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 13,
+                                    color: AppColors.brownMid,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Theme(
+                              data: Theme.of(context).copyWith(
+                                splashFactory: NoSplash.splashFactory,
+                                highlightColor: Colors.transparent,
+                                splashColor: Colors.transparent,
+                              ),
+                              child: PopupMenuButton<String>(
+                                key: _popupKey,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                color: AppColors.chipLight,
+                                offset: const Offset(0, 45),
+                                onSelected: (value) => setState(() => _sortOrder = value),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    customBorder: const CircleBorder(),
+                                    splashColor: Colors.white.withValues(alpha: 0.3),
+                                    highlightColor: Colors.white.withValues(alpha: 0.2),
+                                    onTap: () => _popupKey.currentState?.showButtonMenu(),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: const BoxDecoration(
+                                        color: AppColors.chipLight,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const RotatedBox(
+                                        quarterTurns: 1,
+                                        child: Icon(Icons.tune, size: 20, color: AppColors.brownDark),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                itemBuilder: (context) => [
+                                  PopupMenuItem<String>(
+                                    value: 'high_to_low',
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.arrow_downward, size: 18, color: AppColors.brownDark),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          'High to Low',
+                                          style: GoogleFonts.quicksand(
+                                            color: AppColors.brownDark,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  PopupMenuItem<String>(
+                                    enabled: false,
+                                    height: 1,
+                                    padding: EdgeInsets.zero,
+                                    child: Container(
+                                      height: 1,
+                                      color: AppColors.brownDark.withValues(alpha: 0.2),
+                                    ),
+                                  ),
+                                  PopupMenuItem<String>(
+                                    value: 'low_to_high',
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.arrow_upward, size: 18, color: AppColors.brownDark),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          'Low to High',
+                                          style: GoogleFonts.quicksand(
+                                            color: AppColors.brownDark,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Reviews carousel
+                      if (_reviews.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                          child: Text(
+                            'Be the first to leave a review!',
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              fontStyle: FontStyle.italic,
+                              color: AppColors.brownMid,
+                            ),
+                          ),
+                        )
+                      else
+                        SizedBox(
+                          height: 160,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            itemCount: _sortedReviews.length,
+                            separatorBuilder: (_, __) => const SizedBox(width: 12),
+                            itemBuilder: (_, i) => _reviewCard(screenWidth, _sortedReviews[i]),
+                          ),
+                        ),
+
+                      const SizedBox(height: 11),
+
+                      // Post Your Visit CTA
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.brownMid,
+                              foregroundColor: Colors.white.withValues(alpha: 0.05),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              side: const BorderSide(width: 0.5, color: AppColors.brownDark),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => PostPage(
+                                    placeName: widget.cafe.cafeName,
+                                    placeAddress: widget.cafe.address,
+                                    cafeId: widget.cafe.id,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              'Post Your Visit',
+                              style: GoogleFonts.quicksand(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.tan,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
     );
   }
 
-  Widget _reviewsCarousel(double s) {
-    if (_reviews.isEmpty) {
-      return Positioned(
-        left: 20 * s,
-        top: 604 * s,
-        width: 362 * s,
-        child: Text(
-          'Be the first to leave a review!',
-          style: GoogleFonts.inter(
-            fontSize: 13 * s,
-            fontStyle: FontStyle.italic,
-            color: AppColors.brownMid,
-          ),
-        ),
-      );
-    }
+  Widget _shopImage(double screenHeight) {
+    final url = widget.cafe.imageUrl;
+    final h = screenHeight * 0.45;
+    return url.isNotEmpty
+        ? Image.network(
+            url,
+            width: double.infinity,
+            height: h,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => Container(height: h, color: AppColors.brownMid),
+          )
+        : Container(height: h, color: AppColors.brownMid);
+  }
 
+  Widget _backButton() {
     return Positioned(
-      left: 0,
-      top: 604 * s,
-      width: 402 * s,
-      height: 156 * s,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: 20 * s, vertical: 8 * s),
-        itemCount: _reviews.length,
-        separatorBuilder: (_, __) => SizedBox(width: 16 * s),
-        itemBuilder: (context, i) => _reviewCard(s, _reviews[i]),
+      top: 40,
+      left: 16,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.cream.withValues(alpha: 0.85),
+          shape: BoxShape.circle,
+        ),
+        child: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColors.brownDark, size: 28),
+          onPressed: () => Navigator.maybePop(context),
+        ),
       ),
     );
   }
 
-  Widget _reviewCard(double s, ReviewModel r) {
+  Widget _heartButton() {
+    return Positioned(
+      top: 40,
+      right: 16,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.cream.withValues(alpha: 0.85),
+          shape: BoxShape.circle,
+        ),
+        child: IconButton(
+          icon: _savingInProgress
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.brownDark,
+                  ),
+                )
+              : Icon(
+                  _isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: AppColors.brownDark,
+                ),
+          onPressed: _toggleSaved,
+        ),
+      ),
+    );
+  }
+
+  Widget _pinButton() {
+    return Positioned(
+      top: 100,
+      right: 16,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.cream.withValues(alpha: 0.85),
+          shape: BoxShape.circle,
+        ),
+        child: IconButton(
+          tooltip: _isPinned ? 'Unpin from profile' : 'Pin to profile',
+          icon: _pinningInProgress
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.brownDark,
+                  ),
+                )
+              : Icon(
+                  _isPinned ? Icons.push_pin : Icons.push_pin_outlined,
+                  color: AppColors.brownDark,
+                ),
+          onPressed: _togglePin,
+        ),
+      ),
+    );
+  }
+
+  Widget _reviewCard(double screenWidth, ReviewModel r) {
     return Container(
-      width: 260 * s,
-      height: 140 * s,
-      padding: EdgeInsets.all(14 * s),
+      width: screenWidth * 0.65,
+      height: 140,
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.cardBg,
-        borderRadius: BorderRadius.circular(16 * s),
-        border: Border.all(color: AppColors.cardBorder),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8 * s,
-            offset: Offset(0, 3 * s),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.cardBorder, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Container(
-                width: 36 * s,
-                height: 36 * s,
-                decoration:
-                    const BoxDecoration(color: AppColors.tan, shape: BoxShape.circle),
-              ),
-              SizedBox(width: 10 * s),
+              const CircleAvatar(radius: 18, backgroundColor: AppColors.tan),
+              const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -381,74 +556,38 @@ class _CoffeeShopDetailScreenState extends State<CoffeeShopDetailScreen> {
                       r.displayName,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.inter(
-                        fontSize: 13 * s,
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: AppColors.brownDark,
                       ),
                     ),
-                    Text(
-                      _starsString(r.rating),
-                      style: GoogleFonts.inter(
-                          fontSize: 12 * s, color: AppColors.brownMid),
+                    Row(
+                      children: List.generate(
+                        5,
+                        (i) => Icon(
+                          i < r.rating ? Icons.star : Icons.star_border,
+                          size: 14,
+                          color: AppColors.brownMid,
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
             ],
           ),
-          SizedBox(height: 10 * s),
-          Expanded(
-            child: Text(
-              r.comment,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style:
-                  GoogleFonts.inter(fontSize: 12 * s, color: AppColors.brownMid),
+          const SizedBox(height: 8),
+          Text(
+            r.comment,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              color: AppColors.brownMid,
+              fontWeight: FontWeight.w400,
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _ctaButton(BuildContext context, double s) {
-    return Positioned(
-      left: 37 * s,
-      top: 770 * s,
-      width: 320 * s,
-      height: 60 * s,
-      child: GestureDetector(
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => PostPage(
-                placeName: widget.cafe.cafeName,
-                placeAddress: widget.cafe.address,
-                cafeId: widget.cafe.id,
-              ),
-            ),
-          );
-        },
-        child: Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: AppColors.brownMid,
-            borderRadius: BorderRadius.circular(20 * s),
-            border: Border.all(color: AppColors.brownDark, width: 0.5),
-            boxShadow: const [
-              BoxShadow(
-                  color: Color(0x40000000), blurRadius: 4, offset: Offset(0, 4)),
-            ],
-          ),
-          child: Text(
-            'Post Your Visit',
-            style: GoogleFonts.inter(
-              fontSize: 14 * s,
-              fontWeight: FontWeight.w600,
-              color: AppColors.tan,
-            ),
-          ),
-        ),
       ),
     );
   }

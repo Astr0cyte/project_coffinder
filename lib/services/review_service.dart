@@ -45,15 +45,32 @@ class ReviewService {
     required String comment,
     required int rating,
     bool pinned = false,
-  }) {
-    return _reviewsRef.add({
-      'user_id': uid,
-      'cafe_id': cafeId,
-      'display_name': displayName,
-      'comment': comment,
-      'rating': rating,
-      'pinned': pinned,
-      'created_at': FieldValue.serverTimestamp(),
+  }) async {
+    final cafeRef = FirebaseFirestore.instance.collection('cafes').doc(cafeId);
+    final reviewRef = _reviewsRef.doc();
+
+    await FirebaseFirestore.instance.runTransaction((tx) async {
+      final cafeSnap = await tx.get(cafeRef);
+      final data = cafeSnap.data() ?? {};
+      final currentCount = (data['reviewCount'] as num?)?.toInt() ?? 0;
+      final currentAvg = (data['averageRating'] as num?)?.toDouble() ?? 0.0;
+      final newCount = currentCount + 1;
+      final newAvg = ((currentAvg * currentCount) + rating) / newCount;
+
+      tx.set(reviewRef, {
+        'user_id': uid,
+        'cafe_id': cafeId,
+        'display_name': displayName,
+        'comment': comment,
+        'rating': rating,
+        'pinned': pinned,
+        'created_at': FieldValue.serverTimestamp(),
+      });
+
+      tx.update(cafeRef, {
+        'averageRating': double.parse(newAvg.toStringAsFixed(1)),
+        'reviewCount': newCount,
+      });
     });
   }
 

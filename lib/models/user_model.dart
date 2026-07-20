@@ -8,6 +8,7 @@ class UserModel {
   final String profileImage;
   final String role;
   final int favoriteCafeCount;
+  final String pinnedCafeId;
   final DateTime? createdAt;
 
   UserModel({
@@ -18,6 +19,7 @@ class UserModel {
     required this.profileImage,
     required this.role,
     required this.favoriteCafeCount,
+    this.pinnedCafeId = '',
     this.createdAt,
   });
 
@@ -50,6 +52,7 @@ class UserModel {
       profileImage: map['profileImage'] ?? '',
       role: map['role'] ?? '',
       favoriteCafeCount: (map['favorite_cafe_count'] ?? 0) as int,
+      pinnedCafeId: map['pinnedCafeId'] ?? '',
       createdAt: map['created_at'] is Timestamp
           ? (map['created_at'] as Timestamp).toDate()
           : null,
@@ -72,6 +75,7 @@ class UserModel {
       'profileImage': profileImage,
       'role': role,
       'favorite_cafe_count': favoriteCafeCount,
+      'pinnedCafeId': pinnedCafeId,
       'created_at':
       createdAt != null ? Timestamp.fromDate(createdAt!) : FieldValue.serverTimestamp(),
     };
@@ -84,6 +88,7 @@ class UserModel {
     String? profileImage,
     String? role,
     int? favoriteCafeCount,
+    String? pinnedCafeId,
   }) {
     return UserModel(
       userId: userId,
@@ -93,6 +98,7 @@ class UserModel {
       profileImage: profileImage ?? this.profileImage,
       role: role ?? this.role,
       favoriteCafeCount: favoriteCafeCount ?? this.favoriteCafeCount,
+      pinnedCafeId: pinnedCafeId ?? this.pinnedCafeId,
       createdAt: createdAt,
     );
   }

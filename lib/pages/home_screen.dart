@@ -24,7 +24,8 @@ class ShopListItem {
   final String distance;
   final List<String> amenities;
   final String imageUrl;
-  const ShopListItem(this.name, this.bgColor, this.favorited, this.distance, this.amenities, {this.imageUrl = ''});
+  final double rating;
+  const ShopListItem(this.name, this.bgColor, this.favorited, this.distance, this.amenities, {this.imageUrl = '', this.rating = 0});
 
   /// Text/icon color that stays readable against [bgColor].
   Color contentColor(BuildContext context) {
@@ -157,6 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           cafe.area,
                           cafe.features,
                           imageUrl: cafe.imageUrl,
+                          rating: cafe.averageRating,
                         ),
                         scale: scale,
                         onTap: () {

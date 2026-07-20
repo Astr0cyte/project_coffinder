@@ -59,6 +59,12 @@ class UserService {
     return _usersRef.doc(uid).update({'profileImage': imageUrl});
   }
 
+  Future<void> pinCafe(String uid, String cafeId) =>
+      _usersRef.doc(uid).update({'pinnedCafeId': cafeId});
+
+  Future<void> unpinCafe(String uid) =>
+      _usersRef.doc(uid).update({'pinnedCafeId': ''});
+
   Future<void> incrementFavoriteCafeCount(String uid, {int by = 1}) {
     return _usersRef.doc(uid).update({
       'favorite_cafe_count': FieldValue.increment(by),

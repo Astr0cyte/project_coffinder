@@ -13,6 +13,8 @@ class CafeModel {
   final String area;
   final String address;
   final String imageUrl;
+  final double averageRating;
+  final int reviewCount;
   final DateTime? createdAt;
 
   CafeModel({
@@ -27,6 +29,8 @@ class CafeModel {
     this.area = '',
     this.address = '',
     this.imageUrl = '',
+    this.averageRating = 0,
+    this.reviewCount = 0,
     this.createdAt,
   });
 
@@ -44,6 +48,8 @@ class CafeModel {
       area: _str(map['area']),
       address: _str(map['address']),
       imageUrl: _str(map['imageUrl']),
+      averageRating: (map['averageRating'] as num?)?.toDouble() ?? 0,
+      reviewCount: (map['reviewCount'] as num?)?.toInt() ?? 0,
       createdAt: map['createdAt'] is Timestamp
           ? (map['createdAt'] as Timestamp).toDate()
           : null,
