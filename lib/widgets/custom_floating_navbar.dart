@@ -28,22 +28,24 @@ class CustomFloatingNavBar extends StatelessWidget {
           child: Align(
             alignment: Alignment.bottomCenter,
             child: ClipRRect(
+              // Reduced from 45 to 24 to match the shorter blurred area
               borderRadius: const BorderRadius.vertical(top: Radius.circular(45)),
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 18.0, sigmaY: 18.0),
+                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
                     gradient: RadialGradient(
                       center: Alignment.center,
-                      radius: 2.5,
+                      radius: 0.5,
                       colors: [
                         AppColors.brownDark.withOpacity(0.35),
                         AppColors.cream.withOpacity(0.05),
                       ],
                     ),
                   ),
-                  padding: const EdgeInsets.fromLTRB(16, 32, 16, 12),
+                  // Reduced top padding from 32 to 12 to make the blur background smaller
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                   child: SafeArea(
                     top: false,
                     child: Container(
@@ -90,7 +92,7 @@ class CustomFloatingNavBar extends StatelessWidget {
     final bool active = currentIndex == index;
 
     return GestureDetector(
-      behavior: HitTestBehavior.opaque, // Đảm bảo bấm vào vùng trống vẫn nhận sự kiện
+      behavior: HitTestBehavior.opaque,
       onTap: () => onTap(index),
       child: Container(
         width: 42,

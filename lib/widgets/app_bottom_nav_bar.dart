@@ -36,11 +36,16 @@ class AppBottomNavBar extends StatelessWidget {
         children: List.generate(_icons.length, (index) {
           final isActive = index == currentIndex;
           return GestureDetector(
+            // Giúp toàn bộ vùng padding xung quanh icon đều có thể bấm được
+            behavior: HitTestBehavior.opaque,
             onTap: () => onTap?.call(index),
-            child: Icon(
-              _icons[index],
-              color: isActive ? _activeColor : _inactiveColor,
-              size: 32,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Icon(
+                _icons[index],
+                color: isActive ? _activeColor : _inactiveColor,
+                size: 32,
+              ),
             ),
           );
         }),
