@@ -1,3 +1,6 @@
+import 'dart:ffi';
+
+import 'package:brewstreet_app/pages/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -42,7 +45,17 @@ class StepFlowHeader extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: onSkip,
+              onTap: (){
+                if (currentStep == totalSteps) {
+                  // Final state --> Delete && go straight HomeScreen
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const HomeScreen()),
+                        (route) => false,
+                  );
+                } else {
+                  if (onSkip != null) onSkip!();
+                }
+              },
               child: Row(
                 children: [
                   Text(

@@ -1,3 +1,4 @@
+import 'package:brewstreet_app/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -108,7 +109,13 @@ class SettingsPopup extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                Navigator.pop(context);
+                // Naviagator only change UI
+                // TODO:  --> Clear Token Login (Future Development)
+                // Reason: User close && reopen the app --> REMAIN Logged
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                      (route) => false,
+                );
               },
             ),
           ],

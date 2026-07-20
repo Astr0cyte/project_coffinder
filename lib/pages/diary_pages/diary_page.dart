@@ -6,6 +6,7 @@ import '../../widgets/diary_note_card.dart';
 import '../../widgets/diary_scaffold.dart';
 import 'saved_shops.dart';
 import 'glossary_page.dart';
+import 'draft_reviews_page.dart';
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
@@ -18,30 +19,31 @@ class _DiaryPageState extends State<DiaryPage> {
 
   static const int _glossaryTab = 0;
   static const int _savedShopsTab = 1;
-  int selectedTab = 3;
+  static const int _draftReviewsTab = 2;
+  int selectedTab = 4;
 
-final List<DiaryNote> notes = [
-  DiaryNote(
-    title: "Coffee tasting notes",
-    body:
-        "• Longer note has a drop down and ellipse\n"
-        "to demonstrate a note is longer than the\n"
-        "\"preview\" card.\n"
-        "• Arabica beans.\n"
-        "• Toffee praline flavours. Earthy richness.",
-    expanded: true,
-  ),
-  DiaryNote(
-    title: "Shorter note",
-    body: "• No drop-down required for short notes.",
-  ),
-  DiaryNote(
-    title: "Coffee tasting notes",
-    body:
-        "• Ability to attach notes to specific coffee\n"
-        "shop items within a specific coffee shop?",
-  ),
-];
+  final List<DiaryNote> notes = [
+    DiaryNote(
+      title: "Coffee tasting notes",
+      body:
+          "• Longer note has a drop down and ellipse\n"
+          "to demonstrate a note is longer than the\n"
+          "\"preview\" card.\n"
+          "• Arabica beans.\n"
+          "• Toffee praline flavours. Earthy richness.",
+      expanded: true,
+    ),
+    DiaryNote(
+      title: "Shorter note",
+      body: "• No drop-down required for short notes.",
+    ),
+    DiaryNote(
+      title: "Coffee tasting notes",
+      body:
+          "• Ability to attach notes to specific coffee\n"
+          "shop items within a specific coffee shop?",
+    ),
+  ];
   final tabs = const [
     "Glossary",
     "Saved Shops",
@@ -52,6 +54,7 @@ final List<DiaryNote> notes = [
   @override
   Widget build(BuildContext context) {
     final bool showingSavedShops = selectedTab == _savedShopsTab;
+    final bool showingDraftReviews = selectedTab == _draftReviewsTab;
 
     return DiaryScaffold(
       tabs: tabs,
@@ -61,7 +64,13 @@ final List<DiaryNote> notes = [
           selectedTab = index;
         });
       },
-      child: selectedTab == _glossaryTab ? const DiaryGlossaryPage() : showingSavedShops ? const SavedShops() : _buildNotesTab(),
+      child: selectedTab == _glossaryTab
+        ? const DiaryGlossaryPage()
+        : showingSavedShops
+        ? const SavedShops()
+        : showingDraftReviews
+        ? const DraftReviewsPage()
+        : _buildNotesTab(),
     );
   }
 

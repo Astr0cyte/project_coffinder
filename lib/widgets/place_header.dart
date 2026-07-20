@@ -39,7 +39,7 @@ class PlaceHeader extends StatelessWidget {
                 highlightColor: const Color(0xFF402F11).withAlpha(50), // Darker tint when pressed down
                 splashColor: const Color(0xFF402F11).withAlpha(75),    // Distinct ripple effect
                 child: const Padding(
-                  padding: EdgeInsets.all(8), // Keep the inner spacing around the icon
+                  padding: EdgeInsets.all(10), // Keep the inner spacing around the icon
                   child: Icon(Icons.arrow_back, color: Color(0xFF402F11)),
                 ),
               ),
