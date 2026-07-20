@@ -67,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _searchController.addListener(() => setState(() {}));
     _cafesSub = CafeService.instance.streamAllCafes().listen(
       (cafes) {
         if (mounted) setState(() { _cafes = cafes; _loading = false; _error = null; });
@@ -103,8 +104,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   List<CafeModel> get _visibleCafes {
-    if (_activeFilter == 'All') return _cafes;
-    return _cafes.where((c) => c.features.contains(_activeFilter)).toList();
+    final query = _searchController.text.trim().toLowerCase();
+    var cafes = _activeFilter == 'All'
+        ? _cafes
+        : _cafes.where((c) => c.features.contains(_activeFilter)).toList();
+    if (query.isNotEmpty) {
+      cafes = cafes
+          .where((c) =>
+              c.cafeName.toLowerCase().contains(query) ||
+              c.area.toLowerCase().contains(query))
+          .toList();
+    }
+    return cafes;
   }
 
   @override
@@ -345,10 +356,10 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Row(
           children: [
             GestureDetector(
-              onTap: () => setState(() {
-                _searchOpen = false;
+              onTap: () {
                 _searchController.clear();
-              }),
+                setState(() => _searchOpen = false);
+              },
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12 * s),
                 child: Icon(Icons.arrow_back, size: 18 * s, color: AppColors.brownDark),

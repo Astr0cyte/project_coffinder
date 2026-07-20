@@ -325,6 +325,7 @@ import '../widgets/review_list_item.dart';
 import 'app_colors.dart';
 import 'coffee_shop_detail_screen.dart';
 import 'settings_popup.dart';
+import 'user_search_page.dart';
 
 class ProfilePage extends StatefulWidget {
   final String? userId;
@@ -336,8 +337,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // Tăng biến này để ép FutureBuilder đếm lại followers sau khi follow/unfollow.
-  int _followRefreshTick = 0;
 
   // Cache stream theo profileUid: chỉ tạo Stream MỚI khi đổi sang xem
   // profile khác, không tạo lại mỗi lần build() -> tránh StreamBuilder
@@ -415,8 +414,6 @@ class _ProfilePageState extends State<ProfilePage> {
                               FollowButton(
                                 currentUid: currentUser.uid,
                                 targetUid: profileUid,
-                                onChanged: () =>
-                                    setState(() => _followRefreshTick++),
                               ),
                             const SizedBox(height: 20.0),
                             const Divider(color: Color(0xFFDED4BA), thickness: 1),
@@ -538,7 +535,20 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () => Navigator.pop(context),
             ),
             const Spacer(),
-            if (isOwnProfile)
+            IconButton(
+              icon: const Icon(Icons.person_search_outlined),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              color: const Color(0xFF402F11),
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const UserSearchPage()),
+              ),
+            ),
+            if (isOwnProfile) ...[
+              const SizedBox(width: 12),
               IconButton(
                 icon: const Icon(Icons.settings_outlined),
                 padding: EdgeInsets.zero,
@@ -554,6 +564,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   );
                 },
               ),
+            ],
           ],
         ),
         const SizedBox(height: 20),
@@ -578,49 +589,38 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
         ),
-        Center(
-          child: Text(
-            user.email.isNotEmpty ? user.email : '@Username',
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              fontFamily: 'Quicksand',
-              color: Color(0xFF7E654C),
+        if (isOwnProfile)
+          Center(
+            child: Text(
+              user.email.isNotEmpty ? user.email : '@Username',
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Quicksand',
+                color: Color(0xFF7E654C),
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 4.0),
-        Center(
-          child: Text(
-            user.role.isNotEmpty ? user.role : 'Coffee app',
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              fontFamily: 'Inter',
-              color: Color(0xFF7E654C),
-            ),
-          ),
-        ),
         const SizedBox(height: 20.0),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ProfileStat(value: '$postCount', label: 'Posts'),
             const SizedBox(width: 16.0),
-            FutureBuilder<int>(
-              key: ValueKey('followers_${profileUid}_$_followRefreshTick'),
-              future: FollowService.instance.countFollowers(profileUid),
-              builder: (context, snap) {
-                return ProfileStat(
-                  value: '${snap.data ?? 0}',
-                  label: 'Followers',
-                );
-              },
+            StreamBuilder<int>(
+              stream: FollowService.instance.streamFollowerCount(profileUid),
+              builder: (context, snap) => ProfileStat(
+                value: '${snap.data ?? 0}',
+                label: 'Followers',
+              ),
             ),
             const SizedBox(width: 16.0),
-            ProfileStat(
-              value: '${user.favoriteCafeCount}',
-              label: 'Favourites',
+            StreamBuilder<int>(
+              stream: FollowService.instance.streamFollowingCount(profileUid),
+              builder: (context, snap) => ProfileStat(
+                value: '${snap.data ?? 0}',
+                label: 'Following',
+              ),
             ),
           ],
         ),

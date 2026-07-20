@@ -70,4 +70,16 @@ class UserService {
       'favorite_cafe_count': FieldValue.increment(by),
     });
   }
+
+  /// Fetches all users and filters client-side — no index required,
+  /// case-insensitive, substring match on name and email.
+  Future<List<UserModel>> searchUsers(String query) async {
+    if (query.trim().isEmpty) return [];
+    final q = query.trim().toLowerCase();
+    final snap = await _usersRef.limit(300).get();
+    return snap.docs
+        .map((d) => UserModel.fromSnapshot(d))
+        .where((u) => u.userName.toLowerCase().contains(q))
+        .toList();
+  }
 }

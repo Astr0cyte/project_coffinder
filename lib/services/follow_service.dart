@@ -48,4 +48,20 @@ class FollowService {
     await _followsRef.where('follower_id', isEqualTo: uid).count().get();
     return snap.count ?? 0;
   }
+
+  /// Real-time follower count — updates instantly after follow/unfollow.
+  Stream<int> streamFollowerCount(String uid) {
+    return _followsRef
+        .where('following_id', isEqualTo: uid)
+        .snapshots()
+        .map((snap) => snap.size);
+  }
+
+  /// Real-time following count — updates instantly after follow/unfollow.
+  Stream<int> streamFollowingCount(String uid) {
+    return _followsRef
+        .where('follower_id', isEqualTo: uid)
+        .snapshots()
+        .map((snap) => snap.size);
+  }
 }
