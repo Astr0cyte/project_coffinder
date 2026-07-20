@@ -24,7 +24,7 @@ class _FollowButtonState extends State<FollowButton> {
   bool _isProcessing = false;
 
   Future<void> _handleTap(bool isFollowing) async {
-    if (_isProcessing) return; // chặn spam bấm liên tục
+    if (_isProcessing) return;
     setState(() => _isProcessing = true);
     try {
       if (isFollowing) {
@@ -35,6 +35,12 @@ class _FollowButtonState extends State<FollowButton> {
             .followUser(widget.currentUid, widget.targetUid);
       }
       widget.onChanged?.call();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
     } finally {
       if (mounted) setState(() => _isProcessing = false);
     }

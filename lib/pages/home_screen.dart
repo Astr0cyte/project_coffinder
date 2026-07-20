@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 import 'coffee_shop_detail_screen.dart';
+import 'activity_feed_page.dart';
 import 'profile_page.dart';
 import 'sign_in_page.dart';
 import 'register_page.dart';
@@ -267,11 +268,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SizedBox(width: 8 * s),
                 GestureDetector(
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Notifications tapped')),
-                    );
-                  },
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (_) => const ActivityFeedPage()),
+                  ),
                   child: Container(
                     width: 44 * s,
                     height: 44 * s,

@@ -101,6 +101,27 @@ class CafeService {
         .map((snap) => snap.docs.map((d) => CafeModel.fromSnapshot(d)).toList());
   }
 
+  /// Fetches cafes posted by [uids], sorted newest first.
+  /// Batches into chunks of 30 to stay within Firestore whereIn limits.
+  Future<List<CafeModel>> getCafesByCreators(List<String> uids) async {
+    if (uids.isEmpty) return [];
+    const chunkSize = 30;
+    final results = <CafeModel>[];
+    for (var i = 0; i < uids.length; i += chunkSize) {
+      final chunk = uids.sublist(i, (i + chunkSize).clamp(0, uids.length));
+      final snap = await _cafesRef
+          .where('createdBy', whereIn: chunk)
+          .get();
+      results.addAll(snap.docs.map((d) => CafeModel.fromSnapshot(d)));
+    }
+    results.sort((a, b) {
+      if (a.createdAt == null) return 1;
+      if (b.createdAt == null) return -1;
+      return b.createdAt!.compareTo(a.createdAt!);
+    });
+    return results;
+  }
+
   /// Tạo 1 quán cà phê mới từ dữ liệu đã nhập qua 4 bước (AddCafeState).
   /// imageUrl là link ảnh người dùng tự dán ở Step 1 (không upload file).
   Future<String> createCafe({

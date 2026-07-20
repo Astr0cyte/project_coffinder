@@ -49,6 +49,17 @@ class FollowService {
     return snap.count ?? 0;
   }
 
+  /// Returns the UIDs that [uid] is following.
+  Future<List<String>> getFollowedUids(String uid) async {
+    final snap = await _followsRef
+        .where('follower_id', isEqualTo: uid)
+        .get();
+    return snap.docs
+        .map((d) => d.data()['following_id'])
+        .whereType<String>()
+        .toList();
+  }
+
   /// Real-time follower count — updates instantly after follow/unfollow.
   Stream<int> streamFollowerCount(String uid) {
     return _followsRef

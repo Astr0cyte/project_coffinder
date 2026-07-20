@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/cafe_model.dart';
+import '../pages/coffee_shop_detail_screen.dart';
 import 'coffee_shop_card.dart';
 
 
@@ -24,6 +25,11 @@ class CafePostItem extends StatelessWidget {
       description: cafe.story.isNotEmpty ? cafe.story : cafe.address,
       imageUrl: cafe.imageUrl,
       timeAgo: _timeAgo(cafe.createdAt),
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => CoffeeShopDetailScreen(cafe: cafe),
+        ),
+      ),
     );
   }
 }

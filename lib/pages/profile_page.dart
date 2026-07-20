@@ -581,11 +581,10 @@ class _ProfilePageState extends State<ProfilePage> {
         Center(
           child: Text(
             user.displayName,
-            style: const TextStyle(
+            style: GoogleFonts.playfairDisplay(
               fontSize: 22,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'PlayfairDisplay',
-              color: Color(0xFF402F11),
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF402F11),
             ),
           ),
         ),
@@ -593,11 +592,10 @@ class _ProfilePageState extends State<ProfilePage> {
           Center(
             child: Text(
               user.email.isNotEmpty ? user.email : '@Username',
-              style: const TextStyle(
+              style: GoogleFonts.inter(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                fontFamily: 'Quicksand',
-                color: Color(0xFF7E654C),
+                color: const Color(0xFF7E654C),
               ),
             ),
           ),
@@ -635,9 +633,9 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.cardBg,
+          color: const Color(0xFFDED4BA),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.cardBorder),
+          border: Border.all(color: const Color(0xFFDED4BA)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
@@ -646,13 +644,12 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ],
         ),
-        child: Row(
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Row(
           children: [
             ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                bottomLeft: Radius.circular(16),
-              ),
+              borderRadius: BorderRadius.circular(12),
               child: cafe.imageUrl.isNotEmpty
                   ? Image.network(
                       cafe.imageUrl,
@@ -699,32 +696,26 @@ class _ProfilePageState extends State<ProfilePage> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    if (cafe.averageRating > 0) ...[
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          const Icon(Icons.star, size: 12, color: AppColors.brownMid),
-                          const SizedBox(width: 3),
-                          Text(
-                            cafe.averageRating.toStringAsFixed(1),
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF402F11),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    const SizedBox(height: 4),
+                    Row(
+                      children: List.generate(5, (i) => Padding(
+                        padding: const EdgeInsets.only(right: 3),
+                        child: Icon(
+                          Icons.coffee,
+                          size: 14,
+                          color: i < cafe.averageRating.round()
+                              ? const Color(0xFF7E654C)
+                              : const Color(0xFFB8A78A),
+                        ),
+                      )),
+                    ),
                   ],
                 ),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.only(right: 12),
-              child: Icon(Icons.chevron_right, color: AppColors.brownMid),
-            ),
+            const Icon(Icons.chevron_right, color: AppColors.brownMid),
           ],
+        ),
         ),
       ),
     );

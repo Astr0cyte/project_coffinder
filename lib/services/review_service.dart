@@ -47,6 +47,27 @@ class ReviewService {
         });
   }
 
+  /// Fetches reviews posted by [uids], sorted newest first.
+  /// Batches into chunks of 30 to stay within Firestore whereIn limits.
+  Future<List<ReviewModel>> getReviewsByUsers(List<String> uids) async {
+    if (uids.isEmpty) return [];
+    const chunkSize = 30;
+    final results = <ReviewModel>[];
+    for (var i = 0; i < uids.length; i += chunkSize) {
+      final chunk = uids.sublist(i, (i + chunkSize).clamp(0, uids.length));
+      final snap = await _reviewsRef
+          .where('user_id', whereIn: chunk)
+          .get();
+      results.addAll(snap.docs.map((d) => ReviewModel.fromSnapshot(d)));
+    }
+    results.sort((a, b) {
+      if (a.createdAt == null) return 1;
+      if (b.createdAt == null) return -1;
+      return b.createdAt!.compareTo(a.createdAt!);
+    });
+    return results;
+  }
+
   Future<void> createReview({
     required String uid,
     required String cafeId,

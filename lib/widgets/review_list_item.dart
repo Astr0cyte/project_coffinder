@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/review_model.dart';
+import '../pages/coffee_shop_detail_screen.dart';
 import '../services/cafe_service.dart';
 import 'coffee_shop_card.dart';
 
@@ -28,12 +29,20 @@ class ReviewListItem extends StatelessWidget {
             ? 'Loading...'
             : (snapshot.data?.cafeName ?? 'Cafe deleted');
 
+        final cafe = snapshot.data;
         return CoffeeShopCard(
           name: cafeName,
           description: review.comment,
           rating: review.rating,
           pinned: review.pinned,
           timeAgo: _timeAgo(review.createdAt),
+          onTap: cafe == null
+              ? null
+              : () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => CoffeeShopDetailScreen(cafe: cafe),
+                    ),
+                  ),
         );
       },
     );

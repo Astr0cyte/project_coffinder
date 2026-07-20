@@ -11,6 +11,8 @@ class CoffeeShopCard extends StatelessWidget {
   final String? timeAgo;
   final String? imageUrl;
 
+  final VoidCallback? onTap;
+
   const CoffeeShopCard({
     super.key,
     required this.name,
@@ -19,11 +21,14 @@ class CoffeeShopCard extends StatelessWidget {
     this.pinned = false,
     this.timeAgo,
     this.imageUrl,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: const Color(0xFFDED4BA),
@@ -138,6 +143,7 @@ class CoffeeShopCard extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
   }
 }
