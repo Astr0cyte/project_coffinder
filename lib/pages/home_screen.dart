@@ -1,4 +1,6 @@
 
+import 'package:brewstreet_app/models/cafe.dart';
+import 'package:brewstreet_app/services/cafe_services.dart';
 import 'package:brewstreet_app/widgets/bottom_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,36 +8,10 @@ import 'app_colors.dart';
 import 'coffee_shop_detail_screen.dart';
 import '../widgets/shop_card.dart';
 
-class ShopListItem {
-  final String id;
-  final String name;
-  final String address;
-  final Color bgColor;
-  final bool favorited;
-  final String distance;
-  final List<String> amenities;
-
-  const ShopListItem(
-    this.id,
-    this.name,
-    this.address,
-    this.bgColor,
-    this.favorited,
-    this.distance,
-    this.amenities,
-  );
-}
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
-  static const shops = [
-    ShopListItem('1', 'Phuc Long', '123 Nguyen Hue Street, District 1, HCMC', AppColors.brownMid, false, '350 m away', ['A/C', 'Wi-Fi', 'Quiet']),
-    ShopListItem('2', 'Lotus Leaf Cafe', '456 Le Lai Street, District 1, HCMC', AppColors.cardBg, false, '0.8 km away', ['Pets', 'Friendly']),
-    ShopListItem('3', 'Sunset Terrace Coffee', '789 Tran Hung Dao Street, District 1, HCMC', AppColors.brownDark, true, '1.2 km away', ['Quiet', 'Wi-Fi']),
-    ShopListItem('4', 'Ban Mai Coffee House', '321 Pham Ngu Lao Street, District 1, HCMC', AppColors.tan, true, '1.5 km away', ['A/C', 'Friendly']),
-    ShopListItem('5', 'Old Quarter Coffee', '654 Bui Vien Street, District 1, HCMC', AppColors.chipLight, false, '2.0 km away', ['Pets', 'Wi-Fi', 'Quiet']),
-  ];
+
 
   static const filterLabels = ['All', 'Quiet', 'Wi-Fi', 'A/C', 'Pets', 'Friendly'];
 
@@ -74,11 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 
-  List<ShopListItem> get _visibleShops {
-    if (_activeFilter == 'All') return HomeScreen.shops;
-    return HomeScreen.shops.where((s) => s.amenities.contains(_activeFilter)).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,36 +69,94 @@ class _HomeScreenState extends State<HomeScreen> {
               child: CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(child: _header(context, scale)),
-                //SliverToBoxAdapter(child: _resultsLabel(scale)),
-                SliverToBoxAdapter(child: _filterChips(scale)),
-                SliverPadding(
-                  padding: EdgeInsets.fromLTRB(20 * scale, 12 * scale, 20 * scale, 0),
-                  sliver: SliverList.separated(
-                    itemCount: _visibleShops.length,
-                    separatorBuilder: (_, __) => SizedBox(height: 14 * scale),
-                    itemBuilder: (context, i) => ShopCard(
-                      shop: _visibleShops[i],
-                      scale: scale,
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => CoffeeShopDetailScreen(
-                              cafeId: _visibleShops[i].id,
-                              shopName: _visibleShops[i].name,
-                              address: _visibleShops[i].address,
-                            ),
-                          ),
-                        );
-                      },
+                 SliverToBoxAdapter(
+    child: _filterChips(scale),
+  ),
+                SliverToBoxAdapter(
+  child: Padding(
+    padding: EdgeInsets.fromLTRB(
+      20 * scale,
+      12 * scale,
+      20 * scale,
+      0,
+    ),
+    child: StreamBuilder<List<Cafe>>(
+      stream: CafeService().getCafes(),
+      builder: (context, snapshot) {
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return const Center(
+            child: Text("Something went wrong"),
+          );
+        }
+
+        final cafes = snapshot.data ?? [];
+        List<Cafe> filteredCafes = cafes;
+
+        if (_searchController.text.isNotEmpty) {
+        filteredCafes = filteredCafes.where((cafe) {
+          return cafe.name
+              .toLowerCase()
+              .contains(_searchController.text.toLowerCase());
+        }).toList();
+      }
+
+      if (_activeFilter != "All") {
+      filteredCafes = filteredCafes.where((cafe) {
+        return cafe.tags.contains(_activeFilter);
+      }).toList();
+    }
+
+        return ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: filteredCafes.length,
+          separatorBuilder: (_, __) => SizedBox(height: 14 * scale),
+          itemBuilder: (context, i) {
+
+            final cafe = filteredCafes[i];
+
+            return ShopCard(
+              shopName: cafe.name,
+              imageUrl: cafe.imageUrl,
+              rating: cafe.averageRating,
+              tags: cafe.tags,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CoffeeShopDetailScreen(
+                      cafeId: cafe.id,
+                      shopName: cafe.name, address: '',
                     ),
                   ),
-                ),
+                );
+              },
+            );
+          },
+        );
+      },
+    ),
+  ),
+),
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(20 * scale, 16 * scale, 20 * scale, 110 * scale),
                     child: Text(
-                      '${_visibleShops.length} Coffeeshops Found',
-                      textAlign: TextAlign.center,
+                      child: Text(
+                        "${filteredCafes.length} Coffee Shops Found",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(
+                          fontSize: 13 * scale,
+                          color: AppColors.brownMid,
+                        ),
+                      ),
                       style: GoogleFonts.inter(
                         fontSize: 13 * scale,
                         color: AppColors.brownMid,

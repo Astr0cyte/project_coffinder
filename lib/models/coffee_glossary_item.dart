@@ -21,27 +21,38 @@ lib/
 */
 
 class CoffeeGlossaryItem {
-  final String imagePath;
-  final String englishName; 
+  final String englishName;
   final String vietName;
-  final String pronunciation; 
+  final String pronunciation;
   final String description;
+  final String imagePath;
 
   CoffeeGlossaryItem({
     required this.englishName,
     required this.vietName,
-    required this.imagePath,
-    required this.description,
     required this.pronunciation,
+    required this.description,
+    required this.imagePath,
   });
 
   factory CoffeeGlossaryItem.fromJson(Map<String, dynamic> json) {
     return CoffeeGlossaryItem(
-      englishName: json['englishName'],
-      vietName: json['vietName'],
-      imagePath: json['imagePath'],
-      description: json['description'],
-      pronunciation: json['pronunciation'],
+      englishName: json["englishName"] ?? "",
+      vietName: json["vietName"] ?? "",
+      pronunciation: json["pronunciation"] ?? "",
+      description: json["description"] ?? "",
+      imagePath: json["imagePath"] ?? "",
+    );
+  }
+
+  factory CoffeeGlossaryItem.fromFirestore(
+      Map<String, dynamic> data) {
+    return CoffeeGlossaryItem(
+      englishName: data["english_name"] ?? "",
+      vietName: data["item_name"] ?? "",
+      pronunciation: data["item_pronunciation"] ?? "",
+      description: data["item_description"] ?? "",
+      imagePath: data["item_image_url"] ?? "",
     );
   }
 }

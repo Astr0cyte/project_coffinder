@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../models/diary_note.dart';
 import '/widgets/add_note_dialog.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +42,22 @@ final List<DiaryNote> notes = [
         "shop items within a specific coffee shop?",
   ),
 ];
+
+Stream<List<DiaryNote>> loadFirebaseNotes() {
+  return FirebaseFirestore.instance
+      .collection("notes")
+      .snapshots()
+      .map((snapshot) {
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+
+      return DiaryNote(
+        title: data["notesTitle"] ?? "",
+        body: data["notesDescription"] ?? "",
+      );
+    }).toList();
+  });
+}
   final tabs = const [
     "Glossary",
     "Saved Shops",
@@ -77,35 +95,49 @@ final List<DiaryNote> notes = [
 
         const SizedBox(height: 18),
 
-        Column(
-          children: notes.map((note) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 15),
-              child: DiaryNoteCard(
-                title: note.title,
-                body: note.body,
-                expanded: note.expanded,
-                onToggle: () {
-                  setState(() {
-                    note.expanded = !note.expanded;
-                  });
-                },
-                onEdit: () async {
-                  final DiaryNote? editedNote = await showDialog<DiaryNote>(
-                    context: context,
-                    builder: (_) => AddNoteDialog(note: note),
-                  );
+        StreamBuilder<List<DiaryNote>>(
+          stream: loadFirebaseNotes(),
+          builder: (context, snapshot) {
 
-                  if (editedNote != null) {
-                    setState(() {
-                      note.title = editedNote.title;
-                      note.body = editedNote.body;
-                    });
-                  }
-                },
-              ),
+            final firebaseNotes = snapshot.data ?? [];
+
+            final allNotes = [
+              ...notes,
+              ...firebaseNotes,
+            ];
+
+            return Column(
+              children: allNotes.map((note) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: DiaryNoteCard(
+                    title: note.title,
+                    body: note.body,
+                    expanded: note.expanded,
+                    onToggle: () {
+                      setState(() {
+                        note.expanded = !note.expanded;
+                      });
+                    },
+                    onEdit: () async {
+                      final DiaryNote? editedNote =
+                          await showDialog<DiaryNote>(
+                        context: context,
+                        builder: (_) => AddNoteDialog(note: note),
+                      );
+
+                      if (editedNote != null) {
+                        setState(() {
+                          note.title = editedNote.title;
+                          note.body = editedNote.body;
+                        });
+                      }
+                    },
+                  ),
+                );
+              }).toList(),
             );
-          }).toList(),
+          },
         ),
 
         const SizedBox(height: 22),

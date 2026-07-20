@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class DiaryGlossaryPage extends StatefulWidget {
@@ -26,6 +27,16 @@ class _DiaryGlossaryPageState extends State<DiaryGlossaryPage> {
     return jsonList.map((json) => CoffeeGlossaryItem.fromJson(json)).toList();
   }
 
+Stream<List<CoffeeGlossaryItem>> loadFirebaseCoffeeData() {
+  return FirebaseFirestore.instance
+      .collection("coffee_glossary")
+      .snapshots()
+      .map((snapshot) {
+    return snapshot.docs.map((doc) {
+      return CoffeeGlossaryItem.fromFirestore(doc.data());
+    }).toList();
+  });
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,35 +78,50 @@ class _DiaryGlossaryPageState extends State<DiaryGlossaryPage> {
                 child: FractionallySizedBox(
                   heightFactor: 0.73,
                   child: FutureBuilder<List<CoffeeGlossaryItem>>(
-                    future: loadCoffeeData(),
-                    builder: (context, snapshot) {
-                      if(snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
+                  future: loadCoffeeData(),
+                  builder: (context, jsonSnapshot) {
 
-                      final coffeeGlossaryList = snapshot.data!;
-
-                      return ListView.builder(
-                        padding: const EdgeInsets.only(top: 16),
-                        itemCount: coffeeGlossaryList.length,
-                        itemBuilder: (context, idx) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: CoffeeGlossaryCard(coffee: coffeeGlossaryList[idx]),
-                          );
-                        }
+                    if (jsonSnapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
                       );
                     }
-                  )
+
+                    final jsonItems = jsonSnapshot.data ?? [];
+
+                    return StreamBuilder<List<CoffeeGlossaryItem>>(
+                      stream: loadFirebaseCoffeeData(),
+                      builder: (context, firebaseSnapshot) {
+
+                        final firebaseItems = firebaseSnapshot.data ?? [];
+
+                        final allItems = [
+                          ...jsonItems,
+                          ...firebaseItems,
+                        ];
+
+                        return ListView.builder(
+                          padding: const EdgeInsets.only(top: 16),
+                          itemCount: allItems.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: CoffeeGlossaryCard(
+                                coffee: allItems[index],
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
+                  ),
                 ),
               ),
-        		],
+            ],
           ),
         ),
-      );
-  }
+                );
+              }
 }
-
-
-
   
