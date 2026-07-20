@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Cột hiển thị 1 số liệu thống kê, vd: "42 / Posts".
 class ProfileStat extends StatelessWidget {
   final String value;
   final String label;

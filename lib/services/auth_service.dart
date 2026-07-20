@@ -83,3 +83,4 @@ class AuthService {
 
   Future<void> signOut() => _auth.signOut();
 }
+
