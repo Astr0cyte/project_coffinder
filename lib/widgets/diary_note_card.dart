@@ -14,6 +14,9 @@ class DiaryNoteCard extends StatelessWidget {
     required this.onToggle,
   });
 
+  bool get _isLongNote =>
+    body.length > 120 || body.split('\n').length > 4;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -39,6 +42,7 @@ class DiaryNoteCard extends StatelessWidget {
                   ),
                 ),
               ),
+              if (_isLongNote)
               IconButton(
                 icon: Icon(
                   expanded
@@ -52,9 +56,15 @@ class DiaryNoteCard extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          Text(body),
+          Text(
+            body,
+            maxLines: _isLongNote ? (expanded ? null : 3) : null,
+            overflow: _isLongNote
+            ? TextOverflow.fade
+            : TextOverflow.visible,
+          ),
 
-          if (expanded) ...[
+          if (_isLongNote && expanded) ...[
             const SizedBox(height: 10),
             const Center(child: Text("•••")),
           ],
