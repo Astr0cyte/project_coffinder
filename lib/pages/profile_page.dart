@@ -360,7 +360,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     if (currentUser == null) {
       return const Scaffold(
-        backgroundColor: Color(0xFFFAF9F4),
+        backgroundColor: AppColors.cream,
         body: Center(child: Text('You are not logged in.')),
       );
     }
@@ -370,7 +370,7 @@ class _ProfilePageState extends State<ProfilePage> {
     _ensureStreams(profileUid);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF9F4),
+      backgroundColor: AppColors.cream,
       body: SafeArea(
         child: StreamBuilder<UserModel>(
           stream: _userStream,

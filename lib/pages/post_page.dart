@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../app_colors.dart';
 import '../services/review_service.dart';
 import '../states/review_state.dart';
 import '../widgets/place_header.dart';
@@ -84,7 +85,7 @@ class _PostPageState extends State<PostPage> {
 
   @override
   Widget build(BuildContext context) {
-    const backgroundColor = Color(0xFFFAF9F4);
+    const backgroundColor = AppColors.cream;
     const textColor = Color(0xFF402F11);
     return Scaffold(
       backgroundColor: backgroundColor,

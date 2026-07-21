@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../app_colors.dart';
 import 'login_page.dart';
 
 class SettingsPopup extends StatelessWidget {
@@ -9,7 +10,7 @@ class SettingsPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: const Color(0xFFFAF9F4),
+      backgroundColor: AppColors.cream,
       child: Container(
         width: 360,
         padding: const EdgeInsets.all(24),
