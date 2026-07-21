@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// Full-width rounded primary button used for "Continue" / "Post" at the
 /// bottom of each step.
@@ -31,7 +32,7 @@ class FlowPrimaryButton extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style: GoogleFonts.quicksand(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
     );

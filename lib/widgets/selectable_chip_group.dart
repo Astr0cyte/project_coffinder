@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// A generic wrap of selectable pill-shaped chips. Unlike
 /// `FeatureChipSelector` (which is tied to the `PlaceFeature` enum for the
@@ -47,7 +48,7 @@ class SelectableChipGroup extends StatelessWidget {
               ),
               child: Text(
                 option,
-                style: TextStyle(
+                style: GoogleFonts.quicksand(
                   color: isSelected ? Colors.white : _textColor,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,

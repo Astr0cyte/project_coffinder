@@ -1,6 +1,6 @@
-import 'package:brewstreet_app/model/diary_note.dart';
-import 'package:brewstreet_app/pages/saved_shops.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:brewstreet_app/app_colors.dart';
+
+import '../model/diary_note.dart';
 import '/widgets/add_note_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -87,12 +87,20 @@ Stream<List<DiaryNote>> loadFirebaseNotes() {
         Text(
           "Write your thoughts below",
           style: TextStyle(
-            color: Colors.grey,
+            color: AppColors.brownMid,
             fontFamily: GoogleFonts.quicksand().fontFamily,
           ),
         ),
 
-        const SizedBox(height: 18),
+        const Align(
+            alignment: Alignment(0, -0.50),
+            child: Divider(
+              color: AppColors.gold,
+              thickness: 1,
+            ),
+          ),
+
+        const SizedBox(height: 16),
 
         StreamBuilder<List<DiaryNote>>(
           stream: loadFirebaseNotes(),

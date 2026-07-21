@@ -6,6 +6,7 @@ class DropdownCard extends StatelessWidget {
   final Widget? expandedContent;
   final bool expanded;
   final VoidCallback onToggle;
+  final Color borderColor;
 
   const DropdownCard({
     super.key,
@@ -14,6 +15,7 @@ class DropdownCard extends StatelessWidget {
     required this.expanded,
     required this.onToggle,
     this.expandedContent,
+    this.borderColor = const Color(0xFFDDE1D0),
   });
 
   @override
@@ -25,7 +27,7 @@ class DropdownCard extends StatelessWidget {
         color: const Color(0xFFF9F7EE),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFFDDE1D0),
+          color: borderColor,
         ),
         boxShadow: const [
           BoxShadow(

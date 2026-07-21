@@ -726,10 +726,10 @@ class _ProfilePageState extends State<ProfilePage> {
       alignment: Alignment.centerLeft,
       child: Text(
         title,
-        style: GoogleFonts.playfairDisplay(
+        style: GoogleFonts.quicksand(
           fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: const Color(0xFF402F11),
+          fontWeight: FontWeight.w600,
+          color: AppColors.brownMid,
         ),
       ),
     );

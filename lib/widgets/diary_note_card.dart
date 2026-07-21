@@ -1,6 +1,6 @@
+import 'package:brewstreet_app/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../app_colors.dart';
 import 'dropdown_card.dart';
 
 class DiaryNoteCard extends StatelessWidget {
@@ -51,7 +51,7 @@ class DiaryNoteCard extends StatelessWidget {
           color: const Color(0xFFF9F7EE),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: const Color(0xFFDDE1D0),
+            color: AppColors.cardBorder,
           ),
           boxShadow: const [
             BoxShadow(
@@ -87,6 +87,7 @@ class DiaryNoteCard extends StatelessWidget {
       expandedContent: _isLongNote && expanded
           ? const Center(child: Text(''))
           : null,
+      borderColor: AppColors.cardBorder,
     );
   }
 }
