@@ -4,7 +4,6 @@ import '../../pages/app_colors.dart';
 import '../../states/add_cafe_state.dart';
 import '../../widgets/step_flow_header.dart';
 import '../../widgets/flow_primary_button.dart';
-import '../../widgets/selectable_chip_group.dart';
 import 'step4_story_page.dart';
 
 class Step3CharacteristicsPage extends StatefulWidget {
@@ -186,74 +185,110 @@ class _Step3CharacteristicsPageState extends State<Step3CharacteristicsPage> {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        SelectableChipGroup(
-                          options: _featureOptions,
-                          selected: state.features,
-                          onToggle: state.toggleFeature,
-                          trailing: GestureDetector(
-                            onTap: _showAddCustomFeatureDialog,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 9),
-                              decoration: BoxDecoration(
-                                color: AppColors.chipLight,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                'More ...',
-                                style: GoogleFonts.quicksand(
-                                  color: _textColor.withOpacity(0.8),
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            ..._featureOptions.map((option) {
+                              final isSelected = state.features.contains(option);
+                              return GestureDetector(
+                                onTap: () => state.toggleFeature(option),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 150),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 9),
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? _textColor
+                                        : const Color(0xFFF2EFDE),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    option,
+                                    style: GoogleFonts.quicksand(
+                                      color: isSelected
+                                          ? Colors.white
+                                          : _textColor,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
+                            ..._customFeatures.map((feature) {
+                              final isSelected =
+                                  state.features.contains(feature);
+                              return GestureDetector(
+                                onTap: () => state.toggleFeature(feature),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 150),
+                                  padding: const EdgeInsets.only(
+                                      left: 16, right: 8, top: 9, bottom: 9),
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? _textColor
+                                        : const Color(0xFFF2EFDE),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        feature,
+                                        style: GoogleFonts.quicksand(
+                                          color: isSelected
+                                              ? Colors.white
+                                              : _textColor,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _customFeatures.remove(feature);
+                                            if (state.features
+                                                .contains(feature)) {
+                                              state.toggleFeature(feature);
+                                            }
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.close,
+                                          size: 14,
+                                          color: isSelected
+                                              ? Colors.white70
+                                              : _textColor.withOpacity(0.6),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }),
+                            GestureDetector(
+                              onTap: _showAddCustomFeatureDialog,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 9),
+                                decoration: BoxDecoration(
+                                  color: AppColors.chipLight,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  'More ...',
+                                  style: GoogleFonts.quicksand(
+                                    color: _textColor.withOpacity(0.8),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                        if (_customFeatures.isNotEmpty) ...[
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: _customFeatures.map((feature) {
-                              final isSelected =
-                                  state.features.contains(feature);
-                              return InputChip(
-                                label: Text(feature),
-                                labelStyle: TextStyle(
-                                  color:
-                                      isSelected ? Colors.white : _textColor,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                backgroundColor: isSelected
-                                    ? _textColor
-                                    : Colors.transparent,
-                                selectedColor: _textColor,
-                                deleteIconColor: isSelected
-                                    ? Colors.white70
-                                    : _textColor.withOpacity(0.6),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                  side: BorderSide(
-                                    color: isSelected
-                                        ? _textColor
-                                        : _textColor.withOpacity(0.3),
-                                  ),
-                                ),
-                                onSelected: (_) =>
-                                    state.toggleFeature(feature),
-                                onDeleted: () {
-                                  setState(() {
-                                    _customFeatures.remove(feature);
-                                    if (state.features.contains(feature)) {
-                                      state.toggleFeature(feature);
-                                    }
-                                  });
-                                },
-                              );
-                            }).toList(),
-                          ),
-                        ],
                         const SizedBox(height: 24),
                       ],
                     ),

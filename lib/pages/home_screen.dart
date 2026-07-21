@@ -37,7 +37,7 @@ class ShopListItem {
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
-  static const filterLabels = ['All', 'Quiet', 'Wi-Fi', 'A/C', 'Pets', 'Friendly'];
+  static const filterLabels = ['All', 'Quiet', 'Wi-Fi', 'Air Condtioned', 'Pets', 'Friendly Staff'];
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
