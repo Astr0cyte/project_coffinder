@@ -1,4 +1,3 @@
-import '../model/diary_note.dart';
 import '/widgets/add_note_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,42 +5,49 @@ import '../widgets/diary_note_card.dart';
 import '../widgets/diary_scaffold.dart';
 import 'saved_shops.dart';
 import 'diary_pages/glossary_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../models/diary_note_model.dart';
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
 
   @override
   State<DiaryPage> createState() => _DiaryPageState();
+
+
 }
 
+
 class _DiaryPageState extends State<DiaryPage> {
+
+    @override
+  void initState() {
+  super.initState();
+  loadNotes();
+}
+
+Future<void> loadNotes() async {
+  final uid = FirebaseAuth.instance.currentUser!.uid;
+
+  final snapshot = await FirebaseFirestore.instance
+      .collection('diaries')
+      .where('user_id', isEqualTo: uid)
+      .get();
+
+  setState(() {
+    notes = snapshot.docs
+        .map((doc) => DiaryNoteModel.fromFirestore(doc.data()))
+        .toList();
+  });
+}
   static const int _glossaryTab = 0;
   static const int _savedShopsTab = 1;
 
   int selectedTab = 2;
 
-final List<DiaryNote> notes = [
-  DiaryNote(
-    title: "Coffee tasting notes",
-    body:
-        "• Longer note has a drop down and ellipse\n"
-        "to demonstrate a note is longer than the\n"
-        "\"preview\" card.\n"
-        "• Arabica beans.\n"
-        "• Toffee praline flavours. Earthy richness.",
-    expanded: true,
-  ),
-  DiaryNote(
-    title: "Shorter note",
-    body: "• No drop-down required for short notes.",
-  ),
-  DiaryNote(
-    title: "Coffee tasting notes",
-    body:
-        "• Ability to attach notes to specific coffee\n"
-        "shop items within a specific coffee shop?",
-  ),
-];
+  List<DiaryNoteModel> notes = [];
+
   final tabs = const [
     "Glossary",
     "Saved Shops",
@@ -102,15 +108,17 @@ final List<DiaryNote> notes = [
 
         GestureDetector(
           onTap: () async {
-            final DiaryNote? newNote = await showDialog<DiaryNote>(
+            final DiaryNoteModel? newNote = await showDialog<DiaryNoteModel>(
               context: context,
               builder: (context) => const AddNoteDialog(),
             );
 
             if (newNote != null) {
-              setState(() {
-                notes.add(newNote);
-              });
+            await FirebaseFirestore.instance
+                .collection('diaries')
+                .add(newNote.toFirestore());
+
+            await loadNotes();
             }
           },
           child: Text(
