@@ -1,4 +1,5 @@
 import 'package:brewstreet_app/app_colors.dart';
+import 'package:brewstreet_app/pages/saved_shops.dart';
 
 import '../model/diary_note.dart';
 import '/widgets/add_note_dialog.dart';
@@ -42,21 +43,6 @@ final List<DiaryNote> notes = [
   ),
 ];
 
-Stream<List<DiaryNote>> loadFirebaseNotes() {
-  return FirebaseFirestore.instance
-      .collection("notes")
-      .snapshots()
-      .map((snapshot) {
-    return snapshot.docs.map((doc) {
-      final data = doc.data();
-
-      return DiaryNote(
-        title: data["notesTitle"] ?? "",
-        body: data["notesDescription"] ?? "",
-      );
-    }).toList();
-  });
-}
   final tabs = const [
     "Glossary",
     "Saved Shops",
