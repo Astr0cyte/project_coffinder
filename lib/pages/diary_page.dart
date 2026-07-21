@@ -1,61 +1,73 @@
+import 'package:brewstreet_app/model/diary_note.dart';
+import 'package:brewstreet_app/pages/saved_shops.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '/widgets/add_note_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../widgets/diary_note_card.dart';
-import '../widgets/diary_scaffold.dart';
-import 'saved_shops.dart';
-import 'diary_pages/glossary_page.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../models/diary_note_model.dart';
+import '../../widgets/diary_note_card.dart';
+import '../../widgets/diary_scaffold.dart';
 
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
 
   @override
   State<DiaryPage> createState() => _DiaryPageState();
-
-
 }
-
 
 class _DiaryPageState extends State<DiaryPage> {
-
-    @override
-  void initState() {
-  super.initState();
-  loadNotes();
-}
-
-Future<void> loadNotes() async {
-  final uid = FirebaseAuth.instance.currentUser!.uid;
-
-  final snapshot = await FirebaseFirestore.instance
-      .collection('diaries')
-      .where('user_id', isEqualTo: uid)
-      .get();
-
-  setState(() {
-    notes = snapshot.docs
-        .map((doc) => DiaryNoteModel.fromFirestore(doc.data()))
-        .toList();
-  });
-}
-  static const int _glossaryTab = 0;
   static const int _savedShopsTab = 1;
 
-  int selectedTab = 2;
+  int selectedTab = 3;
 
-  List<DiaryNoteModel> notes = [];
+final List<DiaryNote> notes = [
+  DiaryNote(
+    title: "Coffee tasting notes",
+    body:
+        "• Longer note has a drop down and ellipse\n"
+        "to demonstrate a note is longer than the\n"
+        "\"preview\" card.\n"
+        "• Arabica beans.\n"
+        "• Toffee praline flavours. Earthy richness.",
+    expanded: true,
+  ),
+  DiaryNote(
+    title: "Shorter note",
+    body: "• No drop-down required for short notes.",
+  ),
+  DiaryNote(
+    title: "Coffee tasting notes",
+    body:
+        "• Ability to attach notes to specific coffee\n"
+        "shop items within a specific coffee shop?",
+  ),
+];
 
+Stream<List<DiaryNote>> loadFirebaseNotes() {
+  return FirebaseFirestore.instance
+      .collection("notes")
+      .snapshots()
+      .map((snapshot) {
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+
+      return DiaryNote(
+        title: data["notesTitle"] ?? "",
+        body: data["notesDescription"] ?? "",
+      );
+    }).toList();
+  });
+}
   final tabs = const [
     "Glossary",
     "Saved Shops",
+    "Draft Reviews",
     "Notes",
   ];
 
   @override
   Widget build(BuildContext context) {
+    final bool showingSavedShops = selectedTab == _savedShopsTab;
+
     return DiaryScaffold(
       tabs: tabs,
       selectedIndex: selectedTab,
@@ -64,11 +76,7 @@ Future<void> loadNotes() async {
           selectedTab = index;
         });
       },
-      child: selectedTab == _glossaryTab
-          ? const DiaryGlossaryPage()
-          : selectedTab == _savedShopsTab
-              ? const SavedShops()
-              : _buildNotesTab(),
+      child: showingSavedShops ? const SavedShops() : _buildNotesTab(),
     );
   }
 
@@ -86,39 +94,64 @@ Future<void> loadNotes() async {
 
         const SizedBox(height: 18),
 
-        Column(
-          children: notes.map((note) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 15),
-              child: DiaryNoteCard(
-                title: note.title,
-                body: note.body,
-                expanded: note.expanded,
-                onToggle: () {
-                  setState(() {
-                    note.expanded = !note.expanded;
-                  });
-                },
-              ),
+        StreamBuilder<List<DiaryNote>>(
+          stream: loadFirebaseNotes(),
+          builder: (context, snapshot) {
+
+            final firebaseNotes = snapshot.data ?? [];
+
+            final allNotes = [
+              ...notes,
+              ...firebaseNotes,
+            ];
+
+            return Column(
+              children: allNotes.map((note) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: DiaryNoteCard(
+                    title: note.title,
+                    body: note.body,
+                    expanded: note.expanded,
+                    onToggle: () {
+                      setState(() {
+                        note.expanded = !note.expanded;
+                      });
+                    },
+                    onEdit: () async {
+                      final DiaryNote? editedNote =
+                          await showDialog<DiaryNote>(
+                        context: context,
+                        builder: (_) => AddNoteDialog(),
+                      );
+
+                      if (editedNote != null) {
+                        setState(() {
+                          note.title = editedNote.title;
+                          note.body = editedNote.body;
+                        });
+                      }
+                    },
+                  ),
+                );
+              }).toList(),
             );
-          }).toList(),
+          },
         ),
 
         const SizedBox(height: 22),
 
         GestureDetector(
           onTap: () async {
-            final DiaryNoteModel? newNote = await showDialog<DiaryNoteModel>(
+            final DiaryNote? newNote = await showDialog<DiaryNote>(
               context: context,
               builder: (context) => const AddNoteDialog(),
             );
 
             if (newNote != null) {
-            await FirebaseFirestore.instance
-                .collection('diaries')
-                .add(newNote.toFirestore());
-
-            await loadNotes();
+              setState(() {
+                notes.add(newNote);
+              });
             }
           },
           child: Text(

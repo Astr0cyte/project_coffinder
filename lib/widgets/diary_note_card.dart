@@ -8,6 +8,8 @@ class DiaryNoteCard extends StatelessWidget {
   final String body;
   final bool expanded;
   final VoidCallback onToggle;
+  final VoidCallback? onEdit;
+
 
   const DiaryNoteCard({
     super.key,
@@ -15,6 +17,7 @@ class DiaryNoteCard extends StatelessWidget {
     required this.body,
     required this.expanded,
     required this.onToggle,
+    this.onEdit,
   });
 
   bool get _isLongNote =>
