@@ -5,9 +5,9 @@ class RegisterState extends ChangeNotifier {
   String _firstName = '';
   String _lastName = '';
   String _email = '';
-  DateTime? _dateOfBirth;
-  String _countryDialCode = '+1';
-  String _countryFlagEmoji = '🇺🇸';
+  String _referralCode = '';
+  String _countryDialCode = '+84';
+  String _countryFlagEmoji = '🇻🇳';
   String _phone = '';
   String _password = '';
   bool _obscurePassword = true;
@@ -15,7 +15,7 @@ class RegisterState extends ChangeNotifier {
   String get firstName => _firstName;
   String get lastName => _lastName;
   String get email => _email;
-  DateTime? get dateOfBirth => _dateOfBirth;
+  String get referralCode => _referralCode;
   String get countryDialCode => _countryDialCode;
   String get countryFlagEmoji => _countryFlagEmoji;
   String get phone => _phone;
@@ -26,7 +26,7 @@ class RegisterState extends ChangeNotifier {
       _firstName.trim().isNotEmpty &&
           _lastName.trim().isNotEmpty &&
           _email.trim().isNotEmpty &&
-          _dateOfBirth != null &&
+          _referralCode.trim().isNotEmpty &&
           _phone.trim().isNotEmpty &&
           _password.isNotEmpty;
 
@@ -45,8 +45,8 @@ class RegisterState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setDateOfBirth(DateTime value) {
-    _dateOfBirth = value;
+  void setReferralCode(String value) {
+    _referralCode = value;
     notifyListeners();
   }
 

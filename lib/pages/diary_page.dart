@@ -1,5 +1,6 @@
 import 'package:brewstreet_app/app_colors.dart';
 import 'package:brewstreet_app/pages/saved_shops.dart';
+import 'diary_pages/glossary_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../model/diary_note.dart';
@@ -17,9 +18,10 @@ class DiaryPage extends StatefulWidget {
 }
 
 class _DiaryPageState extends State<DiaryPage> {
+  static const int _glossaryTab = 0;
   static const int _savedShopsTab = 1;
 
-  int selectedTab = 3;
+  int selectedTab = 2;
 
   final List<DiaryNote> notes = [
     DiaryNote(
@@ -60,13 +62,19 @@ class _DiaryPageState extends State<DiaryPage> {
   final tabs = const [
     "Glossary",
     "Saved Shops",
-    "Draft Reviews",
     "Notes",
   ];
 
   @override
   Widget build(BuildContext context) {
-    final bool showingSavedShops = selectedTab == _savedShopsTab;
+    Widget content;
+    if (selectedTab == _glossaryTab) {
+      content = const DiaryGlossaryPage();
+    } else if (selectedTab == _savedShopsTab) {
+      content = const SavedShops();
+    } else {
+      content = _buildNotesTab();
+    }
 
     return DiaryScaffold(
       tabs: tabs,
@@ -76,7 +84,7 @@ class _DiaryPageState extends State<DiaryPage> {
           selectedTab = index;
         });
       },
-      child: showingSavedShops ? const SavedShops() : _buildNotesTab(),
+      child: content,
     );
   }
 

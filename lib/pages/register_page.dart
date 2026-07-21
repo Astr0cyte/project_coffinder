@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/auth_service.dart';
+import '../services/referral_service.dart';
 import '../states/register_state.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/mascot_avatar.dart';
@@ -27,7 +28,7 @@ class _RegisterPageState extends State<RegisterPage> {
   late final TextEditingController _firstNameController;
   late final TextEditingController _lastNameController;
   late final TextEditingController _emailController;
-  late final TextEditingController _dobController;
+  late final TextEditingController _referralCodeController;
   late final TextEditingController _phoneController;
   late final TextEditingController _passwordController;
   bool _isLoading = false;
@@ -47,7 +48,8 @@ class _RegisterPageState extends State<RegisterPage> {
       ..addListener(() => _state.setLastName(_lastNameController.text));
     _emailController = TextEditingController()
       ..addListener(() => _state.setEmail(_emailController.text));
-    _dobController = TextEditingController();
+    _referralCodeController = TextEditingController()
+      ..addListener(() => _state.setReferralCode(_referralCodeController.text));
     _phoneController = TextEditingController()
       ..addListener(() => _state.setPhone(_phoneController.text));
     _passwordController = TextEditingController()
@@ -64,7 +66,7 @@ class _RegisterPageState extends State<RegisterPage> {
     _firstNameController.dispose();
     _lastNameController.dispose();
     _emailController.dispose();
-    _dobController.dispose();
+    _referralCodeController.dispose();
     _phoneController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -76,21 +78,6 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  Future<void> _pickDateOfBirth() async {
-    final now = DateTime.now();
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime(now.year - 18, now.month, now.day),
-      firstDate: DateTime(now.year - 100),
-      lastDate: now,
-    );
-    if (picked != null) {
-      _state.setDateOfBirth(picked);
-      _dobController.text =
-          '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
-    }
-  }
-
   Future<void> _handleRegister() async {
     if (widget.onSubmit != null) {
       widget.onSubmit!(_state);
@@ -98,6 +85,14 @@ class _RegisterPageState extends State<RegisterPage> {
     }
     setState(() => _isLoading = true);
     try {
+      final codeValid = ReferralService.instance.isValid(_state.referralCode);
+
+      if (!codeValid) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Invalid referral code.')),
+        );
+        return;
+      }
       await AuthService.instance.register(
         email: _state.email,
         password: _state.password,
@@ -223,15 +218,8 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                               const SizedBox(height: 12),
                               AuthTextField(
-                                controller: _dobController,
-                                hintText: 'DD/MM/YYYY',
-                                readOnly: true,
-                                onTap: _pickDateOfBirth,
-                                suffixIcon: Icon(
-                                  Icons.calendar_today_outlined,
-                                  size: 18,
-                                  color: _textColor.withOpacity(0.5),
-                                ),
+                                controller: _referralCodeController,
+                                hintText: 'Invitation Code',
                               ),
                               const SizedBox(height: 12),
                               _PhoneField(

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:brewstreet_app/services/google_maps.dart';
+
 import 'diary_page.dart';
 import 'add_cafe/step1_picture_page.dart';
 import '../models/cafe_model.dart';
@@ -478,7 +480,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           MaterialPageRoute(builder: (_) => DiaryPage()),
                         );
                       }),
-                      _navIcon(Icons.location_on_outlined, onTap: () {
+                      _navIcon(Icons.location_on_outlined, onTap: () {Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => MapPage()),
+                        );
                       }),
                       _navIcon(Icons.add, onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => Step1PicturePage(state: AddCafeState())),
