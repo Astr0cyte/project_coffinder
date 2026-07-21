@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../app_colors.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../services/image_upload_service.dart';
 import '../../states/add_cafe_state.dart';
@@ -25,7 +26,7 @@ class Step1PicturePage extends StatefulWidget {
 
 class _Step1PicturePageState extends State<Step1PicturePage> {
   static const _textColor = Color(0xFF7E654C);
-  static const _backgroundColor = Color(0xFFFAF9F4);
+  static const _backgroundColor = AppColors.cream;
 
   File? _pickedFile;
   bool _isUploading = false;

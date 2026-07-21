@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../app_colors.dart';
 import '../../states/add_cafe_state.dart';
 import '../../widgets/step_flow_header.dart';
 import '../../widgets/flow_primary_button.dart';
@@ -22,7 +23,7 @@ class _Step2InformationPageState extends State<Step2InformationPage> {
   late final TextEditingController _openTimeController;
 
   static const _textColor = Color(0xFF7E654C);
-  static const _backgroundColor = Color(0xFFFAF9F4);
+  static const _backgroundColor = AppColors.cream;
 
   @override
   void initState() {

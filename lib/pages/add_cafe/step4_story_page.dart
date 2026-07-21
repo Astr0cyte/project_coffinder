@@ -320,6 +320,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../app_colors.dart';
 import '../../models/cafe_model.dart';
 import '../../services/auth_service.dart';
 import '../../services/cafe_service.dart';
@@ -353,7 +354,7 @@ class _Step4StoryPageState extends State<Step4StoryPage> {
   final ScrollController _scrollController = ScrollController();
 
   static const _textColor = Color(0xFF7E654C);
-  static const _backgroundColor = Color(0xFFFAF9F4);
+  static const _backgroundColor = AppColors.cream;
   static const _cardColor = Color(0xFF8A6A50);
 
   bool _isPosting = false;
