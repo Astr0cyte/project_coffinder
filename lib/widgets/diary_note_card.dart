@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../app_colors.dart';
+import 'dropdown_card.dart';
 
 class DiaryNoteCard extends StatelessWidget {
   final String title;
@@ -19,57 +22,68 @@ class DiaryNoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xffF7F2E8),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xffDCCFB8),
-        ),
+    final header = Text(
+      title,
+      style: GoogleFonts.quicksand(
+        color: AppColors.brownMid,
+        fontWeight: FontWeight.w600,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              if (_isLongNote)
-              IconButton(
-                icon: Icon(
-                  expanded
-                      ? Icons.keyboard_arrow_up
-                      : Icons.keyboard_arrow_down,
-                ),
-                onPressed: onToggle,
-              ),
-            ],
+    );
+
+    final bodyText = Text(
+      body,
+      maxLines: _isLongNote ? (expanded ? null : 3) : null,
+      overflow: _isLongNote ? TextOverflow.fade : TextOverflow.visible,
+      style: GoogleFonts.quicksand(
+        color: AppColors.brownMid,
+        fontWeight: FontWeight.w500,
+      ),
+    );
+
+    if (!_isLongNote) {
+      return Container(
+        width: double.infinity,
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: const Color(0xFFF9F7EE),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: const Color(0xFFDDE1D0),
           ),
-
-          const SizedBox(height: 12),
-
-          Text(
-            body,
-            maxLines: _isLongNote ? (expanded ? null : 3) : null,
-            overflow: _isLongNote
-            ? TextOverflow.fade
-            : TextOverflow.visible,
-          ),
-
-          if (_isLongNote && expanded) ...[
-            const SizedBox(height: 10),
-            const Center(child: Text("•••")),
+          boxShadow: const [
+            BoxShadow(
+              offset: Offset(0, 2),
+              color: Color.fromRGBO(204, 203, 199, 1.0),
+              blurRadius: 1.0,
+            ),
           ],
-        ],
-      ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: header,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: bodyText,
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      );
+    }
+
+    return DropdownCard(
+      expanded: expanded,
+      onToggle: onToggle,
+      header: header,
+      body: bodyText,
+      expandedContent: _isLongNote && expanded
+          ? const Center(child: Text(''))
+          : null,
     );
   }
 }
